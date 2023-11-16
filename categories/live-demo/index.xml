@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>live-demo on XFious</title>
+        <link>https://example.org/categories/live-demo/</link>
+        <description>Recent content in live-demo on XFious</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <managingEditor>xfious@outlook.com (XFious)</managingEditor>
+        <webMaster>xfious@outlook.com (XFious)</webMaster>
+        <lastBuildDate>Sun, 26 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/categories/live-demo/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Revealing Category Preferences of ResNet Layers: Visualization Based on Web</title>
+        <link>https://example.org/project/resnet18-vis/</link>
+        <pubDate>Sun, 26 Mar 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/project/resnet18-vis/</guid>
+        <description>&lt;img src="https://example.org/project/resnet18-vis/activation.png" alt="Featured image of post Revealing Category Preferences of ResNet Layers: Visualization Based on Web" /&gt;&lt;h1 id=&#34;revealing-category-preferences-of-resnet-layers-visualization-based-on-web&#34;&gt;Revealing Category Preferences of ResNet Layers: Visualization Based on Web&lt;/h1&gt;
+&lt;h1 id=&#34;abstract&#34;&gt;Abstract&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Using web-based technology, this project visualizes the internal activation pattern of ResNet18 on the CIFAR10 dataset. The visualization tries to show whether those kernels in convolutional layers tend to specialize to a certain class, and from a higher level, whether exists an internal activation pattern regarding a specific class. If the pattern exists, it can be useful to reveal how the internal pattern allows the model to learn the underlying structure of the data. This project also compares the performance of TensorFlow and PyTorch, and explore how the different default setting affects the training process, as a preliminary step for the visualization.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Online-demo: &lt;a class=&#34;link&#34; href=&#34;https://xiaonanfu-ucsd.github.io/resnet-visualization/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://xiaonanfu-ucsd.github.io/resnet-visualization/&lt;/a&gt;&lt;/p&gt;
+&lt;iframe src=&#34;https://xiaonanfu-ucsd.github.io/resnet-visualization/&#34; style=&#34;width: calc(70vw); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
+&lt;br&gt;
+&lt;hr&gt;
+&lt;br&gt;
+&lt;h1 id=&#34;1-introduction&#34;&gt;1. Introduction&lt;/h1&gt;
+&lt;p&gt;Many studies in the field of Neuroscience already revealed that neurons can have specialized functions (Burke, 1978; Yrttiaho, 2022). For example, some neurons are active with the stimuli of face image; some neurons are active with certain sounds. It is very intuitive to think that artificial neural networks will have similar characteristics, showing a pattern with certain inputs. Is this impression correct? People may feel unsure about the question because this concept is not easy to be verified, and they can only depend on prior knowledge. In many cases, deep learning models are black boxes and it is impossible to let researchers see those computational details. Despite directly reading the model being unachievable, a model can still be visualized somehow, to concentrate the important information to make anyone can form a general idea about how the model works.&lt;/p&gt;
+&lt;p&gt;Based on the conceptual knowledge of modern deep learning and neuroscience, this project examines whether an artificial neural network, in this case, the CNN, will show a clear preference and internal pattern with respect to certain classes.&lt;/p&gt;
+&lt;p&gt;Hypothetically, if a pair of images is belong to the same class, such as two dog pictures, the internal pattern of the model should be similar. From another way to understand it, two embedding vectors that represent the similar meaning, will be close to each other, and have a bigger dot product.&lt;/p&gt;
+&lt;p&gt;In this project, I successfully trained a ResNet18 model on the CIFAR10 dataset, and used front-end technology (i.e. HTML, CSS, JavaScript) to visualize the averaged activation status of the feature maps produced by CNN kernels. CNN is already a mature solution and used in many tasks; more importantly, the inner state of CNN is relatively easier to interpret if we understand it as a filter, compared with MLP and RNN. Although the training process is not the focus of this project, I still want to talk about it because I trained on both TensorFlow and PyTorch, and realized the big gap between them, regarding performance and ease of use. The methodology for ResNet visualization is using bright or dark colors to represent the activation status of a feature map, and using RGB to represent what class the model is processing. If a feature map is only associated with one class, the color will be pure and strong. Using this approach, it is easy to see which kernel&amp;rsquo;s output is most influential to the final result.&lt;/p&gt;
+&lt;h1 id=&#34;2-methodology&#34;&gt;2. Methodology&lt;/h1&gt;
+&lt;h2 id=&#34;21-resnet-tensorflow-and-pytorch&#34;&gt;2.1 Resnet, TensorFlow and PyTorch&lt;/h2&gt;
+&lt;p&gt;Resnet 18 is the simplest version of Resnet but has similar performance as Resnet with more layers, at least on the CIFAR10 dataset (He et al., 2016). the model is constructed with 4 ResNet layers, totally including about 18 convolutional kernels. Along the process, the size of the feature map gets smaller because the stride is 2, but using more kernels to form more channels. It is a pretty reasonable design: a wider network is less efficient than a deeper network if they have the same number of parameters.&lt;/p&gt;
+&lt;p&gt;Obviously, training a model is much more than architecture design. By comparing TensorFlow and PyTorch, I found that with the same structure, PyTorch achieved 94% accuracy on testset without rigorous fine-tuning and complex data augmentation, while TensorFlow only achieved 84%, then stranded in some local minimum which brings the accuracy down to 70%. The two platforms are using different default settings. For example, PyTorch uses He initialization, while TensorFlow uses Xavier initialization. The momentum of batchnorm layer is 0.1 in PyTorch, and 0.99 in TensorFlow. However, even if I make their setting as close as possible, TensorFlow still faces the severe problem of overfitting or underfitting. It forces me to train on PyTorch and migrate the model to TensorFlow. It is risky because some toolchains are no longer actively maintained. TensorFlow is necessary for this project since it is the only mainstream platform that can be deployed on the web, and also provides low-level detail such as the output and parameters of each layer.&lt;/p&gt;
+&lt;h2 id=&#34;22-visualization-design&#34;&gt;2.2 Visualization Design&lt;/h2&gt;
+&lt;p&gt;The goal of this visualization is to show the internal pattern of the model, and the graph should be easy to compare with other states. It is changeling to convert a 3D process to 1D representation (from WHC to C only); some information must be sacrificed. The channel-wise relationships are more important than spatial relationships, because one kernel only produces one feature map, but on the spatial dimension, summing up along HW axis will include other kernels&amp;rsquo; contributions. It is not favorable for understanding the actual usage of kernels in a model.&lt;/p&gt;
+&lt;p&gt;To make the color stand out, there is normalization to compress the range of activation status. The normalization is done on each channel, similar to the steps calculating z-score. Besides, they are set to 0 if they are negative numbers. The reason is the output of the Conv2D layer does not pass through the activation function yet, so a negative number is possible. If the threshold is more radical, then the graph will be cleaner by ignoring some small values. When the threshold sets to 1, every value lower than 1 becomes a black space, then the graph for each layer shows a clear pattern. After this process, the prominent feature map will be more obvious. That is also the reason why the background is dark grey.&lt;/p&gt;
+&lt;p&gt;The graph can be compared side by side, or stacked together. The stacked graph is more intuitive to find some node that is active with a specific class. In general, if a node is white or grey, means it does not show a clear preference. If the node is black, means it is not active. The algorism calculating stacked color is very naive, just calculate the average of the color and times 2, because the color channel is usually 0, averaging makes the graph looks dim.&lt;/p&gt;
+&lt;h1 id=&#34;3-experiment&#34;&gt;3. Experiment&lt;/h1&gt;
+&lt;h2 id=&#34;31-training-process&#34;&gt;3.1 Training Process&lt;/h2&gt;
+&lt;p&gt;A well-trained model is important for later analysis and visualization. Since the ResNet18 on TensorFlow always shows abnormal testing accuracy, I experimented with different batch size, epochs, learning rate, and optimizers to use. The default setting is to use SGD with 0.9 momentum, 128 batch size, 0.01 learning rate, and 15 epochs. Changing batch size does not have a big impact on the accuracy, but largely affects the training time. A learning rate greater than 0.08 prevents the model from converging. The optimizer has more impact. If using Adam, it stops converging at about 0.3 of loss. Then, the loss became nan. The possible reason is that the denominator of the derivative of cross entropy is too small, and the gradient becomes nan. Nadam also causes nan. 15 epochs are usually good for the CIFAR10 dataset. After 30 epochs, the accuracy may go down.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Acc.&lt;/th&gt;
+&lt;th&gt;Batch size&lt;/th&gt;
+&lt;th&gt;Epochs&lt;/th&gt;
+&lt;th&gt;LR&lt;/th&gt;
+&lt;th&gt;Opt.&lt;/th&gt;
+&lt;th&gt;Data Aug.&lt;/th&gt;
+&lt;th&gt;Platform&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;0.9&lt;/td&gt;
+&lt;td&gt;256&lt;/td&gt;
+&lt;td&gt;30&lt;/td&gt;
+&lt;td&gt;0.01&lt;/td&gt;
+&lt;td&gt;SGD&lt;/td&gt;
+&lt;td&gt;Noise&lt;/td&gt;
+&lt;td&gt;PT&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;0.83&lt;/td&gt;
+&lt;td&gt;256&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;td&gt;0.01&lt;/td&gt;
+&lt;td&gt;SGD&lt;/td&gt;
+&lt;td&gt;Noise&lt;/td&gt;
+&lt;td&gt;TF&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;0.78&lt;/td&gt;
+&lt;td&gt;256&lt;/td&gt;
+&lt;td&gt;14&lt;/td&gt;
+&lt;td&gt;0.01&lt;/td&gt;
+&lt;td&gt;SGD&lt;/td&gt;
+&lt;td&gt;Noise&lt;/td&gt;
+&lt;td&gt;TF&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;0.66&lt;/td&gt;
+&lt;td&gt;256&lt;/td&gt;
+&lt;td&gt;20&lt;/td&gt;
+&lt;td&gt;0.01&lt;/td&gt;
+&lt;td&gt;SGD&lt;/td&gt;
+&lt;td&gt;Noise&lt;/td&gt;
+&lt;td&gt;TF&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;0.88&lt;/td&gt;
+&lt;td&gt;512&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;0.008&lt;/td&gt;
+&lt;td&gt;SGD&lt;/td&gt;
+&lt;td&gt;Noise&lt;/td&gt;
+&lt;td&gt;PT&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Nan&lt;/td&gt;
+&lt;td&gt;128&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;0.001&lt;/td&gt;
+&lt;td&gt;Adam&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;PT&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/resnet18-vis/loss.png&#34;
+	width=&#34;956&#34;
+	height=&#34;721&#34;
+	srcset=&#34;https://example.org/project/resnet18-vis/loss_hucc6bf2d438f367c7fa324f150fb886ee_83654_480x0_resize_box_3.png 480w, https://example.org/project/resnet18-vis/loss_hucc6bf2d438f367c7fa324f150fb886ee_83654_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;132&#34;
+		data-flex-basis=&#34;318px&#34;
+	
+&gt;
+&lt;em&gt;Figure 1: 200 epoch, SGD optimizer with CosineAnnealingLR as LR schedular&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;An implementation of ResNet18 from this repository shows a way to use a large epoch number to achieve good performance (Kuangliu, 2019). In Kuangliu&amp;rsquo;s implementation, there is a CosineAnnealingLR learning rate schedular. With dynamic learning rate, the training process can run for 200 epochs without a performance drop. The final accuracy is about 0.94.&lt;/p&gt;
+&lt;h2 id=&#34;32-visualization&#34;&gt;3.2 Visualization&lt;/h2&gt;
+&lt;p&gt;The activation graph for each layer shows that for the input from a specific class, some kernels tend to output an active feature map, and some kernels don&amp;rsquo;t. Red represents car, green represents truck, and blue represents horse. In expectation, horses should have more internal pattern differences in contrast with the other two. The graph in the top few layers has a very similar pattern, even with input from different classes (Figure 2). One possible thing is that only those highlighted kernels can effectively capture the low-level features. Therefore, I tried to shrink the layer behind the model input, to let it only use 32 of channels. Lastly, accuracy has not decreased, showing that the original model has some redundancy in the first few layers. The visualization graph works for analyzing the model.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/resnet18-vis/activation.png&#34;
+	width=&#34;864&#34;
+	height=&#34;312&#34;
+	srcset=&#34;https://example.org/project/resnet18-vis/activation_huea4a95c8cdee07ddad8929a51f90c3f5_64244_480x0_resize_box_3.png 480w, https://example.org/project/resnet18-vis/activation_huea4a95c8cdee07ddad8929a51f90c3f5_64244_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;276&#34;
+		data-flex-basis=&#34;664px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 2: Left side is the activation graph with class “horse”; right side is the mix-class activation graph. It conclude the first Conv2D layer, ResNet Layer 1 and 2.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;From the stacked graph using mixed class data, the second layer of ResNet18 does not show any clear class-related pattern. The transition convolutional layer between ResNet layers 3 and 4 is irregularly sparse. Maybe it implies that this layer only carries a very small amount of role in classifying. Layer 4 is close to the loss function, it is more likely to show a clear pattern. There are more and more pure color patches in the later layers. The last layer is the clearest. The reason is that the last layer is the output of the model, and the loss function is calculated based on the output. The last convolutional layer has many pure color patches, which means this layer is critical for classifying.&lt;/p&gt;
+&lt;p&gt;According to the visualization, later layers tend to be more class-related. later layers are the proper area to analyze the internal pattern of the model because the earlier layers are more likely some general-purpose filters. However, by looking side by side, there are only some vague patterns across similar classes (i.e. car and truck). Without any statistical tools, it is hard to tell if the pattern is significant. However, the with-in-class stacked graph shows a clear pattern within the same class. The within-class similarity indicates that indeed class-related internal patterns exist. It is worth mentioning that since the pattern is meaningless for humans, even though most people can notice there is a within-class pattern, it is not explainable.&lt;/p&gt;
+&lt;h1 id=&#34;4-conclusion&#34;&gt;4. Conclusion&lt;/h1&gt;
+&lt;p&gt;To answer the hypothesis that whether the CNN node has a clear preference and overall pattern, the response can be yes, but it is quite limited toward the output side of the model. The mixed-class stacked graph shows that the later layers&amp;rsquo; nodes tend to have a clear preference. Also, the input from the same class tends to have a similar internal pattern. However, for the cross-class situation, even if the two class has a similar category, it is still hard to eye-balling tell if there is a pattern. There can be one explanation. Due to the one-hot encoding strategy as the label, the model cannot capture those subtle similarities between the two classes. In an end-to-end model, the model may have a larger chance to have a more context-related pattern, rather than just constrained by the label.&lt;/p&gt;
+&lt;h1 id=&#34;5-reference&#34;&gt;5. Reference&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Burke, R. E. (1978). Motor units: physiological/histochemical profiles, neural connectivity and functional specializations. American Zoologist, 18(1), 127-134.&lt;/li&gt;
+&lt;li&gt;He, K., Zhang, X., Ren, S., &amp;amp; Sun, J. (2016). Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 770-778).&lt;/li&gt;
+&lt;li&gt;Kuangliu (2019). Pytorch-cifar. &lt;a class=&#34;link&#34; href=&#34;https://github.com/kuangliu/pytorch-cifar&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/kuangliu/pytorch-cifar&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Yrttiaho, S., Kylliäinen, A., Parviainen, T., &amp;amp; Peltola, M. J. (2022). Neural specialization to human faces at the age of 7 months. Scientific Reports, 12(1), 12471.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>Use Verlet Integration to Simulate Gravity</title>
+        <link>https://example.org/project/verlet-gravity/</link>
+        <pubDate>Mon, 25 Jul 2022 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/project/verlet-gravity/</guid>
+        <description>&lt;img src="https://example.org/project/verlet-gravity/img.png" alt="Featured image of post Use Verlet Integration to Simulate Gravity" /&gt;&lt;h1 id=&#34;finite-difference-verlet-integration-and-its-application&#34;&gt;Finite Difference, Verlet Integration, and its Application&lt;/h1&gt;
+&lt;p&gt;Online-demo: &lt;a class=&#34;link&#34; href=&#34;https://xiaonanfu-ucsd.github.io/verlet-gravity/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://xiaonanfu-ucsd.github.io/verlet-gravity/&lt;/a&gt;&lt;/p&gt;
+&lt;iframe src=&#34;https://xiaonanfu-ucsd.github.io/verlet-gravity/&#34; style=&#34;width: calc(70vw); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;hr&gt;
+&lt;br&gt;
+&lt;p&gt;Differential equations are an important tool for classical mechanics, such as analyzing force and movement. In the simulation of the physical phenomenon of real-world objects, numerical differentiation is usually good enough to reveal the truth about the relationships in a system. The computer can easily handle discrete calculations in the simulation. That is why finite difference is common in the industry. For example, finite element analysis about a vehicle involves finite difference; the trajectory calculation of a satellite uses finite difference.&lt;/p&gt;
+&lt;p&gt;For those Newton’s equations of motion, there are many finite difference methods (FDMs) to find the solution. Generally, those FDMs segment the motion as a bunch of sub-motions that happened in a very short time interval. FDMs assume that the object moves along a constant vector in a particular time interval. If the movement is non-linear, then there is a cumulative error in FDMs’ results. Different FDMs have different degrees of error. Verlet Integration is one of the FDMs which have a relatively small error term. It does not have extra computational cost compared with the Euler method, and it is numerically stable enough for most of the calculations. Therefore, Verlet Integration is popular in computer graphics, such as simulating fluids with particles, and the gravity effect in space.&lt;/p&gt;
+&lt;p&gt;FDMs can be understanded as the Taylor series of a particle position function x. The function x here is the one-dimensional position of a particle.&lt;/p&gt;
+&lt;p&gt;$$x(t)=x(a)+x&amp;rsquo;(a)(t-a)+\frac{x&amp;rsquo;&amp;rsquo;(a)}{2}(t-a)^2+&amp;hellip;+\frac{x^na}{n!}(t-a)^n$$&lt;/p&gt;
+&lt;p&gt;$$x(t)=\lim_{n\rightarrow \infin} \sum^{n}_{i=0}{\frac{x^ia}{i!}(t-a)^i}$$&lt;/p&gt;
+&lt;p&gt;Taylor series gives the approximation to an unknown position $x(t)$ which is close to the knowing position $x(a)$. Since the time interval is small (i.e. $t-a$ is small), even if we ignore the high-order terms, the error will not be significant. Taylor series is helpful in particles simulation because we need to know the position of the particle in the next “step”, which means the position after the time interval $\delta t$.&lt;/p&gt;
+&lt;p&gt;Eq1. $x(t+\delta t) = x(t) + x&amp;rsquo;(t) \delta t + \frac{x&amp;rsquo;&amp;rsquo;(t)}{2}\delta t^2 + \frac{x&amp;rsquo;&amp;rsquo;&amp;rsquo;(t)}{6} \delta t^3 + O(\delta t^4)$&lt;/p&gt;
+&lt;p&gt;The function $O$ here represents the ignored high-order terms in Taylor series has this upper bound. The expression $\delta t^4$ represent $O(δt^4)$ has a similar magnitude as $δt^4$. It is small because time interval &amp;lt; 1. Since Euler method (Note: $x(t+δt)=x(t)+v(t)*δt$) have a error term $O(δt^2)$, Verlet Integration is more precise.&lt;/p&gt;
+&lt;p&gt;Eq2. $x(t - \delta t) = x(t) - x&amp;rsquo;(t) \delta t + \frac{x&amp;rsquo;&amp;rsquo;(t)}{2}\delta t^2 - \frac{x&amp;rsquo;&amp;rsquo;&amp;rsquo;(t)}{6} \delta t^3 + O(\delta t^4)$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Eq2 is the position for the last step.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Eq3. $x(t + \delta t) + x(t - \delta t) = 2x(t) + x&amp;rsquo;&amp;rsquo;(t) \delta t^2 + O(\delta t^4)$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;$Eq3 = Eq1 + Eq2$. It is a middle step to get the equation of Verlet Integration.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Eq4. $x(t + \delta t) = 2x(t) - x(t - \delta t) + x&amp;rsquo;&amp;rsquo;(t) \delta t^2$&lt;/p&gt;
+&lt;p&gt;$x(t + \delta t) = 2x(t) - previous + x&amp;rsquo;&amp;rsquo;(t) \delta t^2$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Eq4 is the equation that can be used to estimate the next step position, and it removes the $O(δt^4)$ because they are not important in the calculation. This equation means Verlet Integration only depends on current position, previous step position, and acceleration.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Depending on previous step position means this method is not self-starting. In most particle simulation test, we only have the initial value about the position and velocity vectors, but not the previous position. Hence we may only estimate the previous position using the initial velocity. It brings in more error.&lt;/p&gt;
+&lt;p&gt;The improved Verlet method is velocity Verlet Integration. It depends on the current velocity rather than previous position. Therefore, velocity Verlet Integration is self-starting.&lt;/p&gt;
+&lt;p&gt;$x(t + \delta t) = x(t) + v(t) \delta t + \frac{a(t)}{2} \delta t^2$&lt;/p&gt;
+&lt;p&gt;Eq5. $v(t+ \delta t) = v(t) + \frac{1}{2}(a(t+ \delta t) + a(t)) \delta t$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Eq5 is the equation to update the velocity, which depends on acceleration.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Acceleration is the key factor in Verlet Integration. By changing $a(t)$, Verlet Integration can simulate different physical phenomenon. Using the Newton’s second law, $F=ma$, $a=\frac{F}{m}$, if we find $F(t)$, then $a(t)$ will be obvious.&lt;/p&gt;
+&lt;p&gt;For gravity simulation in the demonstration I provide, the program iteratively finds the gravity between mass points in the system, and accumulates those force vectors to find the acceleration within that step. Then the program can easily find the next position for mass points. This demonstration does not precisely simulate real-world gravity nor the size and distance of stars. Besides gravity, Verlet Integration can also be applied in simulating a rope. A rope can be modeled as particles linked by spring. After replacing a(t) using Hooke&amp;rsquo;s law, Verlet Integration can predict the position of each rope particle.&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

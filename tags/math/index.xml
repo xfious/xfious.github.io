@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>math on XFious</title>
+        <link>https://example.org/tags/math/</link>
+        <description>Recent content in math on XFious</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <managingEditor>xfious@outlook.com (XFious)</managingEditor>
+        <webMaster>xfious@outlook.com (XFious)</webMaster>
+        <lastBuildDate>Mon, 25 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/tags/math/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Use Verlet Integration to Simulate Gravity</title>
+        <link>https://example.org/project/verlet-gravity/</link>
+        <pubDate>Mon, 25 Jul 2022 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/project/verlet-gravity/</guid>
+        <description>&lt;img src="https://example.org/project/verlet-gravity/img.png" alt="Featured image of post Use Verlet Integration to Simulate Gravity" /&gt;&lt;h1 id=&#34;finite-difference-verlet-integration-and-its-application&#34;&gt;Finite Difference, Verlet Integration, and its Application&lt;/h1&gt;
+&lt;p&gt;Online-demo: &lt;a class=&#34;link&#34; href=&#34;https://xiaonanfu-ucsd.github.io/verlet-gravity/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://xiaonanfu-ucsd.github.io/verlet-gravity/&lt;/a&gt;&lt;/p&gt;
+&lt;iframe src=&#34;https://xiaonanfu-ucsd.github.io/verlet-gravity/&#34; style=&#34;width: calc(70vw); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;hr&gt;
+&lt;br&gt;
+&lt;p&gt;Differential equations are an important tool for classical mechanics, such as analyzing force and movement. In the simulation of the physical phenomenon of real-world objects, numerical differentiation is usually good enough to reveal the truth about the relationships in a system. The computer can easily handle discrete calculations in the simulation. That is why finite difference is common in the industry. For example, finite element analysis about a vehicle involves finite difference; the trajectory calculation of a satellite uses finite difference.&lt;/p&gt;
+&lt;p&gt;For those Newton’s equations of motion, there are many finite difference methods (FDMs) to find the solution. Generally, those FDMs segment the motion as a bunch of sub-motions that happened in a very short time interval. FDMs assume that the object moves along a constant vector in a particular time interval. If the movement is non-linear, then there is a cumulative error in FDMs’ results. Different FDMs have different degrees of error. Verlet Integration is one of the FDMs which have a relatively small error term. It does not have extra computational cost compared with the Euler method, and it is numerically stable enough for most of the calculations. Therefore, Verlet Integration is popular in computer graphics, such as simulating fluids with particles, and the gravity effect in space.&lt;/p&gt;
+&lt;p&gt;FDMs can be understanded as the Taylor series of a particle position function x. The function x here is the one-dimensional position of a particle.&lt;/p&gt;
+&lt;p&gt;$$x(t)=x(a)+x&amp;rsquo;(a)(t-a)+\frac{x&amp;rsquo;&amp;rsquo;(a)}{2}(t-a)^2+&amp;hellip;+\frac{x^na}{n!}(t-a)^n$$&lt;/p&gt;
+&lt;p&gt;$$x(t)=\lim_{n\rightarrow \infin} \sum^{n}_{i=0}{\frac{x^ia}{i!}(t-a)^i}$$&lt;/p&gt;
+&lt;p&gt;Taylor series gives the approximation to an unknown position $x(t)$ which is close to the knowing position $x(a)$. Since the time interval is small (i.e. $t-a$ is small), even if we ignore the high-order terms, the error will not be significant. Taylor series is helpful in particles simulation because we need to know the position of the particle in the next “step”, which means the position after the time interval $\delta t$.&lt;/p&gt;
+&lt;p&gt;Eq1. $x(t+\delta t) = x(t) + x&amp;rsquo;(t) \delta t + \frac{x&amp;rsquo;&amp;rsquo;(t)}{2}\delta t^2 + \frac{x&amp;rsquo;&amp;rsquo;&amp;rsquo;(t)}{6} \delta t^3 + O(\delta t^4)$&lt;/p&gt;
+&lt;p&gt;The function $O$ here represents the ignored high-order terms in Taylor series has this upper bound. The expression $\delta t^4$ represent $O(δt^4)$ has a similar magnitude as $δt^4$. It is small because time interval &amp;lt; 1. Since Euler method (Note: $x(t+δt)=x(t)+v(t)*δt$) have a error term $O(δt^2)$, Verlet Integration is more precise.&lt;/p&gt;
+&lt;p&gt;Eq2. $x(t - \delta t) = x(t) - x&amp;rsquo;(t) \delta t + \frac{x&amp;rsquo;&amp;rsquo;(t)}{2}\delta t^2 - \frac{x&amp;rsquo;&amp;rsquo;&amp;rsquo;(t)}{6} \delta t^3 + O(\delta t^4)$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Eq2 is the position for the last step.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Eq3. $x(t + \delta t) + x(t - \delta t) = 2x(t) + x&amp;rsquo;&amp;rsquo;(t) \delta t^2 + O(\delta t^4)$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;$Eq3 = Eq1 + Eq2$. It is a middle step to get the equation of Verlet Integration.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Eq4. $x(t + \delta t) = 2x(t) - x(t - \delta t) + x&amp;rsquo;&amp;rsquo;(t) \delta t^2$&lt;/p&gt;
+&lt;p&gt;$x(t + \delta t) = 2x(t) - previous + x&amp;rsquo;&amp;rsquo;(t) \delta t^2$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Eq4 is the equation that can be used to estimate the next step position, and it removes the $O(δt^4)$ because they are not important in the calculation. This equation means Verlet Integration only depends on current position, previous step position, and acceleration.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Depending on previous step position means this method is not self-starting. In most particle simulation test, we only have the initial value about the position and velocity vectors, but not the previous position. Hence we may only estimate the previous position using the initial velocity. It brings in more error.&lt;/p&gt;
+&lt;p&gt;The improved Verlet method is velocity Verlet Integration. It depends on the current velocity rather than previous position. Therefore, velocity Verlet Integration is self-starting.&lt;/p&gt;
+&lt;p&gt;$x(t + \delta t) = x(t) + v(t) \delta t + \frac{a(t)}{2} \delta t^2$&lt;/p&gt;
+&lt;p&gt;Eq5. $v(t+ \delta t) = v(t) + \frac{1}{2}(a(t+ \delta t) + a(t)) \delta t$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Eq5 is the equation to update the velocity, which depends on acceleration.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Acceleration is the key factor in Verlet Integration. By changing $a(t)$, Verlet Integration can simulate different physical phenomenon. Using the Newton’s second law, $F=ma$, $a=\frac{F}{m}$, if we find $F(t)$, then $a(t)$ will be obvious.&lt;/p&gt;
+&lt;p&gt;For gravity simulation in the demonstration I provide, the program iteratively finds the gravity between mass points in the system, and accumulates those force vectors to find the acceleration within that step. Then the program can easily find the next position for mass points. This demonstration does not precisely simulate real-world gravity nor the size and distance of stars. Besides gravity, Verlet Integration can also be applied in simulating a rope. A rope can be modeled as particles linked by spring. After replacing a(t) using Hooke&amp;rsquo;s law, Verlet Integration can predict the position of each rope particle.&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

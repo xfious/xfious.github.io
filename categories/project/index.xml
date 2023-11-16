@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>project on XFious</title>
+        <link>https://example.org/categories/project/</link>
+        <description>Recent content in project on XFious</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <managingEditor>xfious@outlook.com (XFious)</managingEditor>
+        <webMaster>xfious@outlook.com (XFious)</webMaster>
+        <lastBuildDate>Thu, 15 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/categories/project/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Are Small Language Models Low-rank?</title>
+        <link>https://example.org/project/low-rank-lm/</link>
+        <pubDate>Thu, 15 Jun 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/project/low-rank-lm/</guid>
+        <description>&lt;img src="https://example.org/project/low-rank-lm/head.png" alt="Featured image of post Are Small Language Models Low-rank?" /&gt;&lt;h1 id=&#34;are-small-language-models-low-rank&#34;&gt;Are Small Language Models Low-rank?&lt;/h1&gt;
+&lt;h2 id=&#34;explore-causal-lm-training-and-increase-hidden-dimension-with-low-rank-matrices&#34;&gt;Explore causal LM training and increase hidden dimension with low-rank matrices.&lt;/h2&gt;
+&lt;h1 id=&#34;abstract&#34;&gt;Abstract&lt;/h1&gt;
+&lt;p&gt;Over-parameterized language models are low rank intrinsically. In this project, I trained 2 causal language models with 28M parameters each, such that one is the baseline and another uses low-rank weights but has higher hidden dimensions, and compare their training speed and accuracy. Although they are trained with more than 12 billion tokens, both models fail to finish training. According to the loss curve on hand, the baseline model trounces the low-rank model in speed and performance.
+GITHUB: &lt;a class=&#34;link&#34; href=&#34;https://github.com/XiaonanFu-ucsd/COGS185-final-project&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/XiaonanFu-ucsd/COGS185-final-project&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;1-introduction&#34;&gt;1. Introduction&lt;/h1&gt;
+&lt;p&gt;Large language models show their power in few-shot learning ability, and the potential to solve most downstream tasks. Just like their name, they are large and expensive to train due to the amount of parameters, and hard to infer on a local machine. If there is some method to make small enough models have decent text generate ability, then a personal device can do local inference in a private and efficient manner. Given that the causal language model with high hidden dimension usually performs better, I explored to use low rank matrices product to simulate a larger model with the same amount of parameters. To compare the overall performance of the normal model and low rank model in terms of training efficiency and accuracy, I trained two models with 28M parameters each, with multiple datasets over 7GB of text. In the training process, I faced several challenges and tried to adjust multiple hyper-parameters to speed up training, such as sequence length, batch size, loss function, and learning rate. Although the low rank model does not work in the limited training time, the exploration of training a language model is still a valuable experience.&lt;/p&gt;
+&lt;h1 id=&#34;2-related-work&#34;&gt;2. Related Work&lt;/h1&gt;
+&lt;h2 id=&#34;21-attention-in-transformers&#34;&gt;2.1 Attention in Transformers&lt;/h2&gt;
+&lt;p&gt;Each Attention layer in transformers uses three matrices to map every token embedding to be query, key, and value vectors. The dot product of the query and key vectors, decides the weight of the corresponding value vectors after the SoftMax operation. After this process, one token embedding obtains other embedding’s value with different weights, so the model has the ability to learn the sequential relationship across different tokens.&lt;/p&gt;
+&lt;p&gt;The positional encoding is also critical for the attention mechanism, since the token embedding itself does not contain the structural information, it should be added in every attention layer. There are many ways to add positional encoding, and in the paper &lt;em&gt;Attention Is All You Need&lt;/em&gt;, it presents sinusoidal positional encoding and learned positional encoding, and they find that they have similar performance, but the sinusoidal version may be better at extrapolation.&lt;/p&gt;
+&lt;h2 id=&#34;22-causal-language-model&#34;&gt;2.2 Causal Language Model&lt;/h2&gt;
+&lt;p&gt;Causal language models use masked attention to restrict every token can only reference the previous token, so they are more relevant and fit the text generation task. In the implementation, they add a mask with some negative infinity to the dot product result, then the number will be zero after SoftMax. Although they are decoder-only structure, the decoder just contains one attention layer and one multilayer feed-forward network.&lt;/p&gt;
+&lt;p&gt;From a holistic perspective to describe the text generation process, a tokenizer encode the prompt to a sequence of token, which can be understood as an integer index in a dictionary. The model uses a lookup table to find the embedding for each token, and send embeddings to decoder layers. In the end, embeddings multiply with a large matric to produce the logit, then use SoftMax to find which logit has the largest probability. It is a multiclass classification task.&lt;/p&gt;
+&lt;h2 id=&#34;23-low-rank-adaptation&#34;&gt;2.3 Low-rank adaptation&lt;/h2&gt;
+&lt;p&gt;Low-rank adaptation is a common fine-turn method to make a base model have a better performance in a downstream task. Inspired by the finding that a large model may not fully utilize their express ability, and those weights have low rank intrinsically, Edward Hu, et al. hypothesize that the amount of weight change also has this low rank property. Based on LORA, fine-turning only need a small amount of parameter to adjust a large model; a larger matrix is the product of two smaller matrices with a much lower rank.&lt;/p&gt;
+&lt;img src=&#34;img1.png&#34; width=&#34;200&#34; height=&#34;200&#34; /&gt;
+&lt;h2 id=&#34;24-tinystories-dataset&#34;&gt;2.4 TinyStories Dataset&lt;/h2&gt;
+&lt;p&gt;Ronen Eldan, et al. build a small enough dataset that covers diverse vocabulary, facts, and reasoning. They used GPT4 prompted with randomly combined none and verb, to produce millions of stories. Using this dataset, their model with 28 million parameters performance better than the GPT2-large with 774 million parameters in terms of story continuation.&lt;/p&gt;
+&lt;h1 id=&#34;3-method&#34;&gt;3. Method&lt;/h1&gt;
+&lt;p&gt;The datasets are mainly composed of the TinyStories and TinyStories Instruction datasets. I also use Alpaca Chinese, Dolly 15K, Lightnovels_EN, Chinese Metaphors datasets as supplementary, and allow the model learn bilingual text generation. About 2/3 of the data comes from TinyStories datasets.&lt;/p&gt;
+&lt;p&gt;Since the datasets are large, I designed a multi-processing dataloader, which can randomly pick which dataset to sample from with the given proportion, and does not need to load all the datasets into the memory. The dataloader needs to tokenize the text while training. If one independent sample text is too long, it will randomly select part of it to fit the specified token sequence length. If the text is too short, it will pad the text with a padding token at the front. The sequence length used in this project is 1024, such that the model needs to predict the last token. By default, the tokenizer will put BOS at the beginning and EOS at the end. To prevent most rows end in EOS, the dataloader will randomly crop the row; it will also increase the robustness of the model. The batch size is 120.&lt;/p&gt;
+&lt;p&gt;I used the tokenizer from the Chinese-LLaMA-Alpaca project, which extends the LLaMA vocabulary with Chinese words. The vocabulary size of this tokenizer is 49954.&lt;/p&gt;
+&lt;p&gt;The baseline model references the implementation of nanoGPT and Meta’s LLAMA. It has 4 layers with a hidden size of 768 and 12 heads, in a total of 28M parameters, except for the final linear layer which converts embedding to logit. Every attention layer needs positional information. Rather than the methods presented in Attention Is All You Need, this model used rotary positional encoding, which does not add to the token embedding, but element-wisely multiplies to the matrix x_q and x_k. This encoding has decreasing sinusoidal frequency for larger dimensions (Su, et al.). Flash attention is used to speed up attention computation. After an attention layer, there is a two-layer FFN, for each is 768*3072; between them is a SiLU activation function.&lt;/p&gt;
+&lt;p&gt;The low rank model has the same structure, but uses low rank weights matrices to achieve a higher hidden dimension, which is 1152, and has 18 heads.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;wq&lt;/th&gt;
+&lt;th&gt;wk&lt;/th&gt;
+&lt;th&gt;wv&lt;/th&gt;
+&lt;th&gt;wo&lt;/th&gt;
+&lt;th&gt;Linear&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Baseline&lt;/td&gt;
+&lt;td&gt;768*768&lt;/td&gt;
+&lt;td&gt;768*768&lt;/td&gt;
+&lt;td&gt;768*768&lt;/td&gt;
+&lt;td&gt;768*768&lt;/td&gt;
+&lt;td&gt;768*3072 * 2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Low-rank&lt;/td&gt;
+&lt;td&gt;1152*256 * 2&lt;/td&gt;
+&lt;td&gt;1152*256 * 2&lt;/td&gt;
+&lt;td&gt;1152*256 * 2&lt;/td&gt;
+&lt;td&gt;1152*256 * 2&lt;/td&gt;
+&lt;td&gt;(1152*512 + 512*2880) * 2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;em&gt;Table 1: comparing the dimension of models&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;For both models, they have layer normalization rather than batch normalization. Batch normalization finds the means among different samples, and layer normalization emphasizes the means within the sample. It is suitable for sequential tasks because the sample have a high inner relationship, but very weak batch-wise relationship. I used RMSnorm since it is slightly faster and make the loss lower (Zhang, et al.).&lt;/p&gt;
+&lt;h1 id=&#34;4-experiment&#34;&gt;4. Experiment&lt;/h1&gt;
+&lt;p&gt;The training process uses cross-entropy loss, and Adam optimizer with a learning rate of 1e-4. The learning rate will decrease under the control of cosine annealing, which will have a cosine curve that the half period is 20000 iterations. With limited computation power, it is slow to train a model with 28 million parameters, and hard to tweak the hyper-parameters and build an intuition. Other than the slow loss decreasing, in the first round, the low rank model had nan loss after 9100 steps. To solve this problem, I revise the model and restart the training for low rank model.&lt;/p&gt;
+&lt;p&gt;It is highly possible that the nan loss caused by some results of SoftMax become 0. The loss function is cross-entropy loss, and in its calculation, there is ln(p), so if p = 0, then ln(p) = -inf. By backpropagation, the invalid value contaminates the whole model. Exploding gradients may cause this problem. Also, I trained the model using BFloat16, which has the same range as float32 but less precision, hence it may severer the problem. First I lowered the learning rate to 1e-5, then use a gradient clip to constrain its value, and set a loss clamp to prevent any infinite loss. Moreover, the low rank model has more linear layers inside, so I add one more layer-normalization in every MLP after the attention layer.&lt;/p&gt;
+&lt;p&gt;Although this fixes the nan problem, the loss function does not show a sign of decreasing. At first, I believe the learning rate is still too large so the gradients go overhead, and the batch size should be larger to smooth the loss, but hours later the model still has a similar loss, I realize that other people successfully train larger models with the learning rate of 1e-4, which means I should use some value higher than that. In the rest of the experiment, I use 2e-4 for the baseline model, and 1.5e-4 for the low rank model. Also, the cosine annealing decay period is set to 120000 iterations, so the learning rate can stay high for a long enough time.&lt;/p&gt;
+&lt;div style=&#34;display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px;&#34;&gt;
+&lt;img src=&#34;fig1.png&#34; width=&#34;400&#34; /&gt;
+&lt;img src=&#34;fig2.png&#34; width=&#34;400&#34; /&gt;
+&lt;/div&gt;
+&lt;p&gt;The baseline model is trained with 128600 batches, and the low rank model is trained with 114500 batches, which is more than 12 billion tokens. However, both models fail to generate any meaningful sentence.&lt;/p&gt;
+&lt;p&gt;The first peak for those two loss curves is due to that I used label smooth for the loss function. It lowers the probability of the ground truth label; without this option, the ground truth will be a one-hot encoding. It is good for generalization, but if I have enough data and many class labels, the model is hard to overfit. That is why I turn it off after about 10000 iterations. After this peak, because I rise the learning rate so there is another peak.&lt;/p&gt;
+&lt;p&gt;The baseline loss curve shows a promising decreasing trend, especially for the evaluation curve; but the low rank&amp;rsquo;s loss curve does not really drop. Since this experiment does not reach its end, I cannot assert that the low-rank method does not work for the training of a relatively small language model. Based on the loss curves, it is clear that the baseline model is much more efficient in training than the low rank model, and has more possibility to have a good performance. One potential justification is that the low rank model is deeper and wider, even if its decoder layers have slightly fewer parameters than the baseline model’s. Another justification is that text generation is already complex enough for this size of model, so the low rank property only applies to the over-parameterized model.&lt;/p&gt;
+&lt;h1 id=&#34;5-conclusion&#34;&gt;5. Conclusion&lt;/h1&gt;
+&lt;p&gt;The tradeoff of rank and dimension does not work with a relatively small language model. After about 3 epochs of data, both the baseline and low rank model have not finished training, but the trend shows that the baseline model still can lower its loss in further training, but seems like the low rank model reaches its limitation. Although the experiment is unsuccessful and the hypothesis is falsified, this project establishes my confidence in training large models, and let me realize that model architectures, datasets, training methods, and computing power are the keys to success in machine learning.&lt;/p&gt;
+&lt;h1 id=&#34;6-reference&#34;&gt;6. Reference&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, Illia Polosukhin. &lt;em&gt;Attention Is All You Need&lt;/em&gt;. &lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/abs/1706.03762&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/abs/1706.03762&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Biao Zhang, Rico Sennrich. Root Mean Square Layer Normalization. &lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/abs/1910.07467&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/abs/1910.07467&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Chunyuan Li, Heerad Farkhoor, Rosanne Liu, Jason Yosinski. Measuring the Intrinsic Dimension of Objective Landscapes. &lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/abs/1804.08838&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/abs/1804.08838&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Chinese-LLaMA-Alpaca &lt;a class=&#34;link&#34; href=&#34;https://github.com/ymcui/Chinese-LLaMA-Alpaca&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/ymcui/Chinese-LLaMA-Alpaca&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;nanoGPT &lt;a class=&#34;link&#34; href=&#34;https://github.com/karpathy/nanoGPT&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/karpathy/nanoGPT&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Jianlin Su, Yu Lu, Shengfeng Pan, Ahmed Murtadha, Bo Wen, Yunfeng Liu. RoFormer: Enhanced Transformer with Rotary Position Embedding. &lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/abs/2104.09864&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/abs/2104.09864&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timothée Lacroix, Baptiste Rozière, Naman Goyal, Eric Hambro, Faisal Azhar, Aurelien Rodriguez, Armand Joulin, Edouard Grave, Guillaume Lample. LLaMA: Open and Efficient Foundation Language Models. &lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/abs/2302.13971&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/abs/2302.13971&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Ronen Eldan, Yuanzhi Li. &lt;em&gt;TinyStories: How Small Can Language Models Be and Still Speak Coherent English?&lt;/em&gt; &lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/abs/2305.07759&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/abs/2305.07759&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>Revealing Category Preferences of ResNet Layers: Visualization Based on Web</title>
+        <link>https://example.org/project/resnet18-vis/</link>
+        <pubDate>Sun, 26 Mar 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/project/resnet18-vis/</guid>
+        <description>&lt;img src="https://example.org/project/resnet18-vis/activation.png" alt="Featured image of post Revealing Category Preferences of ResNet Layers: Visualization Based on Web" /&gt;&lt;h1 id=&#34;revealing-category-preferences-of-resnet-layers-visualization-based-on-web&#34;&gt;Revealing Category Preferences of ResNet Layers: Visualization Based on Web&lt;/h1&gt;
+&lt;h1 id=&#34;abstract&#34;&gt;Abstract&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Using web-based technology, this project visualizes the internal activation pattern of ResNet18 on the CIFAR10 dataset. The visualization tries to show whether those kernels in convolutional layers tend to specialize to a certain class, and from a higher level, whether exists an internal activation pattern regarding a specific class. If the pattern exists, it can be useful to reveal how the internal pattern allows the model to learn the underlying structure of the data. This project also compares the performance of TensorFlow and PyTorch, and explore how the different default setting affects the training process, as a preliminary step for the visualization.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Online-demo: &lt;a class=&#34;link&#34; href=&#34;https://xiaonanfu-ucsd.github.io/resnet-visualization/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://xiaonanfu-ucsd.github.io/resnet-visualization/&lt;/a&gt;&lt;/p&gt;
+&lt;iframe src=&#34;https://xiaonanfu-ucsd.github.io/resnet-visualization/&#34; style=&#34;width: calc(70vw); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
+&lt;br&gt;
+&lt;hr&gt;
+&lt;br&gt;
+&lt;h1 id=&#34;1-introduction&#34;&gt;1. Introduction&lt;/h1&gt;
+&lt;p&gt;Many studies in the field of Neuroscience already revealed that neurons can have specialized functions (Burke, 1978; Yrttiaho, 2022). For example, some neurons are active with the stimuli of face image; some neurons are active with certain sounds. It is very intuitive to think that artificial neural networks will have similar characteristics, showing a pattern with certain inputs. Is this impression correct? People may feel unsure about the question because this concept is not easy to be verified, and they can only depend on prior knowledge. In many cases, deep learning models are black boxes and it is impossible to let researchers see those computational details. Despite directly reading the model being unachievable, a model can still be visualized somehow, to concentrate the important information to make anyone can form a general idea about how the model works.&lt;/p&gt;
+&lt;p&gt;Based on the conceptual knowledge of modern deep learning and neuroscience, this project examines whether an artificial neural network, in this case, the CNN, will show a clear preference and internal pattern with respect to certain classes.&lt;/p&gt;
+&lt;p&gt;Hypothetically, if a pair of images is belong to the same class, such as two dog pictures, the internal pattern of the model should be similar. From another way to understand it, two embedding vectors that represent the similar meaning, will be close to each other, and have a bigger dot product.&lt;/p&gt;
+&lt;p&gt;In this project, I successfully trained a ResNet18 model on the CIFAR10 dataset, and used front-end technology (i.e. HTML, CSS, JavaScript) to visualize the averaged activation status of the feature maps produced by CNN kernels. CNN is already a mature solution and used in many tasks; more importantly, the inner state of CNN is relatively easier to interpret if we understand it as a filter, compared with MLP and RNN. Although the training process is not the focus of this project, I still want to talk about it because I trained on both TensorFlow and PyTorch, and realized the big gap between them, regarding performance and ease of use. The methodology for ResNet visualization is using bright or dark colors to represent the activation status of a feature map, and using RGB to represent what class the model is processing. If a feature map is only associated with one class, the color will be pure and strong. Using this approach, it is easy to see which kernel&amp;rsquo;s output is most influential to the final result.&lt;/p&gt;
+&lt;h1 id=&#34;2-methodology&#34;&gt;2. Methodology&lt;/h1&gt;
+&lt;h2 id=&#34;21-resnet-tensorflow-and-pytorch&#34;&gt;2.1 Resnet, TensorFlow and PyTorch&lt;/h2&gt;
+&lt;p&gt;Resnet 18 is the simplest version of Resnet but has similar performance as Resnet with more layers, at least on the CIFAR10 dataset (He et al., 2016). the model is constructed with 4 ResNet layers, totally including about 18 convolutional kernels. Along the process, the size of the feature map gets smaller because the stride is 2, but using more kernels to form more channels. It is a pretty reasonable design: a wider network is less efficient than a deeper network if they have the same number of parameters.&lt;/p&gt;
+&lt;p&gt;Obviously, training a model is much more than architecture design. By comparing TensorFlow and PyTorch, I found that with the same structure, PyTorch achieved 94% accuracy on testset without rigorous fine-tuning and complex data augmentation, while TensorFlow only achieved 84%, then stranded in some local minimum which brings the accuracy down to 70%. The two platforms are using different default settings. For example, PyTorch uses He initialization, while TensorFlow uses Xavier initialization. The momentum of batchnorm layer is 0.1 in PyTorch, and 0.99 in TensorFlow. However, even if I make their setting as close as possible, TensorFlow still faces the severe problem of overfitting or underfitting. It forces me to train on PyTorch and migrate the model to TensorFlow. It is risky because some toolchains are no longer actively maintained. TensorFlow is necessary for this project since it is the only mainstream platform that can be deployed on the web, and also provides low-level detail such as the output and parameters of each layer.&lt;/p&gt;
+&lt;h2 id=&#34;22-visualization-design&#34;&gt;2.2 Visualization Design&lt;/h2&gt;
+&lt;p&gt;The goal of this visualization is to show the internal pattern of the model, and the graph should be easy to compare with other states. It is changeling to convert a 3D process to 1D representation (from WHC to C only); some information must be sacrificed. The channel-wise relationships are more important than spatial relationships, because one kernel only produces one feature map, but on the spatial dimension, summing up along HW axis will include other kernels&amp;rsquo; contributions. It is not favorable for understanding the actual usage of kernels in a model.&lt;/p&gt;
+&lt;p&gt;To make the color stand out, there is normalization to compress the range of activation status. The normalization is done on each channel, similar to the steps calculating z-score. Besides, they are set to 0 if they are negative numbers. The reason is the output of the Conv2D layer does not pass through the activation function yet, so a negative number is possible. If the threshold is more radical, then the graph will be cleaner by ignoring some small values. When the threshold sets to 1, every value lower than 1 becomes a black space, then the graph for each layer shows a clear pattern. After this process, the prominent feature map will be more obvious. That is also the reason why the background is dark grey.&lt;/p&gt;
+&lt;p&gt;The graph can be compared side by side, or stacked together. The stacked graph is more intuitive to find some node that is active with a specific class. In general, if a node is white or grey, means it does not show a clear preference. If the node is black, means it is not active. The algorism calculating stacked color is very naive, just calculate the average of the color and times 2, because the color channel is usually 0, averaging makes the graph looks dim.&lt;/p&gt;
+&lt;h1 id=&#34;3-experiment&#34;&gt;3. Experiment&lt;/h1&gt;
+&lt;h2 id=&#34;31-training-process&#34;&gt;3.1 Training Process&lt;/h2&gt;
+&lt;p&gt;A well-trained model is important for later analysis and visualization. Since the ResNet18 on TensorFlow always shows abnormal testing accuracy, I experimented with different batch size, epochs, learning rate, and optimizers to use. The default setting is to use SGD with 0.9 momentum, 128 batch size, 0.01 learning rate, and 15 epochs. Changing batch size does not have a big impact on the accuracy, but largely affects the training time. A learning rate greater than 0.08 prevents the model from converging. The optimizer has more impact. If using Adam, it stops converging at about 0.3 of loss. Then, the loss became nan. The possible reason is that the denominator of the derivative of cross entropy is too small, and the gradient becomes nan. Nadam also causes nan. 15 epochs are usually good for the CIFAR10 dataset. After 30 epochs, the accuracy may go down.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Acc.&lt;/th&gt;
+&lt;th&gt;Batch size&lt;/th&gt;
+&lt;th&gt;Epochs&lt;/th&gt;
+&lt;th&gt;LR&lt;/th&gt;
+&lt;th&gt;Opt.&lt;/th&gt;
+&lt;th&gt;Data Aug.&lt;/th&gt;
+&lt;th&gt;Platform&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;0.9&lt;/td&gt;
+&lt;td&gt;256&lt;/td&gt;
+&lt;td&gt;30&lt;/td&gt;
+&lt;td&gt;0.01&lt;/td&gt;
+&lt;td&gt;SGD&lt;/td&gt;
+&lt;td&gt;Noise&lt;/td&gt;
+&lt;td&gt;PT&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;0.83&lt;/td&gt;
+&lt;td&gt;256&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;td&gt;0.01&lt;/td&gt;
+&lt;td&gt;SGD&lt;/td&gt;
+&lt;td&gt;Noise&lt;/td&gt;
+&lt;td&gt;TF&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;0.78&lt;/td&gt;
+&lt;td&gt;256&lt;/td&gt;
+&lt;td&gt;14&lt;/td&gt;
+&lt;td&gt;0.01&lt;/td&gt;
+&lt;td&gt;SGD&lt;/td&gt;
+&lt;td&gt;Noise&lt;/td&gt;
+&lt;td&gt;TF&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;0.66&lt;/td&gt;
+&lt;td&gt;256&lt;/td&gt;
+&lt;td&gt;20&lt;/td&gt;
+&lt;td&gt;0.01&lt;/td&gt;
+&lt;td&gt;SGD&lt;/td&gt;
+&lt;td&gt;Noise&lt;/td&gt;
+&lt;td&gt;TF&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;0.88&lt;/td&gt;
+&lt;td&gt;512&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;0.008&lt;/td&gt;
+&lt;td&gt;SGD&lt;/td&gt;
+&lt;td&gt;Noise&lt;/td&gt;
+&lt;td&gt;PT&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Nan&lt;/td&gt;
+&lt;td&gt;128&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;0.001&lt;/td&gt;
+&lt;td&gt;Adam&lt;/td&gt;
+&lt;td&gt;None&lt;/td&gt;
+&lt;td&gt;PT&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/resnet18-vis/loss.png&#34;
+	width=&#34;956&#34;
+	height=&#34;721&#34;
+	srcset=&#34;https://example.org/project/resnet18-vis/loss_hucc6bf2d438f367c7fa324f150fb886ee_83654_480x0_resize_box_3.png 480w, https://example.org/project/resnet18-vis/loss_hucc6bf2d438f367c7fa324f150fb886ee_83654_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;132&#34;
+		data-flex-basis=&#34;318px&#34;
+	
+&gt;
+&lt;em&gt;Figure 1: 200 epoch, SGD optimizer with CosineAnnealingLR as LR schedular&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;An implementation of ResNet18 from this repository shows a way to use a large epoch number to achieve good performance (Kuangliu, 2019). In Kuangliu&amp;rsquo;s implementation, there is a CosineAnnealingLR learning rate schedular. With dynamic learning rate, the training process can run for 200 epochs without a performance drop. The final accuracy is about 0.94.&lt;/p&gt;
+&lt;h2 id=&#34;32-visualization&#34;&gt;3.2 Visualization&lt;/h2&gt;
+&lt;p&gt;The activation graph for each layer shows that for the input from a specific class, some kernels tend to output an active feature map, and some kernels don&amp;rsquo;t. Red represents car, green represents truck, and blue represents horse. In expectation, horses should have more internal pattern differences in contrast with the other two. The graph in the top few layers has a very similar pattern, even with input from different classes (Figure 2). One possible thing is that only those highlighted kernels can effectively capture the low-level features. Therefore, I tried to shrink the layer behind the model input, to let it only use 32 of channels. Lastly, accuracy has not decreased, showing that the original model has some redundancy in the first few layers. The visualization graph works for analyzing the model.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/resnet18-vis/activation.png&#34;
+	width=&#34;864&#34;
+	height=&#34;312&#34;
+	srcset=&#34;https://example.org/project/resnet18-vis/activation_huea4a95c8cdee07ddad8929a51f90c3f5_64244_480x0_resize_box_3.png 480w, https://example.org/project/resnet18-vis/activation_huea4a95c8cdee07ddad8929a51f90c3f5_64244_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;276&#34;
+		data-flex-basis=&#34;664px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 2: Left side is the activation graph with class “horse”; right side is the mix-class activation graph. It conclude the first Conv2D layer, ResNet Layer 1 and 2.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;From the stacked graph using mixed class data, the second layer of ResNet18 does not show any clear class-related pattern. The transition convolutional layer between ResNet layers 3 and 4 is irregularly sparse. Maybe it implies that this layer only carries a very small amount of role in classifying. Layer 4 is close to the loss function, it is more likely to show a clear pattern. There are more and more pure color patches in the later layers. The last layer is the clearest. The reason is that the last layer is the output of the model, and the loss function is calculated based on the output. The last convolutional layer has many pure color patches, which means this layer is critical for classifying.&lt;/p&gt;
+&lt;p&gt;According to the visualization, later layers tend to be more class-related. later layers are the proper area to analyze the internal pattern of the model because the earlier layers are more likely some general-purpose filters. However, by looking side by side, there are only some vague patterns across similar classes (i.e. car and truck). Without any statistical tools, it is hard to tell if the pattern is significant. However, the with-in-class stacked graph shows a clear pattern within the same class. The within-class similarity indicates that indeed class-related internal patterns exist. It is worth mentioning that since the pattern is meaningless for humans, even though most people can notice there is a within-class pattern, it is not explainable.&lt;/p&gt;
+&lt;h1 id=&#34;4-conclusion&#34;&gt;4. Conclusion&lt;/h1&gt;
+&lt;p&gt;To answer the hypothesis that whether the CNN node has a clear preference and overall pattern, the response can be yes, but it is quite limited toward the output side of the model. The mixed-class stacked graph shows that the later layers&amp;rsquo; nodes tend to have a clear preference. Also, the input from the same class tends to have a similar internal pattern. However, for the cross-class situation, even if the two class has a similar category, it is still hard to eye-balling tell if there is a pattern. There can be one explanation. Due to the one-hot encoding strategy as the label, the model cannot capture those subtle similarities between the two classes. In an end-to-end model, the model may have a larger chance to have a more context-related pattern, rather than just constrained by the label.&lt;/p&gt;
+&lt;h1 id=&#34;5-reference&#34;&gt;5. Reference&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Burke, R. E. (1978). Motor units: physiological/histochemical profiles, neural connectivity and functional specializations. American Zoologist, 18(1), 127-134.&lt;/li&gt;
+&lt;li&gt;He, K., Zhang, X., Ren, S., &amp;amp; Sun, J. (2016). Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 770-778).&lt;/li&gt;
+&lt;li&gt;Kuangliu (2019). Pytorch-cifar. &lt;a class=&#34;link&#34; href=&#34;https://github.com/kuangliu/pytorch-cifar&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/kuangliu/pytorch-cifar&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Yrttiaho, S., Kylliäinen, A., Parviainen, T., &amp;amp; Peltola, M. J. (2022). Neural specialization to human faces at the age of 7 months. Scientific Reports, 12(1), 12471.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>An Evaluation of Four P300 ERP Classifiers&#39; Generalization Performance in the Oddball Paradigm</title>
+        <link>https://example.org/project/eeg-classify/</link>
+        <pubDate>Wed, 22 Mar 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/project/eeg-classify/</guid>
+        <description>&lt;img src="https://example.org/project/eeg-classify/fig6.png" alt="Featured image of post An Evaluation of Four P300 ERP Classifiers&#39; Generalization Performance in the Oddball Paradigm" /&gt;&lt;h1 id=&#34;an-evaluation-of-four-p300-erp-classifiers-generalization-performance-in-the-oddball-paradigm&#34;&gt;An Evaluation of Four P300 ERP Classifiers&amp;rsquo; Generalization Performance in the Oddball Paradigm&lt;/h1&gt;
+&lt;h1 id=&#34;abstract&#34;&gt;Abstract&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;For classifying P300 event-related potential, usually need prior knowledge about the EEG signal during the target and non-target stimuli. However, different classifiers need different amounts of data to achieve a usable classification ability. In this final project, I explored 4 different classifiers and compared their generalization performance on one P300 dataset which took place in GIPSA-lab, 2015. The dataset includes 43 participants. There are 4 classifiers involved in this project, which are LDA, SVM, Random Forest, and EEGNet. They are fed with similar epochs, merely adjusted based on each classifier’s requirement. The metric to measure their performance is F1, since the class is imbalanced. The result shows that the LDA has the high and most stable performance, and the SVM shows the potential to have the highest F1 with more data from the same participant who has been tested on. Overall, based on the procedures and implementation used in this project, the number of pretraining date does not impact much on the performance; the different type of classifier shows a relatively greater influence.
+Code for this project: &lt;a class=&#34;link&#34; href=&#34;https://github.com/XiaonanFu-ucsd/COGS189-final-project&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/XiaonanFu-ucsd/COGS189-final-project&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&#34;1-introduction&#34;&gt;1. Introduction&lt;/h1&gt;
+&lt;p&gt;P300 ERP is evoked when a person perceives a target stimuli, and it associates with the decision-making process that something important had occurred (Picton, 1992). Therefore, the P300 ERP is a good indicator to show whether the event is important for the person. In this scenario, the event is known from the outside, but what the person wants is something unknown. The P300 ERP can tell whether the event is the target, given that the event happened. In application, the P300 ERP can be used to build speller, or to control a cursor to move.&lt;/p&gt;
+&lt;p&gt;P300 ERP changes among population and time. For doing the classification of P300 ERP, the system need to know the P300 ERP of the user, or use some prior knowledge about P300 (Ramele et al., 2018). An ideal system does not need training, or very short training, before someone uses it. Hence it challenges the system to be accurate with a small amount of data, usually in non-clinical applications. If the system can learn the common pattern of P300 before a user uses it, then the amount of data needed for training will be greatly reduced, making the BCI convenient to use.&lt;/p&gt;
+&lt;p&gt;In this project, I explored 4 different classifiers, as a part of the P300 system, to see how they perform across participants. With the different levels of pretraining data, I compared how much fine-tuning data, i.e. training data, is required to achieve a good performance. To fairly compare each classifier, everyone received the epochs from the similar preprocessing method. Some classifiers cannot utilize parallel computing. To make the training possible and can be done in a reasonable time, they may only use a portion of the data, such as 3000 observations (one observation is a time window after a event). Besides, classifiers receive different numbers of time samples within one observation, due to the efficiency of the algorithm. All the classifiers should finish the training within a few seconds.&lt;/p&gt;
+&lt;p&gt;There are three hypothetical factors that may affect the generalization performance: amount of pretraining data, amount of training data, and the type of classifier. For each classifier, it gets a certain level of pretraining, and then gets certain amount of training on the user&amp;rsquo;s EEG data. All of them will test on the same set of data. In summary, there are 3 stages: pre-train, training, and testing. Their performance will be compared using the f1 score.&lt;/p&gt;
+&lt;h1 id=&#34;2-dataset&#34;&gt;2. Dataset&lt;/h1&gt;
+&lt;p&gt;The dataset of the project includes 50 participants, using 32 active wet electrodes, with a visual P300 BCI videogame named Brain Invaders. The experiment took place at GIPSA-lab, Grenoble, France, in 2015 (Korczowski et al., 2019). Based on the document about this dataset, it uses a similar paradigm as the P300 speller, which has 36 symbols, and they will flash in groups but not by row and columns (Congedo et al., 2011). After a certain time, the symbol which represents the character in the game moves slowly. To make the P300 more independent, and prevent the participants&amp;rsquo; emotions affect the EPR when they play it, the game only shows the score between each round. The experimenter already removes one participant who does not have a visible alpha wave, and six participants have some error in their data.&lt;/p&gt;
+&lt;p&gt;The sampling rate of the dataset is 512 Hz. The data is not clean before any filtering, and it can be shown by the power spectrum of the data. The peak at 50 Hz is the power line noise. And the peak at 150 Hz is unknown noise.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/eeg-classify/fig1.png&#34;
+	width=&#34;571&#34;
+	height=&#34;473&#34;
+	srcset=&#34;https://example.org/project/eeg-classify/fig1_hua14b7339d80f6473a579485e5ee3340c_42132_480x0_resize_box_3.png 480w, https://example.org/project/eeg-classify/fig1_hua14b7339d80f6473a579485e5ee3340c_42132_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;power spectrum&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;120&#34;
+		data-flex-basis=&#34;289px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;figure 1. Power spectrum of the Pz channel, after filtering&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/eeg-classify/fig2.png&#34;
+	width=&#34;559&#34;
+	height=&#34;473&#34;
+	srcset=&#34;https://example.org/project/eeg-classify/fig2_huadfdfa37b1eb8d06d36be59d142a368e_41629_480x0_resize_box_3.png 480w, https://example.org/project/eeg-classify/fig2_huadfdfa37b1eb8d06d36be59d142a368e_41629_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;power spectrum&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;118&#34;
+		data-flex-basis=&#34;283px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;figure 2. Power spectrum of the Pz channel, before filtering&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;After filtering using the FIR bandpass filter from 1 to 24 Hz, the power spectrum of the data is shown in the right figure. The bandwidth is used in the example classification code for this dataset (Korczowski et al., 2019). In some other studies, the bandwidth is 0.1 to 30 Hz. Shrinking the bandwidth is reasonable because the P300 ERP is a slow wave. The article from Duncan-Johnson et al. presents that a high-pass filter higher than 0.1 Hz will distort the P300 ERP. In this project, 0.1 or 1 does not make a difference in the performance.&lt;/p&gt;
+&lt;p&gt;Each participant experienced about 1500 events in the whole recording. The ratio of target versus non-target is one-to-five. After averaging all the time windows for target and non-target, it shows a clear difference between the curve, which means the P300 classification is possible on this dataset (Figure 3)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/eeg-classify/fig3.png&#34;
+	width=&#34;1430&#34;
+	height=&#34;485&#34;
+	srcset=&#34;https://example.org/project/eeg-classify/fig3_hu7d11cc6100b889156332ab3a384e9878_110896_480x0_resize_box_3.png 480w, https://example.org/project/eeg-classify/fig3_hu7d11cc6100b889156332ab3a384e9878_110896_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;294&#34;
+		data-flex-basis=&#34;707px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;figure 3. An example of event related potential recored at channel Pz&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;After filtering, the ICA processing detects abnormal variance in some components. Using MNE, the sources are shown below (Figure 6). The artifacts may be blinking artifacts because of their amplitude (Figure 7). They usually are collected from the frontal electrodes.&lt;/p&gt;
+&lt;p&gt;The dataset does not include the EOG data, so there is no explicit reference to indicate which component is due to the blinking artifact. I manually select some components which have high amplitude or sudden spikes, and remove them from the data. The result is shown below (Figure 8 &amp;amp; 9). Here is the component I choose: 0, 1, 2, 4, 6, 8.&lt;/p&gt;
+&lt;p&gt;Since ICA does not make a significant difference in later classification performance, but increases the preprocessing complexity, I decide to not use ICA in the later analysis.&lt;/p&gt;
+&lt;p&gt;The dataset is split into 2 parts. Subjects 1-30 is the range for pretraining, and subjects 31-43 is the range for training and testing. The pretraining data is used to warm up the classifier, and the training data is used to fine-tune the classifier.&lt;/p&gt;
+&lt;p&gt;Every channel is used because the P300 ERP is not localized to a specific area. If the Random forest and LDA only use the Pz channel, the f1 score is much lower than using all the channels. Although Pz channel is the most informative channel for P300 ERP, seemingly it is still too noisy to be used alone.&lt;/p&gt;
+&lt;h1 id=&#34;3-method&#34;&gt;3. Method&lt;/h1&gt;
+&lt;h2 id=&#34;31-preprocessing&#34;&gt;3.1 Preprocessing&lt;/h2&gt;
+&lt;p&gt;For P300 classification tasks, the time window after the event is most informative. Since the system does not need to know when is the event because the event time is known, it is unnecessary to feed in full series of EEG data and let the system decide whether the time window is related to the event. After filtering the data from 1 to 24 Hz, the data is epoched into 800ms windows after the event. 800ms should be long enough to capture the ERP because P300 ERP is usually between 300 to 500 ms with respect to the person&amp;rsquo;s age (Picton, 1992). Also, some papers use 800ms windows to capture the P300 ERP (Oralhan, 2019).&lt;/p&gt;
+&lt;p&gt;Observations have different mean and variance. To make the classifier more robust, the data is normalized by subtracting the mean and dividing by the standard deviation. Zeroing the average can force all observations into the same range. Normalizing the variance by dividing every observation by its own standard deviation can uniform the amplitude of the wave, and allow the classifier to extract more information from the pattern and changes.&lt;/p&gt;
+&lt;p&gt;This is an example time window from participant 3, after filtering and normalization (Figure 4). All data undergoes the above preprocessing. However, the classifiers may need other modifications to make the data fit their requirement.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/eeg-classify/fig4.png&#34;
+	width=&#34;1749&#34;
+	height=&#34;1300&#34;
+	srcset=&#34;https://example.org/project/eeg-classify/fig4_hu085ba3987ff03d75cc8156869a72f936_1068723_480x0_resize_box_3.png 480w, https://example.org/project/eeg-classify/fig4_hu085ba3987ff03d75cc8156869a72f936_1068723_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;134&#34;
+		data-flex-basis=&#34;322px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;figure 4. An example of a time window after filtering and normalization, 3-second segment of filtered data, from subject 3.&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;32-classifier-random-forest&#34;&gt;3.2 Classifier: Random Forest&lt;/h2&gt;
+&lt;p&gt;Random Forest is an ensemble method widely used in the industry. It is non-linear and can easily handle high-dimension data. The ensemble attribute of Random Forest makes it can compute parallelly, which is suitable for large datasets.&lt;/p&gt;
+&lt;p&gt;Before training the Random Forest, each observation subtracts the mean of the baseline, which is 0 - 100 ms after the event. the ERP start is set to 200ms, and the ERP end is set to 800ms. The ERP windows are split into 18 segments and the mean of each segment is used as the feature. Observations are reshaped into a vector of 18 * 32 = 576 features.&lt;/p&gt;
+&lt;p&gt;The Random Forest contains 75  decision trees, and the maximum depth of each tree is 75. The hyperparameters are found by grid search. To fix the imbalance of the data, the class weight is set to 0.5:20. I used this large ratio because the false negative is much large than the true positive in other settings. This model does not support incremental training in scikit-learn, so the pretraining process actually happens in the trainging process, by merge the pretraining data and the training data.&lt;/p&gt;
+&lt;h2 id=&#34;33-classifier-svm&#34;&gt;3.3 Classifier: SVM&lt;/h2&gt;
+&lt;p&gt;Support Vector Machine is sensitive to dimensionality, and too many samples make it hard to train. Therefore, I set the maximum number of training data to 3500. It has the same preprocessing as Random Forest, but only uses 8 segments of the ERP windows. Hence the feature vector is 8 * 32 = 256. The class weight is 0.5:2. This SVM uses linear kernel, and the constraint is set to 0.1. The model does not fit if it uses RBF as the kernel.&lt;/p&gt;
+&lt;p&gt;SVM does not support incremental training, so the pretraining process is similar to Random Forest. However, the SVM has a limitation on the amount of training data. If pretrain + train &amp;gt; 3500, the array will be filled with training data first, and then use shuffled pretraining data to fill the rest. The pretraining data are from different subjects, so shuffling makes the final training data be more diverse.&lt;/p&gt;
+&lt;h2 id=&#34;34-classifier-lda&#34;&gt;3.4 Classifier: LDA&lt;/h2&gt;
+&lt;p&gt;Linear Discriminant Analysis is a linear classifier and it is efficient to train. However, seems like the scikit-learn implementation of LDA has bugs on the Linux platform. With a high amount of training data, approximately 3000, the system stops responding. Therefore, I set the maximum number of training data to 1500. It uses the same method as SVM to handle oversize training data. It has the same preprocessing as Random Forest, but only uses 6 segments of the ERP windows, the shape of the feature vector is 6 * 32 = 192.&lt;/p&gt;
+&lt;h2 id=&#34;35-classifier-eegnet&#34;&gt;3.5 Classifier: EEGNet&lt;/h2&gt;
+&lt;p&gt;EEGNet uses the convolution neural network and the power of deep learning to alleviate the process of feature extraction (Lawhern, 2018). According to the paper, it performs well on various EEG datasets, including P300, SMR, and ERN. The recommended setting of EEGNet is to downsample the data to 128 Hz, and embed 3 convolutional layers as filters and one fully connected layer as output. In my implementation using PyTorch, the first convolutional layer has 16 kernels with size of 1 * 64. The second convolutional layer is a depthwise filter with 32 kernels. The third one is a separable conv2d with 32 depthwise filters (1&lt;em&gt;32) and 64 pointwise filters (1&lt;/em&gt;1). This design allows the CNN to have enough filters to fit different patterns, and wide enough to see a slow wave such as P300. The activation function is ELU, and the dropout rate is 0.3 to prevent overfitting. There are batch normalization between layers, and two average pooling layers to reduce the dimensionality. The reference code can be found at (&lt;a class=&#34;link&#34; href=&#34;https://github.com/vlawhern/arl-eegmodels/blob/master/EEGModels.py&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/vlawhern/arl-eegmodels/blob/master/EEGModels.py&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;Since the convolutional layer is good at capturing temporal ad spatial information, I did not subtract the baseline. The data is downsampled to 128 Hz, and the full observation is used as the feature. The maximum number of iterations of epoch is set to 200. The batch size is 512; the learning rate is 0.001; the loss function is cross entropy because it is convenient to set class weight, which is 1:5.4.&lt;/p&gt;
+&lt;p&gt;Among all the 4 classifiers, EEGNet is the only one that can be trained incrementally, which means the model&amp;rsquo;s weights carry over from the previous training. The training process will only include the data from the current subject.&lt;/p&gt;
+&lt;h2 id=&#34;36-evaluation-performance-metric-and-testing&#34;&gt;3.6 Evaluation: Performance metric and testing&lt;/h2&gt;
+&lt;p&gt;Pretraining amount have 5 levels: none, 1, 3, 10, 30 subjects. For example, if the pretraining count is 3, theoretically, the model will be pretrained with the first 3 subject&amp;rsquo;s full records.&lt;/p&gt;
+&lt;p&gt;The training amount have 10 levels, which are 0 to 900. For all 13 subjects in the testing range, the model will be trained with the first 0 to 900 data from each subject, and then tested on the data after index 900. The process is independent for each testing subject. For example, when I evaluate the EEGNet-3 model (i.e. EEGNet pretrained with 3 subjects), the program load the pretrained model, and directly tests on the data[901:] from subject 31, because now the training amount is 0. Then, the program load the pretrained model again, and train on the data[:100] from subject 31, and test on the same data[901:]. The program will repeat this process for all 13 subjects. The f1 score is the average among them, given a certain pretraining amount and training amount. The classifier must be trained with something, so the pretraining and training will not be 0 at the same time.&lt;/p&gt;
+&lt;p&gt;The F1 macro score is a suitable metric for a binary classification problem. It shows the balance between precision and recall, and it considers the accuracy of the positive and negative classes under the same priority. Accuracy itself is not a good metric for this problem, because the data is imbalanced. If the model always predicts 0, it will have high accuracy, but the precision and recall will be very low for positive class. For the F1 score, if the model always predicts 0, the F1 score will be 0.148 in this case. I did not use AUC because it need the model to output the probability, which needs some modification to the EEGNet and rerun the test.&lt;/p&gt;
+&lt;h1 id=&#34;4-result&#34;&gt;4. Result&lt;/h1&gt;
+&lt;p&gt;The result shows that the SVM is most sensitive to the amount of training. With more data from the current user, it performs better. The one-way ANOVA that evaluates the influence of training amount on the f1 score also supports this result (p = 0.00). Other classifiers are not sensitive to the training amount.&lt;/p&gt;
+&lt;p&gt;However, the plot and the ANOVA show a disagreement about the pretraining. Only the plot of Random Forest indicates that it is sensitive to the pretraining amount. For other classifiers, the ANOVA p-value is very close to 0.00, but there is no clear trend in the plot. In addition, the EEGNet_3 curve is obviously abnormal, which shows a violent variation. Maybe there is some error during the pretraining process.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/eeg-classify/fig5.png&#34;
+	width=&#34;1430&#34;
+	height=&#34;1078&#34;
+	srcset=&#34;https://example.org/project/eeg-classify/fig5_hu01cb5c5aae3898738ab0f7eaa7697c0d_275565_480x0_resize_box_3.png 480w, https://example.org/project/eeg-classify/fig5_hu01cb5c5aae3898738ab0f7eaa7697c0d_275565_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;132&#34;
+		data-flex-basis=&#34;318px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 5: The f1 score for each classifier is shown in this plot. The x-axis is the training amount, and the different lines represent different pretraining amount.&lt;/em&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;Random Forest&lt;/th&gt;
+&lt;th&gt;SVM&lt;/th&gt;
+&lt;th&gt;LDA&lt;/th&gt;
+&lt;th&gt;EEGNet&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Pretrain&lt;/td&gt;
+&lt;td&gt;0.000&lt;/td&gt;
+&lt;td&gt;0.001&lt;/td&gt;
+&lt;td&gt;0.000&lt;/td&gt;
+&lt;td&gt;0.000&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Train&lt;/td&gt;
+&lt;td&gt;0.925&lt;/td&gt;
+&lt;td&gt;0.000&lt;/td&gt;
+&lt;td&gt;0.765&lt;/td&gt;
+&lt;td&gt;0.113&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;em&gt;Table 1: the p-value from one-way ANOVA; A lower p-value shows a higher likelihood that the factor causes the change.&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Random Forest is unaffected with respect to the training amount, but its performance increase with more pretraining data. It can be the result that pretraining data is much more than the training data. Even if it just pretrained with 1 subject&amp;rsquo;s data, it still gets about 5000 observations, because subject 1 has 5000 trials. The model saturates after 10 subjects, about 18000 observations, and the f1 score is mediocre.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SVM shows a clear trend that more training data will lead to much better performance. The pretraining does not impact much; the reason can be the 3500 limitations, which makes it cannot fully utilize the pretraining data. With more training data, it has the best performance. SVM is optimal for long term and personal BCI.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;LDA has the highest performance among all 4 classifiers, and the pretraining and training do not affect its performance. It makes LDA a good choice in the application of P300 BCI in general, if the data is limited.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;EEGNet is slightly better than the Random Forest, but clearly worse than SVM and LDA. The pretraining does not improve its generalization. Seems like the training data amount has a positive impact, but the statistical test does not support this statement. It is possible that due to my implement and filter design, it overfits the pretraining and training data, since the accuracy is close to 1.00 on those parts.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;5-discussion&#34;&gt;5. Discussion&lt;/h1&gt;
+&lt;p&gt;I was not expected that the most challenging thing is to make LDA and Random Forest fit this dataset before I wrote the code to compare classifiers. Using these two models, I tried many different ways to make them stop classifying every point as negative, such as adjusting the class weight, removing artifacts, only using certain channels, and combining multiple classifiers to let them vote. After weeks of experiments, I accidentally found that the most significant factor is the step between preprocessing and training, which is reshaping the feature vector. The original shape of each time window is (T, C), such that T is the number of time points, and C is the number of channels. In this case, reshape function breaks the temporal structure, leading to a complete mixture in high dimensional space. After changing the shape to (C, T), the model can finally learn the temporal information.&lt;/p&gt;
+&lt;p&gt;The result shows that the traditional machine learning methods still have their own advantage in P300 BCI. The LDA and SVM cannot fully utilize the pretraining data and computing power, but they still perform well with a limited amount of data, which is important in real-world EEG applications. EEGNet has the potential to be an ideal model since it is good at capturing temporal and spatial information, and it can be trained incrementally. However, at least in my implementation and this dataset, EEGNet fails to meet my expectation overall.&lt;/p&gt;
+&lt;p&gt;It is worth mentioning that classification is just one step in the BCI pipeline, and BCI application is much more than accurate. How to use the classification result, how to collect the data in a comfortable and efficient way, how to make the system robust, and many other aspects need to be considered if a BCI is for users, rather than research only.&lt;/p&gt;
+&lt;h1 id=&#34;6-reference&#34;&gt;6. Reference&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Congedo, M., Goyat, M., Tarrin, N., Ionescu, G., Varnet, L., Rivet, B., &amp;hellip; &amp;amp; Jutten, C. (2011, September). &amp;quot; Brain Invaders&amp;quot;: a prototype of an open-source P300-based video game working with the OpenViBE platform. In BCI 2011-5th International Brain-Computer Interface Conference (pp. 280-283).&lt;/li&gt;
+&lt;li&gt;Duncan-Johnson CC, Donchin E. The time constant in P300 recording. Psychophysiology 1979:16:53-5.&lt;/li&gt;
+&lt;li&gt;Korczowski, L., Cederhout, M., Andreev, A., Cattan, G., Rodrigues, P. L. C., Gautheret, V., &amp;amp; Congedo, M. (2019). Brain Invaders calibration-less P300-based BCI with modulation of flash duration Dataset (bi2015a) (Doctoral dissertation, GIPSA-lab).&lt;/li&gt;
+&lt;li&gt;Lawhern, V. J., Solon, A. J., Waytowich, N. R., Gordon, S. M., Hung, C. P., &amp;amp; Lance, B. J. (2018). EEGNet: a compact convolutional neural network for EEG-based brain–computer interfaces. Journal of neural engineering, 15(5), 056013.&lt;/li&gt;
+&lt;li&gt;Oralhan, Z. (2019). A new paradigm for region-based P300 speller in brain computer interface. Ieee Access, 7, 106618-106627.&lt;/li&gt;
+&lt;li&gt;Picton, T. W. (1992). The P300 wave of the human event-related potential. Journal of Clinical Neurophysiology, 9(4), 456–479.&lt;/li&gt;
+&lt;li&gt;Ramele, R., Villar, A., Santos, J. (2018). EEG waveform analysis of P300 ERP with applications to brain computer interfaces. Brain Sciences, 8(11), 199.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;7-appendix&#34;&gt;7. Appendix&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/eeg-classify/fig6.png&#34;
+	width=&#34;1032&#34;
+	height=&#34;779&#34;
+	srcset=&#34;https://example.org/project/eeg-classify/fig6_hu3a3edbb572f981d3ec8c1dfd133d5977_1016109_480x0_resize_box_3.png 480w, https://example.org/project/eeg-classify/fig6_hu3a3edbb572f981d3ec8c1dfd133d5977_1016109_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;132&#34;
+		data-flex-basis=&#34;317px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 6: the source of each ICA component&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/eeg-classify/fig7.png&#34;
+	width=&#34;1353&#34;
+	height=&#34;776&#34;
+	srcset=&#34;https://example.org/project/eeg-classify/fig7_hu48a8351c3440e3d95eba0b94713db999_399139_480x0_resize_box_3.png 480w, https://example.org/project/eeg-classify/fig7_hu48a8351c3440e3d95eba0b94713db999_399139_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;174&#34;
+		data-flex-basis=&#34;418px&#34;
+	
+&gt;
+&lt;em&gt;Figure 7: ICA components&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/eeg-classify/fig8.png&#34;
+	width=&#34;1430&#34;
+	height=&#34;821&#34;
+	srcset=&#34;https://example.org/project/eeg-classify/fig8_huf6d2f0d05a3246d7e9e2cbc3e002d30a_876319_480x0_resize_box_3.png 480w, https://example.org/project/eeg-classify/fig8_huf6d2f0d05a3246d7e9e2cbc3e002d30a_876319_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;174&#34;
+		data-flex-basis=&#34;418px&#34;
+	
+&gt;
+&lt;em&gt;Figure 8: EEG before ICA correction&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/eeg-classify/fig9.png&#34;
+	width=&#34;1430&#34;
+	height=&#34;821&#34;
+	srcset=&#34;https://example.org/project/eeg-classify/fig9_hu757c0fec8f102787892b749bb57270b2_909417_480x0_resize_box_3.png 480w, https://example.org/project/eeg-classify/fig9_hu757c0fec8f102787892b749bb57270b2_909417_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;174&#34;
+		data-flex-basis=&#34;418px&#34;
+	
+&gt;
+&lt;em&gt;Figure 9: EEG after ICA correction&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/eeg-classify/fig10.png&#34;
+	width=&#34;1430&#34;
+	height=&#34;1078&#34;
+	srcset=&#34;https://example.org/project/eeg-classify/fig10_hu5c8eecd29b2409568044ec0991f34b9b_255507_480x0_resize_box_3.png 480w, https://example.org/project/eeg-classify/fig10_hu5c8eecd29b2409568044ec0991f34b9b_255507_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;132&#34;
+		data-flex-basis=&#34;318px&#34;
+	
+&gt;
+&lt;em&gt;Figure 10: Accuracy for the classifiers. Since the data is imbalanced, this plot is just for reference.&lt;/em&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Use Verlet Integration to Simulate Gravity</title>
+        <link>https://example.org/project/verlet-gravity/</link>
+        <pubDate>Mon, 25 Jul 2022 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/project/verlet-gravity/</guid>
+        <description>&lt;img src="https://example.org/project/verlet-gravity/img.png" alt="Featured image of post Use Verlet Integration to Simulate Gravity" /&gt;&lt;h1 id=&#34;finite-difference-verlet-integration-and-its-application&#34;&gt;Finite Difference, Verlet Integration, and its Application&lt;/h1&gt;
+&lt;p&gt;Online-demo: &lt;a class=&#34;link&#34; href=&#34;https://xiaonanfu-ucsd.github.io/verlet-gravity/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://xiaonanfu-ucsd.github.io/verlet-gravity/&lt;/a&gt;&lt;/p&gt;
+&lt;iframe src=&#34;https://xiaonanfu-ucsd.github.io/verlet-gravity/&#34; style=&#34;width: calc(70vw); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;hr&gt;
+&lt;br&gt;
+&lt;p&gt;Differential equations are an important tool for classical mechanics, such as analyzing force and movement. In the simulation of the physical phenomenon of real-world objects, numerical differentiation is usually good enough to reveal the truth about the relationships in a system. The computer can easily handle discrete calculations in the simulation. That is why finite difference is common in the industry. For example, finite element analysis about a vehicle involves finite difference; the trajectory calculation of a satellite uses finite difference.&lt;/p&gt;
+&lt;p&gt;For those Newton’s equations of motion, there are many finite difference methods (FDMs) to find the solution. Generally, those FDMs segment the motion as a bunch of sub-motions that happened in a very short time interval. FDMs assume that the object moves along a constant vector in a particular time interval. If the movement is non-linear, then there is a cumulative error in FDMs’ results. Different FDMs have different degrees of error. Verlet Integration is one of the FDMs which have a relatively small error term. It does not have extra computational cost compared with the Euler method, and it is numerically stable enough for most of the calculations. Therefore, Verlet Integration is popular in computer graphics, such as simulating fluids with particles, and the gravity effect in space.&lt;/p&gt;
+&lt;p&gt;FDMs can be understanded as the Taylor series of a particle position function x. The function x here is the one-dimensional position of a particle.&lt;/p&gt;
+&lt;p&gt;$$x(t)=x(a)+x&amp;rsquo;(a)(t-a)+\frac{x&amp;rsquo;&amp;rsquo;(a)}{2}(t-a)^2+&amp;hellip;+\frac{x^na}{n!}(t-a)^n$$&lt;/p&gt;
+&lt;p&gt;$$x(t)=\lim_{n\rightarrow \infin} \sum^{n}_{i=0}{\frac{x^ia}{i!}(t-a)^i}$$&lt;/p&gt;
+&lt;p&gt;Taylor series gives the approximation to an unknown position $x(t)$ which is close to the knowing position $x(a)$. Since the time interval is small (i.e. $t-a$ is small), even if we ignore the high-order terms, the error will not be significant. Taylor series is helpful in particles simulation because we need to know the position of the particle in the next “step”, which means the position after the time interval $\delta t$.&lt;/p&gt;
+&lt;p&gt;Eq1. $x(t+\delta t) = x(t) + x&amp;rsquo;(t) \delta t + \frac{x&amp;rsquo;&amp;rsquo;(t)}{2}\delta t^2 + \frac{x&amp;rsquo;&amp;rsquo;&amp;rsquo;(t)}{6} \delta t^3 + O(\delta t^4)$&lt;/p&gt;
+&lt;p&gt;The function $O$ here represents the ignored high-order terms in Taylor series has this upper bound. The expression $\delta t^4$ represent $O(δt^4)$ has a similar magnitude as $δt^4$. It is small because time interval &amp;lt; 1. Since Euler method (Note: $x(t+δt)=x(t)+v(t)*δt$) have a error term $O(δt^2)$, Verlet Integration is more precise.&lt;/p&gt;
+&lt;p&gt;Eq2. $x(t - \delta t) = x(t) - x&amp;rsquo;(t) \delta t + \frac{x&amp;rsquo;&amp;rsquo;(t)}{2}\delta t^2 - \frac{x&amp;rsquo;&amp;rsquo;&amp;rsquo;(t)}{6} \delta t^3 + O(\delta t^4)$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Eq2 is the position for the last step.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Eq3. $x(t + \delta t) + x(t - \delta t) = 2x(t) + x&amp;rsquo;&amp;rsquo;(t) \delta t^2 + O(\delta t^4)$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;$Eq3 = Eq1 + Eq2$. It is a middle step to get the equation of Verlet Integration.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Eq4. $x(t + \delta t) = 2x(t) - x(t - \delta t) + x&amp;rsquo;&amp;rsquo;(t) \delta t^2$&lt;/p&gt;
+&lt;p&gt;$x(t + \delta t) = 2x(t) - previous + x&amp;rsquo;&amp;rsquo;(t) \delta t^2$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Eq4 is the equation that can be used to estimate the next step position, and it removes the $O(δt^4)$ because they are not important in the calculation. This equation means Verlet Integration only depends on current position, previous step position, and acceleration.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Depending on previous step position means this method is not self-starting. In most particle simulation test, we only have the initial value about the position and velocity vectors, but not the previous position. Hence we may only estimate the previous position using the initial velocity. It brings in more error.&lt;/p&gt;
+&lt;p&gt;The improved Verlet method is velocity Verlet Integration. It depends on the current velocity rather than previous position. Therefore, velocity Verlet Integration is self-starting.&lt;/p&gt;
+&lt;p&gt;$x(t + \delta t) = x(t) + v(t) \delta t + \frac{a(t)}{2} \delta t^2$&lt;/p&gt;
+&lt;p&gt;Eq5. $v(t+ \delta t) = v(t) + \frac{1}{2}(a(t+ \delta t) + a(t)) \delta t$&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Eq5 is the equation to update the velocity, which depends on acceleration.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Acceleration is the key factor in Verlet Integration. By changing $a(t)$, Verlet Integration can simulate different physical phenomenon. Using the Newton’s second law, $F=ma$, $a=\frac{F}{m}$, if we find $F(t)$, then $a(t)$ will be obvious.&lt;/p&gt;
+&lt;p&gt;For gravity simulation in the demonstration I provide, the program iteratively finds the gravity between mass points in the system, and accumulates those force vectors to find the acceleration within that step. Then the program can easily find the next position for mass points. This demonstration does not precisely simulate real-world gravity nor the size and distance of stars. Besides gravity, Verlet Integration can also be applied in simulating a rope. A rope can be modeled as particles linked by spring. After replacing a(t) using Hooke&amp;rsquo;s law, Verlet Integration can predict the position of each rope particle.&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

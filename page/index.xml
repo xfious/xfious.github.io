@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Pages on XFious</title>
+        <link>https://example.org/page/</link>
+        <description>Recent content in Pages on XFious</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <managingEditor>xfious@outlook.com (XFious)</managingEditor>
+        <webMaster>xfious@outlook.com (XFious)</webMaster><atom:link href="https://example.org/page/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>ABOUT</title>
+        <link>https://example.org/page/search/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/page/search/</guid>
+        <description>&lt;h1 id=&#34;xiaonan-fu&#34;&gt;Xiaonan Fu&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Email: &lt;a class=&#34;link&#34; href=&#34;mailto:xfious@outlook.com&#34; &gt;xfious@outlook.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Github: &lt;a class=&#34;link&#34; href=&#34;https://github.com/xfious&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;xfious&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Github: &lt;a class=&#34;link&#34; href=&#34;https://github.com/xiaonanfu-ucsd&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;xiaonanfu-ucsd&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;skill-set&#34;&gt;Skill set&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Web development and electron-based desktop development; Javascript/Typescript + HTML + CSS, MySQL&lt;/li&gt;
+&lt;li&gt;Python + Pytorch&lt;/li&gt;
+&lt;li&gt;C/C++, Java, Node.js, Rust&lt;/li&gt;
+&lt;li&gt;Android native app development&lt;/li&gt;
+&lt;li&gt;CUDA&lt;/li&gt;
+&lt;li&gt;Linux administration and maintenance + Docker&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;research-interest&#34;&gt;Research Interest&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Training and deployment of multi-modal large models.&lt;/li&gt;
+&lt;li&gt;Memory-augmented large language models, using vector database as memory.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;other-topics&#34;&gt;other topics&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;iterative thinking process of LLM
+&lt;ul&gt;
+&lt;li&gt;Diffusion-based language model&lt;/li&gt;
+&lt;li&gt;Tree of thought, chain of thought&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Meta-learning&lt;/li&gt;
+&lt;li&gt;Reinforcement Learning, GAN, and new learning methods (learning objective) derived from them.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

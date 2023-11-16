@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Explore causal LM training and increase hidden dimension with low-rank matrices.'>
+<title>Are Small Language Models Low-rank?</title>
+
+<link rel='canonical' href='https://example.org/project/low-rank-lm/'>
+
+<link rel="stylesheet" href="/scss/style.min.189adf11eec5d9cf8bae111a0210e6bdd431cef7e93f94224970c938eb7a7157.css"><meta property='og:title' content='Are Small Language Models Low-rank?'>
+<meta property='og:description' content='Explore causal LM training and increase hidden dimension with low-rank matrices.'>
+<meta property='og:url' content='https://example.org/project/low-rank-lm/'>
+<meta property='og:site_name' content='XFious'>
+<meta property='og:type' content='article'><meta property='article:section' content='Project' /><meta property='article:tag' content='Transformer' /><meta property='article:tag' content='Language Model' /><meta property='article:tag' content='GPT' /><meta property='article:published_time' content='2023-06-15T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2023-06-15T00:00:00&#43;00:00'/><meta property='og:image' content='https://example.org/project/low-rank-lm/head.png' />
+<meta name="twitter:title" content="Are Small Language Models Low-rank?">
+<meta name="twitter:description" content="Explore causal LM training and increase hidden dimension with low-rank matrices."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://example.org/project/low-rank-lm/head.png' />
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu7cb1eebc9f4aa269064878323564022e_247050_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🌙</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">XFious</a></h1>
+            <h2 class="site-description">Xiaonan Fu</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xfious'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonanfu-ucsd'
+                        target="_blank"
+                        title="GitHub-ucsd"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu" style="margin-top: 36px;">
+        
+        
+        
+        <li  class='current' >
+            <a href='/project/' >
+                
+                
+                
+                <span>PROJECT</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/machine-learning/' >
+                
+                
+                
+                <span>MACHINE LEARNING</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/coding/' >
+                
+                
+                
+                <span>CODING</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/method/' >
+                
+                
+                
+                <span>METHOD</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/page/search/' >
+                
+                
+                
+                <span>ABOUT</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/project/low-rank-lm/">
+                <img src="/project/low-rank-lm/head_hue00612f30d1ff6864bc6f7151cc442be_91303_800x0_resize_box_3.png"
+                        srcset="/project/low-rank-lm/head_hue00612f30d1ff6864bc6f7151cc442be_91303_800x0_resize_box_3.png 800w, /project/low-rank-lm/head_hue00612f30d1ff6864bc6f7151cc442be_91303_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="534" 
+                        loading="lazy"
+                        alt="Featured image of post Are Small Language Models Low-rank?" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/project/" >
+                project
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/project/low-rank-lm/">Are Small Language Models Low-rank?</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            Explore causal LM training and increase hidden dimension with low-rank matrices.
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 15, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    10 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="are-small-language-models-low-rank">Are Small Language Models Low-rank?</h1>
+<h2 id="explore-causal-lm-training-and-increase-hidden-dimension-with-low-rank-matrices">Explore causal LM training and increase hidden dimension with low-rank matrices.</h2>
+<h1 id="abstract">Abstract</h1>
+<p>Over-parameterized language models are low rank intrinsically. In this project, I trained 2 causal language models with 28M parameters each, such that one is the baseline and another uses low-rank weights but has higher hidden dimensions, and compare their training speed and accuracy. Although they are trained with more than 12 billion tokens, both models fail to finish training. According to the loss curve on hand, the baseline model trounces the low-rank model in speed and performance.
+GITHUB: <a class="link" href="https://github.com/XiaonanFu-ucsd/COGS185-final-project"  target="_blank" rel="noopener"
+    >https://github.com/XiaonanFu-ucsd/COGS185-final-project</a></p>
+<h1 id="1-introduction">1. Introduction</h1>
+<p>Large language models show their power in few-shot learning ability, and the potential to solve most downstream tasks. Just like their name, they are large and expensive to train due to the amount of parameters, and hard to infer on a local machine. If there is some method to make small enough models have decent text generate ability, then a personal device can do local inference in a private and efficient manner. Given that the causal language model with high hidden dimension usually performs better, I explored to use low rank matrices product to simulate a larger model with the same amount of parameters. To compare the overall performance of the normal model and low rank model in terms of training efficiency and accuracy, I trained two models with 28M parameters each, with multiple datasets over 7GB of text. In the training process, I faced several challenges and tried to adjust multiple hyper-parameters to speed up training, such as sequence length, batch size, loss function, and learning rate. Although the low rank model does not work in the limited training time, the exploration of training a language model is still a valuable experience.</p>
+<h1 id="2-related-work">2. Related Work</h1>
+<h2 id="21-attention-in-transformers">2.1 Attention in Transformers</h2>
+<p>Each Attention layer in transformers uses three matrices to map every token embedding to be query, key, and value vectors. The dot product of the query and key vectors, decides the weight of the corresponding value vectors after the SoftMax operation. After this process, one token embedding obtains other embedding’s value with different weights, so the model has the ability to learn the sequential relationship across different tokens.</p>
+<p>The positional encoding is also critical for the attention mechanism, since the token embedding itself does not contain the structural information, it should be added in every attention layer. There are many ways to add positional encoding, and in the paper <em>Attention Is All You Need</em>, it presents sinusoidal positional encoding and learned positional encoding, and they find that they have similar performance, but the sinusoidal version may be better at extrapolation.</p>
+<h2 id="22-causal-language-model">2.2 Causal Language Model</h2>
+<p>Causal language models use masked attention to restrict every token can only reference the previous token, so they are more relevant and fit the text generation task. In the implementation, they add a mask with some negative infinity to the dot product result, then the number will be zero after SoftMax. Although they are decoder-only structure, the decoder just contains one attention layer and one multilayer feed-forward network.</p>
+<p>From a holistic perspective to describe the text generation process, a tokenizer encode the prompt to a sequence of token, which can be understood as an integer index in a dictionary. The model uses a lookup table to find the embedding for each token, and send embeddings to decoder layers. In the end, embeddings multiply with a large matric to produce the logit, then use SoftMax to find which logit has the largest probability. It is a multiclass classification task.</p>
+<h2 id="23-low-rank-adaptation">2.3 Low-rank adaptation</h2>
+<p>Low-rank adaptation is a common fine-turn method to make a base model have a better performance in a downstream task. Inspired by the finding that a large model may not fully utilize their express ability, and those weights have low rank intrinsically, Edward Hu, et al. hypothesize that the amount of weight change also has this low rank property. Based on LORA, fine-turning only need a small amount of parameter to adjust a large model; a larger matrix is the product of two smaller matrices with a much lower rank.</p>
+<img src="img1.png" width="200" height="200" />
+<h2 id="24-tinystories-dataset">2.4 TinyStories Dataset</h2>
+<p>Ronen Eldan, et al. build a small enough dataset that covers diverse vocabulary, facts, and reasoning. They used GPT4 prompted with randomly combined none and verb, to produce millions of stories. Using this dataset, their model with 28 million parameters performance better than the GPT2-large with 774 million parameters in terms of story continuation.</p>
+<h1 id="3-method">3. Method</h1>
+<p>The datasets are mainly composed of the TinyStories and TinyStories Instruction datasets. I also use Alpaca Chinese, Dolly 15K, Lightnovels_EN, Chinese Metaphors datasets as supplementary, and allow the model learn bilingual text generation. About 2/3 of the data comes from TinyStories datasets.</p>
+<p>Since the datasets are large, I designed a multi-processing dataloader, which can randomly pick which dataset to sample from with the given proportion, and does not need to load all the datasets into the memory. The dataloader needs to tokenize the text while training. If one independent sample text is too long, it will randomly select part of it to fit the specified token sequence length. If the text is too short, it will pad the text with a padding token at the front. The sequence length used in this project is 1024, such that the model needs to predict the last token. By default, the tokenizer will put BOS at the beginning and EOS at the end. To prevent most rows end in EOS, the dataloader will randomly crop the row; it will also increase the robustness of the model. The batch size is 120.</p>
+<p>I used the tokenizer from the Chinese-LLaMA-Alpaca project, which extends the LLaMA vocabulary with Chinese words. The vocabulary size of this tokenizer is 49954.</p>
+<p>The baseline model references the implementation of nanoGPT and Meta’s LLAMA. It has 4 layers with a hidden size of 768 and 12 heads, in a total of 28M parameters, except for the final linear layer which converts embedding to logit. Every attention layer needs positional information. Rather than the methods presented in Attention Is All You Need, this model used rotary positional encoding, which does not add to the token embedding, but element-wisely multiplies to the matrix x_q and x_k. This encoding has decreasing sinusoidal frequency for larger dimensions (Su, et al.). Flash attention is used to speed up attention computation. After an attention layer, there is a two-layer FFN, for each is 768*3072; between them is a SiLU activation function.</p>
+<p>The low rank model has the same structure, but uses low rank weights matrices to achieve a higher hidden dimension, which is 1152, and has 18 heads.</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th></th>
+<th>wq</th>
+<th>wk</th>
+<th>wv</th>
+<th>wo</th>
+<th>Linear</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline</td>
+<td>768*768</td>
+<td>768*768</td>
+<td>768*768</td>
+<td>768*768</td>
+<td>768*3072 * 2</td>
+</tr>
+<tr>
+<td>Low-rank</td>
+<td>1152*256 * 2</td>
+<td>1152*256 * 2</td>
+<td>1152*256 * 2</td>
+<td>1152*256 * 2</td>
+<td>(1152*512 + 512*2880) * 2</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Table 1: comparing the dimension of models</em></p>
+<p>For both models, they have layer normalization rather than batch normalization. Batch normalization finds the means among different samples, and layer normalization emphasizes the means within the sample. It is suitable for sequential tasks because the sample have a high inner relationship, but very weak batch-wise relationship. I used RMSnorm since it is slightly faster and make the loss lower (Zhang, et al.).</p>
+<h1 id="4-experiment">4. Experiment</h1>
+<p>The training process uses cross-entropy loss, and Adam optimizer with a learning rate of 1e-4. The learning rate will decrease under the control of cosine annealing, which will have a cosine curve that the half period is 20000 iterations. With limited computation power, it is slow to train a model with 28 million parameters, and hard to tweak the hyper-parameters and build an intuition. Other than the slow loss decreasing, in the first round, the low rank model had nan loss after 9100 steps. To solve this problem, I revise the model and restart the training for low rank model.</p>
+<p>It is highly possible that the nan loss caused by some results of SoftMax become 0. The loss function is cross-entropy loss, and in its calculation, there is ln(p), so if p = 0, then ln(p) = -inf. By backpropagation, the invalid value contaminates the whole model. Exploding gradients may cause this problem. Also, I trained the model using BFloat16, which has the same range as float32 but less precision, hence it may severer the problem. First I lowered the learning rate to 1e-5, then use a gradient clip to constrain its value, and set a loss clamp to prevent any infinite loss. Moreover, the low rank model has more linear layers inside, so I add one more layer-normalization in every MLP after the attention layer.</p>
+<p>Although this fixes the nan problem, the loss function does not show a sign of decreasing. At first, I believe the learning rate is still too large so the gradients go overhead, and the batch size should be larger to smooth the loss, but hours later the model still has a similar loss, I realize that other people successfully train larger models with the learning rate of 1e-4, which means I should use some value higher than that. In the rest of the experiment, I use 2e-4 for the baseline model, and 1.5e-4 for the low rank model. Also, the cosine annealing decay period is set to 120000 iterations, so the learning rate can stay high for a long enough time.</p>
+<div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px;">
+<img src="fig1.png" width="400" />
+<img src="fig2.png" width="400" />
+</div>
+<p>The baseline model is trained with 128600 batches, and the low rank model is trained with 114500 batches, which is more than 12 billion tokens. However, both models fail to generate any meaningful sentence.</p>
+<p>The first peak for those two loss curves is due to that I used label smooth for the loss function. It lowers the probability of the ground truth label; without this option, the ground truth will be a one-hot encoding. It is good for generalization, but if I have enough data and many class labels, the model is hard to overfit. That is why I turn it off after about 10000 iterations. After this peak, because I rise the learning rate so there is another peak.</p>
+<p>The baseline loss curve shows a promising decreasing trend, especially for the evaluation curve; but the low rank&rsquo;s loss curve does not really drop. Since this experiment does not reach its end, I cannot assert that the low-rank method does not work for the training of a relatively small language model. Based on the loss curves, it is clear that the baseline model is much more efficient in training than the low rank model, and has more possibility to have a good performance. One potential justification is that the low rank model is deeper and wider, even if its decoder layers have slightly fewer parameters than the baseline model’s. Another justification is that text generation is already complex enough for this size of model, so the low rank property only applies to the over-parameterized model.</p>
+<h1 id="5-conclusion">5. Conclusion</h1>
+<p>The tradeoff of rank and dimension does not work with a relatively small language model. After about 3 epochs of data, both the baseline and low rank model have not finished training, but the trend shows that the baseline model still can lower its loss in further training, but seems like the low rank model reaches its limitation. Although the experiment is unsuccessful and the hypothesis is falsified, this project establishes my confidence in training large models, and let me realize that model architectures, datasets, training methods, and computing power are the keys to success in machine learning.</p>
+<h1 id="6-reference">6. Reference</h1>
+<ul>
+<li>Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, Illia Polosukhin. <em>Attention Is All You Need</em>. <a class="link" href="https://arxiv.org/abs/1706.03762"  target="_blank" rel="noopener"
+    >https://arxiv.org/abs/1706.03762</a></li>
+<li>Biao Zhang, Rico Sennrich. Root Mean Square Layer Normalization. <a class="link" href="https://arxiv.org/abs/1910.07467"  target="_blank" rel="noopener"
+    >https://arxiv.org/abs/1910.07467</a></li>
+<li>Chunyuan Li, Heerad Farkhoor, Rosanne Liu, Jason Yosinski. Measuring the Intrinsic Dimension of Objective Landscapes. <a class="link" href="https://arxiv.org/abs/1804.08838"  target="_blank" rel="noopener"
+    >https://arxiv.org/abs/1804.08838</a></li>
+<li>Chinese-LLaMA-Alpaca <a class="link" href="https://github.com/ymcui/Chinese-LLaMA-Alpaca"  target="_blank" rel="noopener"
+    >https://github.com/ymcui/Chinese-LLaMA-Alpaca</a></li>
+<li>nanoGPT <a class="link" href="https://github.com/karpathy/nanoGPT"  target="_blank" rel="noopener"
+    >https://github.com/karpathy/nanoGPT</a></li>
+<li>Jianlin Su, Yu Lu, Shengfeng Pan, Ahmed Murtadha, Bo Wen, Yunfeng Liu. RoFormer: Enhanced Transformer with Rotary Position Embedding. <a class="link" href="https://arxiv.org/abs/2104.09864"  target="_blank" rel="noopener"
+    >https://arxiv.org/abs/2104.09864</a></li>
+<li>Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timothée Lacroix, Baptiste Rozière, Naman Goyal, Eric Hambro, Faisal Azhar, Aurelien Rodriguez, Armand Joulin, Edouard Grave, Guillaume Lample. LLaMA: Open and Efficient Foundation Language Models. <a class="link" href="https://arxiv.org/abs/2302.13971"  target="_blank" rel="noopener"
+    >https://arxiv.org/abs/2302.13971</a></li>
+<li>Ronen Eldan, Yuanzhi Li. <em>TinyStories: How Small Can Language Models Be and Still Speak Coherent English?</em> <a class="link" href="https://arxiv.org/abs/2305.07759"  target="_blank" rel="noopener"
+    >https://arxiv.org/abs/2305.07759</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/transformer/">Transformer</a>
+        
+            <a href="/tags/language-model/">Language Model</a>
+        
+            <a href="/tags/gpt/">GPT</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2023 XFious
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.21.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

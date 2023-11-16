@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='P300 ERP is evoked when a person perceives a target stimuli, and it associates with the decision-making process that something important had occurred.'>
+<title>An Evaluation of Four P300 ERP Classifiers&#39; Generalization Performance in the Oddball Paradigm</title>
+
+<link rel='canonical' href='https://example.org/project/eeg-classify/'>
+
+<link rel="stylesheet" href="/scss/style.min.189adf11eec5d9cf8bae111a0210e6bdd431cef7e93f94224970c938eb7a7157.css"><meta property='og:title' content='An Evaluation of Four P300 ERP Classifiers&#39; Generalization Performance in the Oddball Paradigm'>
+<meta property='og:description' content='P300 ERP is evoked when a person perceives a target stimuli, and it associates with the decision-making process that something important had occurred.'>
+<meta property='og:url' content='https://example.org/project/eeg-classify/'>
+<meta property='og:site_name' content='XFious'>
+<meta property='og:type' content='article'><meta property='article:section' content='Project' /><meta property='article:tag' content='brain-computer-interface' /><meta property='article:tag' content='machine-learning' /><meta property='article:tag' content='CNN' /><meta property='article:published_time' content='2023-03-22T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2023-03-22T00:00:00&#43;00:00'/><meta property='og:image' content='https://example.org/project/eeg-classify/fig6.png' />
+<meta name="twitter:title" content="An Evaluation of Four P300 ERP Classifiers&#39; Generalization Performance in the Oddball Paradigm">
+<meta name="twitter:description" content="P300 ERP is evoked when a person perceives a target stimuli, and it associates with the decision-making process that something important had occurred."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://example.org/project/eeg-classify/fig6.png' />
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu7cb1eebc9f4aa269064878323564022e_247050_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🌙</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">XFious</a></h1>
+            <h2 class="site-description">Xiaonan Fu</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xfious'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonanfu-ucsd'
+                        target="_blank"
+                        title="GitHub-ucsd"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu" style="margin-top: 36px;">
+        
+        
+        
+        <li  class='current' >
+            <a href='/project/' >
+                
+                
+                
+                <span>PROJECT</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/machine-learning/' >
+                
+                
+                
+                <span>MACHINE LEARNING</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/coding/' >
+                
+                
+                
+                <span>CODING</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/method/' >
+                
+                
+                
+                <span>METHOD</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/page/search/' >
+                
+                
+                
+                <span>ABOUT</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/project/eeg-classify/">
+                <img src="/project/eeg-classify/fig6_hu3a3edbb572f981d3ec8c1dfd133d5977_1016109_800x0_resize_box_3.png"
+                        srcset="/project/eeg-classify/fig6_hu3a3edbb572f981d3ec8c1dfd133d5977_1016109_800x0_resize_box_3.png 800w, /project/eeg-classify/fig6_hu3a3edbb572f981d3ec8c1dfd133d5977_1016109_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="604" 
+                        loading="lazy"
+                        alt="Featured image of post An Evaluation of Four P300 ERP Classifiers&#39; Generalization Performance in the Oddball Paradigm" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/project/" >
+                project
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/project/eeg-classify/">An Evaluation of Four P300 ERP Classifiers&#39; Generalization Performance in the Oddball Paradigm</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            P300 ERP is evoked when a person perceives a target stimuli, and it associates with the decision-making process that something important had occurred.
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Mar 22, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    17 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="an-evaluation-of-four-p300-erp-classifiers-generalization-performance-in-the-oddball-paradigm">An Evaluation of Four P300 ERP Classifiers&rsquo; Generalization Performance in the Oddball Paradigm</h1>
+<h1 id="abstract">Abstract</h1>
+<blockquote>
+<p>For classifying P300 event-related potential, usually need prior knowledge about the EEG signal during the target and non-target stimuli. However, different classifiers need different amounts of data to achieve a usable classification ability. In this final project, I explored 4 different classifiers and compared their generalization performance on one P300 dataset which took place in GIPSA-lab, 2015. The dataset includes 43 participants. There are 4 classifiers involved in this project, which are LDA, SVM, Random Forest, and EEGNet. They are fed with similar epochs, merely adjusted based on each classifier’s requirement. The metric to measure their performance is F1, since the class is imbalanced. The result shows that the LDA has the high and most stable performance, and the SVM shows the potential to have the highest F1 with more data from the same participant who has been tested on. Overall, based on the procedures and implementation used in this project, the number of pretraining date does not impact much on the performance; the different type of classifier shows a relatively greater influence.
+Code for this project: <a class="link" href="https://github.com/XiaonanFu-ucsd/COGS189-final-project"  target="_blank" rel="noopener"
+    >https://github.com/XiaonanFu-ucsd/COGS189-final-project</a></p>
+</blockquote>
+<h1 id="1-introduction">1. Introduction</h1>
+<p>P300 ERP is evoked when a person perceives a target stimuli, and it associates with the decision-making process that something important had occurred (Picton, 1992). Therefore, the P300 ERP is a good indicator to show whether the event is important for the person. In this scenario, the event is known from the outside, but what the person wants is something unknown. The P300 ERP can tell whether the event is the target, given that the event happened. In application, the P300 ERP can be used to build speller, or to control a cursor to move.</p>
+<p>P300 ERP changes among population and time. For doing the classification of P300 ERP, the system need to know the P300 ERP of the user, or use some prior knowledge about P300 (Ramele et al., 2018). An ideal system does not need training, or very short training, before someone uses it. Hence it challenges the system to be accurate with a small amount of data, usually in non-clinical applications. If the system can learn the common pattern of P300 before a user uses it, then the amount of data needed for training will be greatly reduced, making the BCI convenient to use.</p>
+<p>In this project, I explored 4 different classifiers, as a part of the P300 system, to see how they perform across participants. With the different levels of pretraining data, I compared how much fine-tuning data, i.e. training data, is required to achieve a good performance. To fairly compare each classifier, everyone received the epochs from the similar preprocessing method. Some classifiers cannot utilize parallel computing. To make the training possible and can be done in a reasonable time, they may only use a portion of the data, such as 3000 observations (one observation is a time window after a event). Besides, classifiers receive different numbers of time samples within one observation, due to the efficiency of the algorithm. All the classifiers should finish the training within a few seconds.</p>
+<p>There are three hypothetical factors that may affect the generalization performance: amount of pretraining data, amount of training data, and the type of classifier. For each classifier, it gets a certain level of pretraining, and then gets certain amount of training on the user&rsquo;s EEG data. All of them will test on the same set of data. In summary, there are 3 stages: pre-train, training, and testing. Their performance will be compared using the f1 score.</p>
+<h1 id="2-dataset">2. Dataset</h1>
+<p>The dataset of the project includes 50 participants, using 32 active wet electrodes, with a visual P300 BCI videogame named Brain Invaders. The experiment took place at GIPSA-lab, Grenoble, France, in 2015 (Korczowski et al., 2019). Based on the document about this dataset, it uses a similar paradigm as the P300 speller, which has 36 symbols, and they will flash in groups but not by row and columns (Congedo et al., 2011). After a certain time, the symbol which represents the character in the game moves slowly. To make the P300 more independent, and prevent the participants&rsquo; emotions affect the EPR when they play it, the game only shows the score between each round. The experimenter already removes one participant who does not have a visible alpha wave, and six participants have some error in their data.</p>
+<p>The sampling rate of the dataset is 512 Hz. The data is not clean before any filtering, and it can be shown by the power spectrum of the data. The peak at 50 Hz is the power line noise. And the peak at 150 Hz is unknown noise.</p>
+<p><img src="/project/eeg-classify/fig1.png"
+	width="571"
+	height="473"
+	srcset="/project/eeg-classify/fig1_hua14b7339d80f6473a579485e5ee3340c_42132_480x0_resize_box_3.png 480w, /project/eeg-classify/fig1_hua14b7339d80f6473a579485e5ee3340c_42132_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="power spectrum"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="120"
+		data-flex-basis="289px"
+	
+></p>
+<p><em>figure 1. Power spectrum of the Pz channel, after filtering</em></p>
+<p><img src="/project/eeg-classify/fig2.png"
+	width="559"
+	height="473"
+	srcset="/project/eeg-classify/fig2_huadfdfa37b1eb8d06d36be59d142a368e_41629_480x0_resize_box_3.png 480w, /project/eeg-classify/fig2_huadfdfa37b1eb8d06d36be59d142a368e_41629_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+		alt="power spectrum"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="118"
+		data-flex-basis="283px"
+	
+></p>
+<p><em>figure 2. Power spectrum of the Pz channel, before filtering</em></p>
+<p>After filtering using the FIR bandpass filter from 1 to 24 Hz, the power spectrum of the data is shown in the right figure. The bandwidth is used in the example classification code for this dataset (Korczowski et al., 2019). In some other studies, the bandwidth is 0.1 to 30 Hz. Shrinking the bandwidth is reasonable because the P300 ERP is a slow wave. The article from Duncan-Johnson et al. presents that a high-pass filter higher than 0.1 Hz will distort the P300 ERP. In this project, 0.1 or 1 does not make a difference in the performance.</p>
+<p>Each participant experienced about 1500 events in the whole recording. The ratio of target versus non-target is one-to-five. After averaging all the time windows for target and non-target, it shows a clear difference between the curve, which means the P300 classification is possible on this dataset (Figure 3)</p>
+<p><img src="/project/eeg-classify/fig3.png"
+	width="1430"
+	height="485"
+	srcset="/project/eeg-classify/fig3_hu7d11cc6100b889156332ab3a384e9878_110896_480x0_resize_box_3.png 480w, /project/eeg-classify/fig3_hu7d11cc6100b889156332ab3a384e9878_110896_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="294"
+		data-flex-basis="707px"
+	
+></p>
+<p><em>figure 3. An example of event related potential recored at channel Pz</em></p>
+<p>After filtering, the ICA processing detects abnormal variance in some components. Using MNE, the sources are shown below (Figure 6). The artifacts may be blinking artifacts because of their amplitude (Figure 7). They usually are collected from the frontal electrodes.</p>
+<p>The dataset does not include the EOG data, so there is no explicit reference to indicate which component is due to the blinking artifact. I manually select some components which have high amplitude or sudden spikes, and remove them from the data. The result is shown below (Figure 8 &amp; 9). Here is the component I choose: 0, 1, 2, 4, 6, 8.</p>
+<p>Since ICA does not make a significant difference in later classification performance, but increases the preprocessing complexity, I decide to not use ICA in the later analysis.</p>
+<p>The dataset is split into 2 parts. Subjects 1-30 is the range for pretraining, and subjects 31-43 is the range for training and testing. The pretraining data is used to warm up the classifier, and the training data is used to fine-tune the classifier.</p>
+<p>Every channel is used because the P300 ERP is not localized to a specific area. If the Random forest and LDA only use the Pz channel, the f1 score is much lower than using all the channels. Although Pz channel is the most informative channel for P300 ERP, seemingly it is still too noisy to be used alone.</p>
+<h1 id="3-method">3. Method</h1>
+<h2 id="31-preprocessing">3.1 Preprocessing</h2>
+<p>For P300 classification tasks, the time window after the event is most informative. Since the system does not need to know when is the event because the event time is known, it is unnecessary to feed in full series of EEG data and let the system decide whether the time window is related to the event. After filtering the data from 1 to 24 Hz, the data is epoched into 800ms windows after the event. 800ms should be long enough to capture the ERP because P300 ERP is usually between 300 to 500 ms with respect to the person&rsquo;s age (Picton, 1992). Also, some papers use 800ms windows to capture the P300 ERP (Oralhan, 2019).</p>
+<p>Observations have different mean and variance. To make the classifier more robust, the data is normalized by subtracting the mean and dividing by the standard deviation. Zeroing the average can force all observations into the same range. Normalizing the variance by dividing every observation by its own standard deviation can uniform the amplitude of the wave, and allow the classifier to extract more information from the pattern and changes.</p>
+<p>This is an example time window from participant 3, after filtering and normalization (Figure 4). All data undergoes the above preprocessing. However, the classifiers may need other modifications to make the data fit their requirement.</p>
+<p><img src="/project/eeg-classify/fig4.png"
+	width="1749"
+	height="1300"
+	srcset="/project/eeg-classify/fig4_hu085ba3987ff03d75cc8156869a72f936_1068723_480x0_resize_box_3.png 480w, /project/eeg-classify/fig4_hu085ba3987ff03d75cc8156869a72f936_1068723_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="134"
+		data-flex-basis="322px"
+	
+></p>
+<p><em>figure 4. An example of a time window after filtering and normalization, 3-second segment of filtered data, from subject 3.</em></p>
+<h2 id="32-classifier-random-forest">3.2 Classifier: Random Forest</h2>
+<p>Random Forest is an ensemble method widely used in the industry. It is non-linear and can easily handle high-dimension data. The ensemble attribute of Random Forest makes it can compute parallelly, which is suitable for large datasets.</p>
+<p>Before training the Random Forest, each observation subtracts the mean of the baseline, which is 0 - 100 ms after the event. the ERP start is set to 200ms, and the ERP end is set to 800ms. The ERP windows are split into 18 segments and the mean of each segment is used as the feature. Observations are reshaped into a vector of 18 * 32 = 576 features.</p>
+<p>The Random Forest contains 75  decision trees, and the maximum depth of each tree is 75. The hyperparameters are found by grid search. To fix the imbalance of the data, the class weight is set to 0.5:20. I used this large ratio because the false negative is much large than the true positive in other settings. This model does not support incremental training in scikit-learn, so the pretraining process actually happens in the trainging process, by merge the pretraining data and the training data.</p>
+<h2 id="33-classifier-svm">3.3 Classifier: SVM</h2>
+<p>Support Vector Machine is sensitive to dimensionality, and too many samples make it hard to train. Therefore, I set the maximum number of training data to 3500. It has the same preprocessing as Random Forest, but only uses 8 segments of the ERP windows. Hence the feature vector is 8 * 32 = 256. The class weight is 0.5:2. This SVM uses linear kernel, and the constraint is set to 0.1. The model does not fit if it uses RBF as the kernel.</p>
+<p>SVM does not support incremental training, so the pretraining process is similar to Random Forest. However, the SVM has a limitation on the amount of training data. If pretrain + train &gt; 3500, the array will be filled with training data first, and then use shuffled pretraining data to fill the rest. The pretraining data are from different subjects, so shuffling makes the final training data be more diverse.</p>
+<h2 id="34-classifier-lda">3.4 Classifier: LDA</h2>
+<p>Linear Discriminant Analysis is a linear classifier and it is efficient to train. However, seems like the scikit-learn implementation of LDA has bugs on the Linux platform. With a high amount of training data, approximately 3000, the system stops responding. Therefore, I set the maximum number of training data to 1500. It uses the same method as SVM to handle oversize training data. It has the same preprocessing as Random Forest, but only uses 6 segments of the ERP windows, the shape of the feature vector is 6 * 32 = 192.</p>
+<h2 id="35-classifier-eegnet">3.5 Classifier: EEGNet</h2>
+<p>EEGNet uses the convolution neural network and the power of deep learning to alleviate the process of feature extraction (Lawhern, 2018). According to the paper, it performs well on various EEG datasets, including P300, SMR, and ERN. The recommended setting of EEGNet is to downsample the data to 128 Hz, and embed 3 convolutional layers as filters and one fully connected layer as output. In my implementation using PyTorch, the first convolutional layer has 16 kernels with size of 1 * 64. The second convolutional layer is a depthwise filter with 32 kernels. The third one is a separable conv2d with 32 depthwise filters (1<em>32) and 64 pointwise filters (1</em>1). This design allows the CNN to have enough filters to fit different patterns, and wide enough to see a slow wave such as P300. The activation function is ELU, and the dropout rate is 0.3 to prevent overfitting. There are batch normalization between layers, and two average pooling layers to reduce the dimensionality. The reference code can be found at (<a class="link" href="https://github.com/vlawhern/arl-eegmodels/blob/master/EEGModels.py"  target="_blank" rel="noopener"
+    >https://github.com/vlawhern/arl-eegmodels/blob/master/EEGModels.py</a>)</p>
+<p>Since the convolutional layer is good at capturing temporal ad spatial information, I did not subtract the baseline. The data is downsampled to 128 Hz, and the full observation is used as the feature. The maximum number of iterations of epoch is set to 200. The batch size is 512; the learning rate is 0.001; the loss function is cross entropy because it is convenient to set class weight, which is 1:5.4.</p>
+<p>Among all the 4 classifiers, EEGNet is the only one that can be trained incrementally, which means the model&rsquo;s weights carry over from the previous training. The training process will only include the data from the current subject.</p>
+<h2 id="36-evaluation-performance-metric-and-testing">3.6 Evaluation: Performance metric and testing</h2>
+<p>Pretraining amount have 5 levels: none, 1, 3, 10, 30 subjects. For example, if the pretraining count is 3, theoretically, the model will be pretrained with the first 3 subject&rsquo;s full records.</p>
+<p>The training amount have 10 levels, which are 0 to 900. For all 13 subjects in the testing range, the model will be trained with the first 0 to 900 data from each subject, and then tested on the data after index 900. The process is independent for each testing subject. For example, when I evaluate the EEGNet-3 model (i.e. EEGNet pretrained with 3 subjects), the program load the pretrained model, and directly tests on the data[901:] from subject 31, because now the training amount is 0. Then, the program load the pretrained model again, and train on the data[:100] from subject 31, and test on the same data[901:]. The program will repeat this process for all 13 subjects. The f1 score is the average among them, given a certain pretraining amount and training amount. The classifier must be trained with something, so the pretraining and training will not be 0 at the same time.</p>
+<p>The F1 macro score is a suitable metric for a binary classification problem. It shows the balance between precision and recall, and it considers the accuracy of the positive and negative classes under the same priority. Accuracy itself is not a good metric for this problem, because the data is imbalanced. If the model always predicts 0, it will have high accuracy, but the precision and recall will be very low for positive class. For the F1 score, if the model always predicts 0, the F1 score will be 0.148 in this case. I did not use AUC because it need the model to output the probability, which needs some modification to the EEGNet and rerun the test.</p>
+<h1 id="4-result">4. Result</h1>
+<p>The result shows that the SVM is most sensitive to the amount of training. With more data from the current user, it performs better. The one-way ANOVA that evaluates the influence of training amount on the f1 score also supports this result (p = 0.00). Other classifiers are not sensitive to the training amount.</p>
+<p>However, the plot and the ANOVA show a disagreement about the pretraining. Only the plot of Random Forest indicates that it is sensitive to the pretraining amount. For other classifiers, the ANOVA p-value is very close to 0.00, but there is no clear trend in the plot. In addition, the EEGNet_3 curve is obviously abnormal, which shows a violent variation. Maybe there is some error during the pretraining process.</p>
+<p><img src="/project/eeg-classify/fig5.png"
+	width="1430"
+	height="1078"
+	srcset="/project/eeg-classify/fig5_hu01cb5c5aae3898738ab0f7eaa7697c0d_275565_480x0_resize_box_3.png 480w, /project/eeg-classify/fig5_hu01cb5c5aae3898738ab0f7eaa7697c0d_275565_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="132"
+		data-flex-basis="318px"
+	
+></p>
+<p><em>Figure 5: The f1 score for each classifier is shown in this plot. The x-axis is the training amount, and the different lines represent different pretraining amount.</em></p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th></th>
+<th>Random Forest</th>
+<th>SVM</th>
+<th>LDA</th>
+<th>EEGNet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pretrain</td>
+<td>0.000</td>
+<td>0.001</td>
+<td>0.000</td>
+<td>0.000</td>
+</tr>
+<tr>
+<td>Train</td>
+<td>0.925</td>
+<td>0.000</td>
+<td>0.765</td>
+<td>0.113</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Table 1: the p-value from one-way ANOVA; A lower p-value shows a higher likelihood that the factor causes the change.</em></p>
+<ul>
+<li>
+<p>Random Forest is unaffected with respect to the training amount, but its performance increase with more pretraining data. It can be the result that pretraining data is much more than the training data. Even if it just pretrained with 1 subject&rsquo;s data, it still gets about 5000 observations, because subject 1 has 5000 trials. The model saturates after 10 subjects, about 18000 observations, and the f1 score is mediocre.</p>
+</li>
+<li>
+<p>SVM shows a clear trend that more training data will lead to much better performance. The pretraining does not impact much; the reason can be the 3500 limitations, which makes it cannot fully utilize the pretraining data. With more training data, it has the best performance. SVM is optimal for long term and personal BCI.</p>
+</li>
+<li>
+<p>LDA has the highest performance among all 4 classifiers, and the pretraining and training do not affect its performance. It makes LDA a good choice in the application of P300 BCI in general, if the data is limited.</p>
+</li>
+<li>
+<p>EEGNet is slightly better than the Random Forest, but clearly worse than SVM and LDA. The pretraining does not improve its generalization. Seems like the training data amount has a positive impact, but the statistical test does not support this statement. It is possible that due to my implement and filter design, it overfits the pretraining and training data, since the accuracy is close to 1.00 on those parts.</p>
+</li>
+</ul>
+<h1 id="5-discussion">5. Discussion</h1>
+<p>I was not expected that the most challenging thing is to make LDA and Random Forest fit this dataset before I wrote the code to compare classifiers. Using these two models, I tried many different ways to make them stop classifying every point as negative, such as adjusting the class weight, removing artifacts, only using certain channels, and combining multiple classifiers to let them vote. After weeks of experiments, I accidentally found that the most significant factor is the step between preprocessing and training, which is reshaping the feature vector. The original shape of each time window is (T, C), such that T is the number of time points, and C is the number of channels. In this case, reshape function breaks the temporal structure, leading to a complete mixture in high dimensional space. After changing the shape to (C, T), the model can finally learn the temporal information.</p>
+<p>The result shows that the traditional machine learning methods still have their own advantage in P300 BCI. The LDA and SVM cannot fully utilize the pretraining data and computing power, but they still perform well with a limited amount of data, which is important in real-world EEG applications. EEGNet has the potential to be an ideal model since it is good at capturing temporal and spatial information, and it can be trained incrementally. However, at least in my implementation and this dataset, EEGNet fails to meet my expectation overall.</p>
+<p>It is worth mentioning that classification is just one step in the BCI pipeline, and BCI application is much more than accurate. How to use the classification result, how to collect the data in a comfortable and efficient way, how to make the system robust, and many other aspects need to be considered if a BCI is for users, rather than research only.</p>
+<h1 id="6-reference">6. Reference</h1>
+<ul>
+<li>Congedo, M., Goyat, M., Tarrin, N., Ionescu, G., Varnet, L., Rivet, B., &hellip; &amp; Jutten, C. (2011, September). &quot; Brain Invaders&quot;: a prototype of an open-source P300-based video game working with the OpenViBE platform. In BCI 2011-5th International Brain-Computer Interface Conference (pp. 280-283).</li>
+<li>Duncan-Johnson CC, Donchin E. The time constant in P300 recording. Psychophysiology 1979:16:53-5.</li>
+<li>Korczowski, L., Cederhout, M., Andreev, A., Cattan, G., Rodrigues, P. L. C., Gautheret, V., &amp; Congedo, M. (2019). Brain Invaders calibration-less P300-based BCI with modulation of flash duration Dataset (bi2015a) (Doctoral dissertation, GIPSA-lab).</li>
+<li>Lawhern, V. J., Solon, A. J., Waytowich, N. R., Gordon, S. M., Hung, C. P., &amp; Lance, B. J. (2018). EEGNet: a compact convolutional neural network for EEG-based brain–computer interfaces. Journal of neural engineering, 15(5), 056013.</li>
+<li>Oralhan, Z. (2019). A new paradigm for region-based P300 speller in brain computer interface. Ieee Access, 7, 106618-106627.</li>
+<li>Picton, T. W. (1992). The P300 wave of the human event-related potential. Journal of Clinical Neurophysiology, 9(4), 456–479.</li>
+<li>Ramele, R., Villar, A., Santos, J. (2018). EEG waveform analysis of P300 ERP with applications to brain computer interfaces. Brain Sciences, 8(11), 199.</li>
+</ul>
+<h1 id="7-appendix">7. Appendix</h1>
+<p><img src="/project/eeg-classify/fig6.png"
+	width="1032"
+	height="779"
+	srcset="/project/eeg-classify/fig6_hu3a3edbb572f981d3ec8c1dfd133d5977_1016109_480x0_resize_box_3.png 480w, /project/eeg-classify/fig6_hu3a3edbb572f981d3ec8c1dfd133d5977_1016109_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="132"
+		data-flex-basis="317px"
+	
+></p>
+<p><em>Figure 6: the source of each ICA component</em></p>
+<p><img src="/project/eeg-classify/fig7.png"
+	width="1353"
+	height="776"
+	srcset="/project/eeg-classify/fig7_hu48a8351c3440e3d95eba0b94713db999_399139_480x0_resize_box_3.png 480w, /project/eeg-classify/fig7_hu48a8351c3440e3d95eba0b94713db999_399139_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="174"
+		data-flex-basis="418px"
+	
+>
+<em>Figure 7: ICA components</em></p>
+<p><img src="/project/eeg-classify/fig8.png"
+	width="1430"
+	height="821"
+	srcset="/project/eeg-classify/fig8_huf6d2f0d05a3246d7e9e2cbc3e002d30a_876319_480x0_resize_box_3.png 480w, /project/eeg-classify/fig8_huf6d2f0d05a3246d7e9e2cbc3e002d30a_876319_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="174"
+		data-flex-basis="418px"
+	
+>
+<em>Figure 8: EEG before ICA correction</em></p>
+<p><img src="/project/eeg-classify/fig9.png"
+	width="1430"
+	height="821"
+	srcset="/project/eeg-classify/fig9_hu757c0fec8f102787892b749bb57270b2_909417_480x0_resize_box_3.png 480w, /project/eeg-classify/fig9_hu757c0fec8f102787892b749bb57270b2_909417_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="174"
+		data-flex-basis="418px"
+	
+>
+<em>Figure 9: EEG after ICA correction</em></p>
+<p><img src="/project/eeg-classify/fig10.png"
+	width="1430"
+	height="1078"
+	srcset="/project/eeg-classify/fig10_hu5c8eecd29b2409568044ec0991f34b9b_255507_480x0_resize_box_3.png 480w, /project/eeg-classify/fig10_hu5c8eecd29b2409568044ec0991f34b9b_255507_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="132"
+		data-flex-basis="318px"
+	
+>
+<em>Figure 10: Accuracy for the classifiers. Since the data is imbalanced, this plot is just for reference.</em></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/brain-computer-interface/">brain-computer-interface</a>
+        
+            <a href="/tags/machine-learning/">machine-learning</a>
+        
+            <a href="/tags/cnn/">CNN</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2023 XFious
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.21.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
