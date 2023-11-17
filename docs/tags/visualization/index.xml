@@ -21,7 +21,7 @@
 &lt;/blockquote&gt;
 &lt;p&gt;Online-demo: &lt;a class=&#34;link&#34; href=&#34;https://xiaonanfu-ucsd.github.io/resnet-visualization/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;https://xiaonanfu-ucsd.github.io/resnet-visualization/&lt;/a&gt;&lt;/p&gt;
-&lt;iframe src=&#34;https://xiaonanfu-ucsd.github.io/resnet-visualization/&#34; style=&#34;width: calc(70vw); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
+&lt;iframe src=&#34;https://xiaonanfu-ucsd.github.io/resnet-visualization/&#34; style=&#34;width: calc(100%); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
 &lt;br&gt;
 &lt;hr&gt;
 &lt;br&gt;

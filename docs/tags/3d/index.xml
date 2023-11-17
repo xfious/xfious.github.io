@@ -17,7 +17,7 @@
         <description>&lt;img src="https://example.org/project/verlet-gravity/img.png" alt="Featured image of post Use Verlet Integration to Simulate Gravity" /&gt;&lt;h1 id=&#34;finite-difference-verlet-integration-and-its-application&#34;&gt;Finite Difference, Verlet Integration, and its Application&lt;/h1&gt;
 &lt;p&gt;Online-demo: &lt;a class=&#34;link&#34; href=&#34;https://xiaonanfu-ucsd.github.io/verlet-gravity/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;https://xiaonanfu-ucsd.github.io/verlet-gravity/&lt;/a&gt;&lt;/p&gt;
-&lt;iframe src=&#34;https://xiaonanfu-ucsd.github.io/verlet-gravity/&#34; style=&#34;width: calc(70vw); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
+&lt;iframe src=&#34;https://xiaonanfu-ucsd.github.io/verlet-gravity/&#34; style=&#34;width: calc(100%); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
 &lt;br&gt;
 &lt;br&gt;
 &lt;hr&gt;
