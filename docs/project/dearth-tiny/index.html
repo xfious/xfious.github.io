@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='This experiment is to verify the effectiveness of the various methods from papers.'>
+<title>preliminary experiment for LM distillation and pretraining</title>
+
+<link rel='canonical' href='https://example.org/project/dearth-tiny/'>
+
+<link rel="stylesheet" href="/scss/style.min.189adf11eec5d9cf8bae111a0210e6bdd431cef7e93f94224970c938eb7a7157.css"><meta property='og:title' content='preliminary experiment for LM distillation and pretraining'>
+<meta property='og:description' content='This experiment is to verify the effectiveness of the various methods from papers.'>
+<meta property='og:url' content='https://example.org/project/dearth-tiny/'>
+<meta property='og:site_name' content='XFious'>
+<meta property='og:type' content='article'><meta property='article:section' content='Project' /><meta property='article:tag' content='Transformer' /><meta property='article:tag' content='Language Model' /><meta property='article:tag' content='GPT' /><meta property='article:tag' content='TinyStories' /><meta property='article:published_time' content='2023-11-13T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2023-11-13T00:00:00&#43;00:00'/><meta property='og:image' content='https://example.org/project/dearth-tiny/img.png' />
+<meta name="twitter:title" content="preliminary experiment for LM distillation and pretraining">
+<meta name="twitter:description" content="This experiment is to verify the effectiveness of the various methods from papers."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://example.org/project/dearth-tiny/img.png' />
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu7cb1eebc9f4aa269064878323564022e_247050_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🌙</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">XFious</a></h1>
+            <h2 class="site-description">Xiaonan Fu</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xfious'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonanfu-ucsd'
+                        target="_blank"
+                        title="GitHub-ucsd"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu" style="margin-top: 36px;">
+        
+        
+        
+        <li  class='current' >
+            <a href='/project/' >
+                
+                
+                
+                <span>PROJECT</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/machine-learning/' >
+                
+                
+                
+                <span>MACHINE LEARNING</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/coding/' >
+                
+                
+                
+                <span>CODING</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/method/' >
+                
+                
+                
+                <span>METHOD</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/page/search/' >
+                
+                
+                
+                <span>ABOUT</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/project/dearth-tiny/">
+                <img src="/project/dearth-tiny/img_hu5085bae4096f43e0be5508f02cbe5659_107275_800x0_resize_box_3.png"
+                        srcset="/project/dearth-tiny/img_hu5085bae4096f43e0be5508f02cbe5659_107275_800x0_resize_box_3.png 800w, /project/dearth-tiny/img_hu5085bae4096f43e0be5508f02cbe5659_107275_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="400" 
+                        loading="lazy"
+                        alt="Featured image of post preliminary experiment for LM distillation and pretraining" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/project/" >
+                project
+            </a>
+        
+            <a href="/categories/live-demo/" >
+                live-demo
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/project/dearth-tiny/">preliminary experiment for LM distillation and pretraining</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            This experiment is to verify the effectiveness of the various methods from papers.
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 13, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    4 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="language-model-on-tinystories">Language Model on TinyStories</h1>
+<iframe src="https://xfious-dearth-tiny.hf.space" style="width: calc(70vw); height: calc(100vh - 100px); margin: 0px"></iframe>
+<p>Online demo: <a class="link" href="https://huggingface.co/spaces/XFious/dearth-tiny"  target="_blank" rel="noopener"
+    >https://huggingface.co/spaces/XFious/dearth-tiny</a></p>
+<h1 id="about-this-project">About this project</h1>
+<h2 id="what-is-this-project">What is this project?</h2>
+<ul>
+<li>This is a preliminary experiment for pretraining language model, and using distillation to accelerate training and improve performance. The experiment is to verify the effectiveness of the following method:
+<ul>
+<li>DeepNet (<a class="link" href="https://arxiv.org/pdf/2203.00555.pdf"  target="_blank" rel="noopener"
+    >https://arxiv.org/pdf/2203.00555.pdf</a>)</li>
+<li>Distillation framework, and corresponding loss function (<a class="link" href="https://arxiv.org/pdf/2002.10957.pdf"  target="_blank" rel="noopener"
+    >https://arxiv.org/pdf/2002.10957.pdf</a>)</li>
+<li>New Optimizer Sophia (<a class="link" href="https://arxiv.org/pdf/2305.14342.pdf"  target="_blank" rel="noopener"
+    >https://arxiv.org/pdf/2305.14342.pdf</a>)</li>
+<li>front window and attention window, LM_infinite (<a class="link" href="https://arxiv.org/pdf/2308.16137.pdf"  target="_blank" rel="noopener"
+    >https://arxiv.org/pdf/2308.16137.pdf</a>)</li>
+<li>other hyperparameters of the training process.</li>
+<li>using MSE loss for soft label</li>
+<li>group-query attention (<a class="link" href="https://arxiv.org/pdf/2305.13245.pdf"  target="_blank" rel="noopener"
+    >https://arxiv.org/pdf/2305.13245.pdf</a>)</li>
+<li>computation budget (<a class="link" href="https://arxiv.org/pdf/2203.15556.pdf"  target="_blank" rel="noopener"
+    >https://arxiv.org/pdf/2203.15556.pdf</a>)</li>
+</ul>
+</li>
+<li>Dearth-tiny is a LM trained based on TinyStories. This model can write short stories with children&rsquo;s level vocabulary; it is not used for instruction QA.</li>
+</ul>
+<h2 id="what-is-the-significance-and-purpose-of-this-project">What is the significance and purpose of this project?</h2>
+<ul>
+<li>Obtain smaller models through distillation that can be run on CPU and mobile devices</li>
+<li>Compared with pruning methods like Sheared LLaMA, distillation allows more flexible model structure</li>
+<li>Compared with direct training, distillation may improve the effect and accelerate training</li>
+<li>Make the model deeper and have more layers, improving the effect to a certain extent</li>
+<li>Trying to make the model handle extremely long sequences</li>
+</ul>
+<h2 id="what-is-the-limitation-of-this-project">What is the limitation of this project?</h2>
+<ul>
+<li>Due to the limitation of training data, this model can only generate short stories using very simple words, which means most language is out of distribution.</li>
+<li>The purpose of the TinyStories dataset is to serve as a sanity check, verifying the effect of the model and training process; the scope and knowledge of the data are very limited, so it does not require a large number of parameters to show a good performance.</li>
+</ul>
+<h1 id="the-distillation-and-training-process">The distillation and training process</h1>
+<h2 id="about-the-model-structure">About the model structure</h2>
+<ul>
+<li>DeepNet: Amplify the residual connection so that the gradient of the layer close to the input will not be too small; allow a deeper model structure to improve the effect to a certain extent;</li>
+<li>LM_infinite: using the front attention window to make later tokens can attend to the front token with enough weights, preventing the out-of-distribution problem.</li>
+<li>Mistral: using attention window to solve long sequence problem (<a class="link" href="https://arxiv.org/pdf/2310.06825.pdf"  target="_blank" rel="noopener"
+    >https://arxiv.org/pdf/2310.06825.pdf</a>)</li>
+<li>Adding rotary position embedding to query and key vectors.</li>
+</ul>
+<h2 id="how-to-distill-and-train-the-model">How to distill and train the model</h2>
+<ul>
+<li>One training objective is to imitate the attention map and value, and the other is to imitate the logits.</li>
+<li>Using MSE loss for soft label and comparing logits between teacher and student, because according to the profiler&rsquo;s result, softmax required by KL divergence is very time-consuming.</li>
+<li>Seqence length = 256, batch_size for distillation = 200, batch_size for training = 800</li>
+<li>2k steps for distillation with 300 steps warmup, 2k steps for training.</li>
+<li>Using Sophia optimizer, peak lr = 5e-4, beta1 = 0.9, beta2 = 0.99, weight decay = 0.2.</li>
+</ul>
+<h2 id="what-is-the-error-that-has-been-corrected">What is the error that has been corrected?</h2>
+<ul>
+<li>In the previous project about low-rank LM, the loss function is wrong, because it only checks the logits of the last token, causing a very slow and unstable training process. It is unreasonable to only check the last token&rsquo;s logits, because the model is trained to predict the next token, not the last token, so every output is usable to estimate the loss.</li>
+</ul>
+<p><img src="/project/dearth-tiny/loss-ts100-re2.png"
+	width="977"
+	height="990"
+	srcset="/project/dearth-tiny/loss-ts100-re2_hufd0b3d3930ee9759a967dbdea3dadaaa_55644_480x0_resize_box_3.png 480w, /project/dearth-tiny/loss-ts100-re2_hufd0b3d3930ee9759a967dbdea3dadaaa_55644_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="98"
+		data-flex-basis="236px"
+	
+></p>
+<p><em>Figure 1: shows each loss component. After 2000 steps, loss_soft and loss_mimic are not used in the training process.</em></p>
+<p><img src="/project/dearth-tiny/lr-ts100-re2.png"
+	width="573"
+	height="413"
+	srcset="/project/dearth-tiny/lr-ts100-re2_hu1efa4cf25de4292373e54e67f5efcd5b_22492_480x0_resize_box_3.png 480w, /project/dearth-tiny/lr-ts100-re2_hu1efa4cf25de4292373e54e67f5efcd5b_22492_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="138"
+		data-flex-basis="332px"
+	
+></p>
+<p><em>Figure 2: learning rate for distillation and training.</em></p>
+<hr>
+<h1 id="work-in-progress">Work in progress</h1>
+<h2 id="what-can-be-done-to-improve-the-effect-why-is-the-effect-not-good">What can be done to improve the effect? Why is the effect not good?</h2>
+<ul>
+<li>The current PPL of the student model is 1.7, and the teacher PPL is 0.9.</li>
+<li>Need more training steps</li>
+<li>Need to experiment with more suitable learning rate with the new optimizer</li>
+</ul>
+<h2 id="potential-problems">Potential problems</h2>
+<ul>
+<li>Compared with the teacher model, the student model has fewer parameters. If the student spend too much capacity on fitting the internal structure, it may be difficult to fit the hard label loss (the loss for the next token).</li>
+<li>Whether the distillation process, that is, learning the internal structure, can replace the fact that the model has experienced a large number of tokens; that is to say, is the ability of the large language model derived from the acquisition of attention map, or from the subtle internal representation that must learn from diverse and numerous training data?</li>
+</ul>
+<h2 id="what-is-the-work-in-progress">What is the work in progress?</h2>
+<ul>
+<li>Adjust the learning rate so that the training process can be intervened manually to adjust; avoid interrupting the training.</li>
+<li>Distill 7B into 1B, and then compare it with other 1B models</li>
+<li>Instruction fine-tuning.</li>
+</ul>
+<h2 id="what-is-the-future-work">What is the future work?</h2>
+<ul>
+<li>PPO for alignment.</li>
+<li>Memory-augmented model, adding memory to improve the effect of the model; the memory stored in the database can make the model more controllable and may reduce the illusion caused by the memory stored in the parameters.</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/transformer/">Transformer</a>
+        
+            <a href="/tags/language-model/">Language Model</a>
+        
+            <a href="/tags/gpt/">GPT</a>
+        
+            <a href="/tags/tinystories/">TinyStories</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/project/low-rank-lm/">
+        
+        
+            <div class="article-image">
+                <img src="/project/low-rank-lm/head.95a90211412c6e801e973fb2ba6ed28c_hue00612f30d1ff6864bc6f7151cc442be_91303_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Are Small Language Models Low-rank?"
+                        data-key="low-rank-lm" 
+                        data-hash="md5-lakCEUEsboAelz&#43;yum7SjA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Are Small Language Models Low-rank?</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2023 XFious
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.21.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>TinyStories on XFious</title>
+        <link>https://example.org/tags/tinystories/</link>
+        <description>Recent content in TinyStories on XFious</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <managingEditor>xfious@outlook.com (XFious)</managingEditor>
+        <webMaster>xfious@outlook.com (XFious)</webMaster>
+        <lastBuildDate>Mon, 13 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/tags/tinystories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>preliminary experiment for LM distillation and pretraining</title>
+        <link>https://example.org/project/dearth-tiny/</link>
+        <pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/project/dearth-tiny/</guid>
+        <description>&lt;img src="https://example.org/project/dearth-tiny/img.png" alt="Featured image of post preliminary experiment for LM distillation and pretraining" /&gt;&lt;h1 id=&#34;language-model-on-tinystories&#34;&gt;Language Model on TinyStories&lt;/h1&gt;
+&lt;iframe src=&#34;https://xfious-dearth-tiny.hf.space&#34; style=&#34;width: calc(70vw); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
+&lt;p&gt;Online demo: &lt;a class=&#34;link&#34; href=&#34;https://huggingface.co/spaces/XFious/dearth-tiny&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://huggingface.co/spaces/XFious/dearth-tiny&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;about-this-project&#34;&gt;About this project&lt;/h1&gt;
+&lt;h2 id=&#34;what-is-this-project&#34;&gt;What is this project?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;This is a preliminary experiment for pretraining language model, and using distillation to accelerate training and improve performance. The experiment is to verify the effectiveness of the following method:
+&lt;ul&gt;
+&lt;li&gt;DeepNet (&lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/pdf/2203.00555.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/pdf/2203.00555.pdf&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Distillation framework, and corresponding loss function (&lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/pdf/2002.10957.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/pdf/2002.10957.pdf&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;New Optimizer Sophia (&lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/pdf/2305.14342.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/pdf/2305.14342.pdf&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;front window and attention window, LM_infinite (&lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/pdf/2308.16137.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/pdf/2308.16137.pdf&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;other hyperparameters of the training process.&lt;/li&gt;
+&lt;li&gt;using MSE loss for soft label&lt;/li&gt;
+&lt;li&gt;group-query attention (&lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/pdf/2305.13245.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/pdf/2305.13245.pdf&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;computation budget (&lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/pdf/2203.15556.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/pdf/2203.15556.pdf&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Dearth-tiny is a LM trained based on TinyStories. This model can write short stories with children&amp;rsquo;s level vocabulary; it is not used for instruction QA.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;what-is-the-significance-and-purpose-of-this-project&#34;&gt;What is the significance and purpose of this project?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Obtain smaller models through distillation that can be run on CPU and mobile devices&lt;/li&gt;
+&lt;li&gt;Compared with pruning methods like Sheared LLaMA, distillation allows more flexible model structure&lt;/li&gt;
+&lt;li&gt;Compared with direct training, distillation may improve the effect and accelerate training&lt;/li&gt;
+&lt;li&gt;Make the model deeper and have more layers, improving the effect to a certain extent&lt;/li&gt;
+&lt;li&gt;Trying to make the model handle extremely long sequences&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;what-is-the-limitation-of-this-project&#34;&gt;What is the limitation of this project?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Due to the limitation of training data, this model can only generate short stories using very simple words, which means most language is out of distribution.&lt;/li&gt;
+&lt;li&gt;The purpose of the TinyStories dataset is to serve as a sanity check, verifying the effect of the model and training process; the scope and knowledge of the data are very limited, so it does not require a large number of parameters to show a good performance.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;the-distillation-and-training-process&#34;&gt;The distillation and training process&lt;/h1&gt;
+&lt;h2 id=&#34;about-the-model-structure&#34;&gt;About the model structure&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;DeepNet: Amplify the residual connection so that the gradient of the layer close to the input will not be too small; allow a deeper model structure to improve the effect to a certain extent;&lt;/li&gt;
+&lt;li&gt;LM_infinite: using the front attention window to make later tokens can attend to the front token with enough weights, preventing the out-of-distribution problem.&lt;/li&gt;
+&lt;li&gt;Mistral: using attention window to solve long sequence problem (&lt;a class=&#34;link&#34; href=&#34;https://arxiv.org/pdf/2310.06825.pdf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://arxiv.org/pdf/2310.06825.pdf&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Adding rotary position embedding to query and key vectors.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;how-to-distill-and-train-the-model&#34;&gt;How to distill and train the model&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;One training objective is to imitate the attention map and value, and the other is to imitate the logits.&lt;/li&gt;
+&lt;li&gt;Using MSE loss for soft label and comparing logits between teacher and student, because according to the profiler&amp;rsquo;s result, softmax required by KL divergence is very time-consuming.&lt;/li&gt;
+&lt;li&gt;Seqence length = 256, batch_size for distillation = 200, batch_size for training = 800&lt;/li&gt;
+&lt;li&gt;2k steps for distillation with 300 steps warmup, 2k steps for training.&lt;/li&gt;
+&lt;li&gt;Using Sophia optimizer, peak lr = 5e-4, beta1 = 0.9, beta2 = 0.99, weight decay = 0.2.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;what-is-the-error-that-has-been-corrected&#34;&gt;What is the error that has been corrected?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;In the previous project about low-rank LM, the loss function is wrong, because it only checks the logits of the last token, causing a very slow and unstable training process. It is unreasonable to only check the last token&amp;rsquo;s logits, because the model is trained to predict the next token, not the last token, so every output is usable to estimate the loss.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/dearth-tiny/loss-ts100-re2.png&#34;
+	width=&#34;977&#34;
+	height=&#34;990&#34;
+	srcset=&#34;https://example.org/project/dearth-tiny/loss-ts100-re2_hufd0b3d3930ee9759a967dbdea3dadaaa_55644_480x0_resize_box_3.png 480w, https://example.org/project/dearth-tiny/loss-ts100-re2_hufd0b3d3930ee9759a967dbdea3dadaaa_55644_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;98&#34;
+		data-flex-basis=&#34;236px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 1: shows each loss component. After 2000 steps, loss_soft and loss_mimic are not used in the training process.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://example.org/project/dearth-tiny/lr-ts100-re2.png&#34;
+	width=&#34;573&#34;
+	height=&#34;413&#34;
+	srcset=&#34;https://example.org/project/dearth-tiny/lr-ts100-re2_hu1efa4cf25de4292373e54e67f5efcd5b_22492_480x0_resize_box_3.png 480w, https://example.org/project/dearth-tiny/lr-ts100-re2_hu1efa4cf25de4292373e54e67f5efcd5b_22492_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;138&#34;
+		data-flex-basis=&#34;332px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 2: learning rate for distillation and training.&lt;/em&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;work-in-progress&#34;&gt;Work in progress&lt;/h1&gt;
+&lt;h2 id=&#34;what-can-be-done-to-improve-the-effect-why-is-the-effect-not-good&#34;&gt;What can be done to improve the effect? Why is the effect not good?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The current PPL of the student model is 1.7, and the teacher PPL is 0.9.&lt;/li&gt;
+&lt;li&gt;Need more training steps&lt;/li&gt;
+&lt;li&gt;Need to experiment with more suitable learning rate with the new optimizer&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;potential-problems&#34;&gt;Potential problems&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Compared with the teacher model, the student model has fewer parameters. If the student spend too much capacity on fitting the internal structure, it may be difficult to fit the hard label loss (the loss for the next token).&lt;/li&gt;
+&lt;li&gt;Whether the distillation process, that is, learning the internal structure, can replace the fact that the model has experienced a large number of tokens; that is to say, is the ability of the large language model derived from the acquisition of attention map, or from the subtle internal representation that must learn from diverse and numerous training data?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;what-is-the-work-in-progress&#34;&gt;What is the work in progress?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Adjust the learning rate so that the training process can be intervened manually to adjust; avoid interrupting the training.&lt;/li&gt;
+&lt;li&gt;Distill 7B into 1B, and then compare it with other 1B models&lt;/li&gt;
+&lt;li&gt;Instruction fine-tuning.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;what-is-the-future-work&#34;&gt;What is the future work?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;PPO for alignment.&lt;/li&gt;
+&lt;li&gt;Memory-augmented model, adding memory to improve the effect of the model; the memory stored in the database can make the model more controllable and may reduce the illusion caused by the memory stored in the parameters.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

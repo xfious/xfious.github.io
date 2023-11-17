@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Tags on XFious</title>
+        <link>https://example.org/tags/</link>
+        <description>Recent content in Tags on XFious</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <managingEditor>xfious@outlook.com (XFious)</managingEditor>
+        <webMaster>xfious@outlook.com (XFious)</webMaster>
+        <lastBuildDate>Mon, 13 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>GPT</title>
+        <link>https://example.org/tags/gpt/</link>
+        <pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/gpt/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Language Model</title>
+        <link>https://example.org/tags/language-model/</link>
+        <pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/language-model/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>TinyStories</title>
+        <link>https://example.org/tags/tinystories/</link>
+        <pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/tinystories/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Transformer</title>
+        <link>https://example.org/tags/transformer/</link>
+        <pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/transformer/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>CNN</title>
+        <link>https://example.org/tags/cnn/</link>
+        <pubDate>Sun, 26 Mar 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/cnn/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>ResNet</title>
+        <link>https://example.org/tags/resnet/</link>
+        <pubDate>Sun, 26 Mar 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/resnet/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Visualization</title>
+        <link>https://example.org/tags/visualization/</link>
+        <pubDate>Sun, 26 Mar 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/visualization/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>brain-computer-interface</title>
+        <link>https://example.org/tags/brain-computer-interface/</link>
+        <pubDate>Wed, 22 Mar 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/brain-computer-interface/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>machine-learning</title>
+        <link>https://example.org/tags/machine-learning/</link>
+        <pubDate>Wed, 22 Mar 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/machine-learning/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>3D</title>
+        <link>https://example.org/tags/3d/</link>
+        <pubDate>Mon, 25 Jul 2022 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/3d/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>differential equation</title>
+        <link>https://example.org/tags/differential-equation/</link>
+        <pubDate>Mon, 25 Jul 2022 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/differential-equation/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>javascript</title>
+        <link>https://example.org/tags/javascript/</link>
+        <pubDate>Mon, 25 Jul 2022 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/javascript/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>math</title>
+        <link>https://example.org/tags/math/</link>
+        <pubDate>Mon, 25 Jul 2022 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/tags/math/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>
