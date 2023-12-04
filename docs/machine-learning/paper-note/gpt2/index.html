@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='A general purpose training procedure that can be applied to a variety of NLP tasks in a zero-shot manner.'>
+<title>[Paper Note] Language Models are Unsupervised Multitask Learners</title>
+
+<link rel='canonical' href='https://example.org/machine-learning/paper-note/gpt2/'>
+
+<link rel="stylesheet" href="/scss/style.min.189adf11eec5d9cf8bae111a0210e6bdd431cef7e93f94224970c938eb7a7157.css"><meta property='og:title' content='[Paper Note] Language Models are Unsupervised Multitask Learners'>
+<meta property='og:description' content='A general purpose training procedure that can be applied to a variety of NLP tasks in a zero-shot manner.'>
+<meta property='og:url' content='https://example.org/machine-learning/paper-note/gpt2/'>
+<meta property='og:site_name' content='XFious'>
+<meta property='og:type' content='article'><meta property='article:section' content='Machine-Learning' /><meta property='article:tag' content='Transformer' /><meta property='article:tag' content='Language Model' /><meta property='article:tag' content='GPT' /><meta property='article:tag' content='paper-note' /><meta property='article:published_time' content='2023-11-24T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2023-11-24T00:00:00&#43;00:00'/><meta property='og:image' content='https://example.org/machine-learning/paper-note/gpt2/gpt2-size.png' />
+<meta name="twitter:title" content="[Paper Note] Language Models are Unsupervised Multitask Learners">
+<meta name="twitter:description" content="A general purpose training procedure that can be applied to a variety of NLP tasks in a zero-shot manner."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://example.org/machine-learning/paper-note/gpt2/gpt2-size.png' />
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu7cb1eebc9f4aa269064878323564022e_247050_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🌙</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">XFious</a></h1>
+            <h2 class="site-description">Xiaonan Fu</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xfious'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://github.com/xiaonanfu-ucsd'
+                        target="_blank"
+                        title="GitHub-ucsd"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu" style="margin-top: 36px;">
+        
+        
+        
+        <li >
+            <a href='/project/' >
+                
+                
+                
+                <span>PROJECT</span>
+            </a>
+        </li>
+        
+        
+        <li  class='current' >
+            <a href='/machine-learning/' >
+                
+                
+                
+                <span>MACHINE LEARNING</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/coding/' >
+                
+                
+                
+                <span>CODING</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/method/' >
+                
+                
+                
+                <span>METHOD</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/page/search/' >
+                
+                
+                
+                <span>ABOUT</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/machine-learning/paper-note/gpt2/">
+                <img src="/machine-learning/paper-note/gpt2/gpt2-size_hu2a712fa5b1f94dd6df0ed28b1e442b10_139988_800x0_resize_box_3.png"
+                        srcset="/machine-learning/paper-note/gpt2/gpt2-size_hu2a712fa5b1f94dd6df0ed28b1e442b10_139988_800x0_resize_box_3.png 800w, /machine-learning/paper-note/gpt2/gpt2-size_hu2a712fa5b1f94dd6df0ed28b1e442b10_139988_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="379" 
+                        loading="lazy"
+                        alt="Featured image of post [Paper Note] Language Models are Unsupervised Multitask Learners" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/paper-note/" >
+                paper-note
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/machine-learning/paper-note/gpt2/">[Paper Note] Language Models are Unsupervised Multitask Learners</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            A general purpose training procedure that can be applied to a variety of NLP tasks in a zero-shot manner.
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 24, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    11 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="key-insights">Key Insights</h1>
+<ul>
+<li>This paper presents a general purpose training procedure that can be applied to a variety of NLP tasks, using task instructions and task input as conditioning factors.</li>
+<li>A model trained with a massive, diverse, and unsupervised dataset can handle many tasks in a zero-shot manner and typically outperforms SOTA task-specific models.</li>
+</ul>
+<h2 id="problems-of-previous-methods">Problems of Previous Methods</h2>
+<ul>
+<li>Heavily supervised methods require large amounts of labeled data; however, some tasks lack high-quality labeled data or a sufficient volume of it.</li>
+<li>Previously, different training objectives needed to be formulated for each task.</li>
+<li>As training was specific to a certain task and narrow dataset, the model had limited generalization and transfer capabilities.</li>
+</ul>
+<h2 id="advantages-of-this-method">Advantages of This Method</h2>
+<ul>
+<li>The model utilizes self-supervised learning, eliminating the need for labeled data.</li>
+<li>The training procedure and objective are versatile, applicable to both pre-training and downstream tasks.</li>
+<li>It can handle many tasks in a zero-shot approach.</li>
+<li>No changes to the model&rsquo;s architecture are required.</li>
+</ul>
+<h1 id="approachcore-idea">Approach/Core Idea</h1>
+<ul>
+<li>This paper treats language modeling as a conditional generation problem. It takes advantage of language&rsquo;s inherent sequential order: subsequent tokens are conditioned on previous ones. The goal is to maximize the sequence&rsquo;s probability.</li>
+<li>$P(x) = \prod_{i=1}^n P(x_i|x_{&lt;i})$</li>
+<li>Text generation is conditioned on the task instruction and task input, both presented in text format.</li>
+<li>The training corpus must be diverse enough to encompass language distribution and large enough to provide sufficient training data.</li>
+</ul>
+<h1 id="method">Method</h1>
+<h2 id="about-input">About Input</h2>
+<ul>
+<li>The necessary corpus characteristics include:
+<ul>
+<li>Diversity: The corpus should not be limited to just dialogues, news, or novels.</li>
+<li>Logical coherence: The text should reflect the underlying rules of the language. Common crawl data has too much noise prior to filtering.</li>
+<li>Volume and ease of collection: The corpus should be both extensive and easily collectable.</li>
+</ul>
+</li>
+<li>WebText: This paper uses links in Reddit as a data source. As these links are user-selected, they offer high quality at a low cost.</li>
+<li>Wikipedia is kept separate to avoid duplication.</li>
+</ul>
+<h2 id="encoding-strategy-byte-pair-encoding-bpe">Encoding Strategy: Byte Pair Encoding (BPE)</h2>
+<ul>
+<li>What is BPE:
+<ul>
+<li>To establish a vocabulary table for tokenization, the BPE algorithm treats text as a byte sequence and merges byte sub-sequences based on frequency.</li>
+</ul>
+</li>
+<li>Advantages of BPE:
+<ul>
+<li>It can encompass all strings, encompassing unknown and artificial words.</li>
+<li>It doesn&rsquo;t require lossy preprocessing like casting all words to lowercase.</li>
+<li>This method strikes a balance between vocabulary size and word fragmentation. If Unicode isn&rsquo;t broken down, the vocabulary size becomes excessively large due to Unicode&rsquo;s vast range. If only 256 bytes are used to form any string without merging them into vocabulary, many semantics embedded in words will be lost, significantly increasing learning difficulty.</li>
+</ul>
+</li>
+<li>Problem with naive BPE:
+<ul>
+<li>It merges too many variants of common words like &ldquo;dog,&rdquo; &ldquo;dogs,&rdquo; &ldquo;dog. dog!&rdquo; and &ldquo;dog?&rdquo;</li>
+<li>This approach wastes vocabulary space and model capacity.</li>
+</ul>
+</li>
+<li>The solution involves categorizing strings into different types. For instance, punctuation can be separated from words. Strings cannot be merged across different categories unless it&rsquo;s a space, which improves compression efficiency.</li>
+</ul>
+<h2 id="model">Model</h2>
+<ul>
+<li>A decoder-only transformer serves as the backbone.</li>
+<li>Pre-norm residual blocks are employed.</li>
+<li>The weights in the transformer block are initialized with 1/sqrt(N), where N is the number of layers.</li>
+</ul>
+<h2 id="training-process-and-loss-function">Training Process and Loss Function</h2>
+<ul>
+<li>The learning rate is tuned using 5% of the WebText dataset.</li>
+<li>Four models are trained with a geometrically increasing number of parameters.</li>
+<li>Sequence length (seqlen) is set to 1024.</li>
+<li>Batch size is set to 512.</li>
+<li>Loss function: $L = \sum_{i=1}^n \frac{cross_entropy(p_i, x_i)}{seqlen}$
+<ul>
+<li>Here, p represents the probability of the predicted token, and x denotes the ground truth token.</li>
+<li>Spanning from the first to the last token, the loss is computed as the average cross entropy between the predicted token and ground truth token.</li>
+</ul>
+</li>
+</ul>
+<h2 id="metrics-and-evaluation">Metrics and Evaluation</h2>
+<ul>
+<li>Perplexity (PPL): Lower values are better. PPL is calculated as $PPL = \exp(L)$</li>
+<li>Bits per byte (BPB): This measures the model&rsquo;s compression efficiency. Lower values are better. BPB is calculated as $BPB = \frac{L}{log(2)}$</li>
+<li>Bits per character (BPC): Lower values are preferable.</li>
+<li>Accuracy (ACC): Higher values are better. This metric is used for multiple-choice tasks.</li>
+</ul>
+<h1 id="results-and-findings">Results and Findings</h1>
+<ul>
+<li>The model can handle many tasks across different domains in a zero-shot manner, demonstrating considerable improvement on tasks with small datasets.</li>
+<li>The model performs reliably on noisy data and out-of-distribution data.</li>
+</ul>
+<h2 id="childrens-book-test">Children’s Book Test</h2>
+<ul>
+<li>This dataset tests the model&rsquo;s ability to discern the missing word with a context of 20 sentences provided for each question. The model should capture the language&rsquo;s long-term dependencies.</li>
+<li>Even the smallest model surpasses the state-of-the-art (SOTA).</li>
+</ul>
+<h2 id="lambada">LAMBADA</h2>
+<ul>
+<li>The task involves predicting the last word of a sentence. For humans, approximately 50 words are typically needed to predict the last word.</li>
+<li>The models outperform the SOTA in terms of perplexity (PPL).</li>
+<li>For incorrect predictions, most predictions are valid continuations of the sentence but not valid final words. This suggests that the models are not specialized for this task and do not know they should predict the sentence&rsquo;s last word.</li>
+</ul>
+<h2 id="coqa">CoQA</h2>
+<ul>
+<li>This task tests reading comprehension, and the model needs to understand the conversation history because it includes questions like &ldquo;why&rdquo;.</li>
+<li>The model surpasses the SOTA without fine-tuning.</li>
+<li>Problem and finding: The model often uses simple retrieval-based heuristics, such as directly copying a name from the context to answer a &ldquo;who&rdquo; question.</li>
+</ul>
+<h2 id="summarization">Summarization</h2>
+<ul>
+<li>The prompt &ldquo;TL;DR:&rdquo; is used to induce summarization.</li>
+<li>The performance falls short of classic neural baselines.</li>
+<li>Problem and finding:
+<ul>
+<li>Capturing long-distance dependencies is challenging. The model tends to summarize only the most recent sentences.</li>
+<li>It makes mistakes on details, such as how many cars were involved in a crash.</li>
+</ul>
+</li>
+</ul>
+<h2 id="translation">Translation</h2>
+<ul>
+<li>Although English predominates in the training corpus, the model shows limited ability to understand and translate French. The volume of French data is 500 times smaller than typical monolingual translation datasets.</li>
+<li>The overall performance significantly trails behind SOTA.</li>
+</ul>
+<h2 id="question-answering">Question Answering</h2>
+<ul>
+<li>Factoid questions were used to assess and quantify how much knowledge has been learned by the model.</li>
+<li>Model size is crucial for performance.</li>
+<li>Compared with an open domain question answering system that uses a retrieval-based method, the largest GPT2 performs significantly worse.</li>
+</ul>
+<h1 id="inspiration-and-derivatives-from-this-paper">Inspiration and Derivatives from This Paper</h1>
+<h2 id="distribution-of-language">Distribution of Language</h2>
+<p>An effective language model should be capable of learning the inherent rules of language, as these rules determine the distribution of language. By evaluating what factors influence language and whether these factors can be learned easily, we can identify the model&rsquo;s weaknesses and areas for improvement.</p>
+<p>Language, an outcome of thought, conceptualizes human senses and cognition, serving as a medium for communication and a vehicle for thought. It can also be viewed as an agent&rsquo;s reaction to its environment, functioning as an explicit symbol for conveying messages or abstracting entities to facilitate logical reasoning. However, since language compresses information and cannot fully represent its referent, it cannot fully reflect the process of thought but rather serves as an output of this process.</p>
+<p>From a text-generation perspective, each subsequent token is conditioned by preceding text. The relationship between the last token and preceding text can be syntactical or semantic. Among these, semantic relationships are the most crucial and challenging to learn. Semantics originate from the agent&rsquo;s cognitive activity and are influenced by various factors that may be hard to infer from preceding text. By examining these factors and tracking their influence on cognition, we can identify which elements are difficult for models to predict, thereby pinpointing the model&rsquo;s weaknesses and potential areas for enhancement.</p>
+<p>Factors that are challenging to predict typically exhibit the following characteristics:</p>
+<ul>
+<li>Strong associations with known conditions (preceding text), such that a high-probability answer can be inferred from previous context. For instance, common sense is easily predictable; if during text generation the given statement is &ldquo;The sky is&hellip;&rdquo;, we can confidently predict &ldquo;blue&rdquo; as the next word. However, personal experiences are unpredictable; if given &ldquo;When I was a child&hellip;&rdquo;, predicting the next word becomes challenging due to the unique nature of individual experiences.</li>
+<li>For unknown factors not directly related to previous context but indirectly influencing future text through the state of the agent, predictability becomes challenging.</li>
+</ul>
+<p>Factors that might influence current semantics include:</p>
+<ul>
+<li>Preceding text: This factor is easy for a well-trained model to predict as the meaning can typically be inferred from the context.</li>
+<li>Environment: This represents the agent&rsquo;s physical and social surroundings, which might not be explicitly stated in the text.
+<ul>
+<li>Context: This can usually be inferred to a large degree from preceding text and can significantly influence subsequent text. However, it may not always be fully embodied in preceding text.</li>
+<li>Agent&rsquo;s environment: Very little about this can be inferred from preceding text. Although it might not directly impact preceding text, it indirectly influences future text by affecting the agent&rsquo;s state.</li>
+</ul>
+</li>
+<li>Memory
+<ul>
+<li>Common knowledge and cultural background: These are easily predictable; given preceding context, we can confidently infer what common knowledge is used. This directly impacts future text in a similar manner as preceding context.</li>
+<li>Personal experiences: These are hard to predict unless explicitly mentioned in preceding text. Like preceding context, personal experiences directly influence future text.</li>
+<li>Domain knowledge: This is relatively easy to predict by determining a field or domain of knowledge through the context and preceding text. The challenge here lies in small-scale models that do not have enough capacity to accommodate this low-frequency knowledge.</li>
+</ul>
+</li>
+<li>Inner state refers to intermediate products of the cognitive process, rather than the preceding text itself. This does not aim to describe the entire cognitive process but rather views it as a black box, assuming intermediate outputs for better understanding of the model.
+<ul>
+<li>Perception and understanding of environment: These are hard to infer but more direct than environmental factors.</li>
+<li>Thoughts and understanding of preceding text: These are relatively easier to infer since text is an output of thought. The only challenging part is predicting a complete thought or cognitive process; however, they significantly influence future text.</li>
+<li>Motivation: This is relatively hard to predict. Although most people will have similar motivations under similar circumstances, the environment is unpredictable, making motivations equally hard to predict. Motivations indirectly influence future text by affecting thoughts and emotions.</li>
+<li>Emotions: These are usually reflected in text and thus easier to infer; they directly influence future text quite significantly.</li>
+</ul>
+</li>
+</ul>
+<p>This analysis indicates that even though large language models display impressive language comprehension abilities, there are still factors difficult to infer from preceding text. By providing additional information, we could potentially enhance the model&rsquo;s understanding of language, particularly the underlying generation process, thereby improving its overall performance.</p>
+<h2 id="why-does-this-training-procedure-work">Why does this training procedure work?</h2>
+<p>A key advantage of this method is that for each token, the input&rsquo;s distribution is similar; this means that any substring within a piece of text, designated as $p(x_i, x_{&lt;i})$, falls within the training distribution. Although training is conducted in parallel, attention masking ensures that the model only sees preceding tokens and not future ones, thereby aligning the distributions during the training and inference phases.</p>
+<p>A sufficiently challenging objective is also crucial as it compels the model to learn the intrinsic rules influencing language distribution. If the training data covers a wide range, the model can&rsquo;t merely overfit a subset of data through shortcuts; instead, it must predict all data by deciphering these inherent rules, thereby encompassing a vast body of knowledge. However, since the model can only indirectly learn about inner states, its understanding cannot fully represent cognitive states, resulting in limited logical and inferential capabilities. To render text more regular, the content should ideally encompass comprehensive information; for reference on this aspect, we can refer back to the analysis on language distribution. Despite its challenging nature, this objective is achievable by leveraging Transformers&rsquo; capability to capture long-distance dependencies, allowing model convergence.</p>
+<h2 id="why-the-model-can-zero-shot-many-tasks">Why the model can zero-shot many tasks?</h2>
+<p>Zero-shot refers to a model’s ability to perform reasonably well on a task without having been specifically trained for it. The objective of this model is to predict subsequent content based on preceding text, thereby creating a unified prediction format. This format can effectively guide the model&rsquo;s behavior through prompts, harmonizing the way context and tasks are conditioned. Given sufficient conditions, the model can understand the task at hand. The model&rsquo;s ability to not only comprehend tasks but also accomplish them stems from its understanding of the underlying rules of language. Essentially, it learns these deeper determinants of language distribution from extensive corpora; viewed from this deeper level, downstream tasks do not exceed the scope of the training distribution.</p>
+<h2 id="why-has-this-level-of-intelligence-emerged-in-natural-language-modalities-while-video-based-auto-regressive-models-havent-reached-this-level-yet">Why has this level of intelligence emerged in natural language modalities, while video-based auto-regressive models haven&rsquo;t reached this level yet?</h2>
+<p>Language is a product of the thought process, serving as a vehicle for thought and a means of expressing dense semantics. Therefore, it is closer to human-understood intelligence compared to imagery. For video-based auto-regressive models, learning the laws of the world from videos and gaining an understanding of these global change patterns through a similar self-supervised approach is a more challenging task. Language inherently sets a context; even scattered text on the internet can construct context to some extent, although video can also achieve this.</p>
+<p>Finally, from a hardware resource perspective, language has high information density; a small amount of text can convey substantial information. In contrast, imagery requires numerous pixels to express comparable information, making the data throughput requirements for language lower than visual modalities.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/transformer/">Transformer</a>
+        
+            <a href="/tags/language-model/">Language Model</a>
+        
+            <a href="/tags/gpt/">GPT</a>
+        
+            <a href="/tags/paper-note/">paper-note</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/project/dearth-tiny/">
+        
+        
+            <div class="article-image">
+                <img src="/project/dearth-tiny/img.fca20233cc86027dc762c5898eb01836_hu5085bae4096f43e0be5508f02cbe5659_107275_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post preliminary experiment for LLM distillation and pretraining"
+                        data-key="dearth-tiny" 
+                        data-hash="md5-/KICM8yGAn3HYsWJjrAYNg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">preliminary experiment for LLM distillation and pretraining</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/project/low-rank-lm/">
+        
+        
+            <div class="article-image">
+                <img src="/project/low-rank-lm/head.95a90211412c6e801e973fb2ba6ed28c_hue00612f30d1ff6864bc6f7151cc442be_91303_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy"
+                        alt="Featured image of post Are Small Language Models Low-rank?"
+                        data-key="low-rank-lm" 
+                        data-hash="md5-lakCEUEsboAelz&#43;yum7SjA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Are Small Language Models Low-rank?</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2023 XFious
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.21.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

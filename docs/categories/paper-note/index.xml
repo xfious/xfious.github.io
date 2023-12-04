@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>PAPER NOTE on XFious</title>
-        <link>https://example.org/machine-learning/paper-note/</link>
-        <description>Recent content in PAPER NOTE on XFious</description>
+        <title>paper-note on XFious</title>
+        <link>https://example.org/categories/paper-note/</link>
+        <description>Recent content in paper-note on XFious</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <managingEditor>xfious@outlook.com (XFious)</managingEditor>
         <webMaster>xfious@outlook.com (XFious)</webMaster>
-        <lastBuildDate>Sun, 06 Mar 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/machine-learning/paper-note/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 24 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/categories/paper-note/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>[Paper Note] Language Models are Unsupervised Multitask Learners</title>
         <link>https://example.org/machine-learning/paper-note/gpt2/</link>
         <pubDate>Fri, 24 Nov 2023 00:00:00 +0000</pubDate>

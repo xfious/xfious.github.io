@@ -8,7 +8,15 @@
         <language>en-us</language>
         <managingEditor>xfious@outlook.com (XFious)</managingEditor>
         <webMaster>xfious@outlook.com (XFious)</webMaster>
-        <lastBuildDate>Mon, 13 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 24 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>paper-note</title>
+        <link>https://example.org/categories/paper-note/</link>
+        <pubDate>Fri, 24 Nov 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/categories/paper-note/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>live-demo</title>
         <link>https://example.org/categories/live-demo/</link>
         <pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate>

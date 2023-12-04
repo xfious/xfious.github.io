@@ -8,13 +8,195 @@
         <language>en-us</language>
         <managingEditor>xfious@outlook.com (XFious)</managingEditor>
         <webMaster>xfious@outlook.com (XFious)</webMaster>
-        <lastBuildDate>Mon, 13 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/tags/language-model/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>preliminary experiment for distillation and pretraining</title>
+        <lastBuildDate>Fri, 24 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/tags/language-model/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>[Paper Note] Language Models are Unsupervised Multitask Learners</title>
+        <link>https://example.org/machine-learning/paper-note/gpt2/</link>
+        <pubDate>Fri, 24 Nov 2023 00:00:00 +0000</pubDate>
+        <author>xfious@outlook.com (XFious)</author>
+        <guid>https://example.org/machine-learning/paper-note/gpt2/</guid>
+        <description>&lt;img src="https://example.org/machine-learning/paper-note/gpt2/gpt2-size.png" alt="Featured image of post [Paper Note] Language Models are Unsupervised Multitask Learners" /&gt;&lt;h1 id=&#34;key-insights&#34;&gt;Key Insights&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;This paper presents a general purpose training procedure that can be applied to a variety of NLP tasks, using task instructions and task input as conditioning factors.&lt;/li&gt;
+&lt;li&gt;A model trained with a massive, diverse, and unsupervised dataset can handle many tasks in a zero-shot manner and typically outperforms SOTA task-specific models.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;problems-of-previous-methods&#34;&gt;Problems of Previous Methods&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Heavily supervised methods require large amounts of labeled data; however, some tasks lack high-quality labeled data or a sufficient volume of it.&lt;/li&gt;
+&lt;li&gt;Previously, different training objectives needed to be formulated for each task.&lt;/li&gt;
+&lt;li&gt;As training was specific to a certain task and narrow dataset, the model had limited generalization and transfer capabilities.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;advantages-of-this-method&#34;&gt;Advantages of This Method&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The model utilizes self-supervised learning, eliminating the need for labeled data.&lt;/li&gt;
+&lt;li&gt;The training procedure and objective are versatile, applicable to both pre-training and downstream tasks.&lt;/li&gt;
+&lt;li&gt;It can handle many tasks in a zero-shot approach.&lt;/li&gt;
+&lt;li&gt;No changes to the model&amp;rsquo;s architecture are required.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;approachcore-idea&#34;&gt;Approach/Core Idea&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;This paper treats language modeling as a conditional generation problem. It takes advantage of language&amp;rsquo;s inherent sequential order: subsequent tokens are conditioned on previous ones. The goal is to maximize the sequence&amp;rsquo;s probability.&lt;/li&gt;
+&lt;li&gt;$P(x) = \prod_{i=1}^n P(x_i|x_{&amp;lt;i})$&lt;/li&gt;
+&lt;li&gt;Text generation is conditioned on the task instruction and task input, both presented in text format.&lt;/li&gt;
+&lt;li&gt;The training corpus must be diverse enough to encompass language distribution and large enough to provide sufficient training data.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;method&#34;&gt;Method&lt;/h1&gt;
+&lt;h2 id=&#34;about-input&#34;&gt;About Input&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The necessary corpus characteristics include:
+&lt;ul&gt;
+&lt;li&gt;Diversity: The corpus should not be limited to just dialogues, news, or novels.&lt;/li&gt;
+&lt;li&gt;Logical coherence: The text should reflect the underlying rules of the language. Common crawl data has too much noise prior to filtering.&lt;/li&gt;
+&lt;li&gt;Volume and ease of collection: The corpus should be both extensive and easily collectable.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;WebText: This paper uses links in Reddit as a data source. As these links are user-selected, they offer high quality at a low cost.&lt;/li&gt;
+&lt;li&gt;Wikipedia is kept separate to avoid duplication.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;encoding-strategy-byte-pair-encoding-bpe&#34;&gt;Encoding Strategy: Byte Pair Encoding (BPE)&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;What is BPE:
+&lt;ul&gt;
+&lt;li&gt;To establish a vocabulary table for tokenization, the BPE algorithm treats text as a byte sequence and merges byte sub-sequences based on frequency.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Advantages of BPE:
+&lt;ul&gt;
+&lt;li&gt;It can encompass all strings, encompassing unknown and artificial words.&lt;/li&gt;
+&lt;li&gt;It doesn&amp;rsquo;t require lossy preprocessing like casting all words to lowercase.&lt;/li&gt;
+&lt;li&gt;This method strikes a balance between vocabulary size and word fragmentation. If Unicode isn&amp;rsquo;t broken down, the vocabulary size becomes excessively large due to Unicode&amp;rsquo;s vast range. If only 256 bytes are used to form any string without merging them into vocabulary, many semantics embedded in words will be lost, significantly increasing learning difficulty.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Problem with naive BPE:
+&lt;ul&gt;
+&lt;li&gt;It merges too many variants of common words like &amp;ldquo;dog,&amp;rdquo; &amp;ldquo;dogs,&amp;rdquo; &amp;ldquo;dog. dog!&amp;rdquo; and &amp;ldquo;dog?&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;This approach wastes vocabulary space and model capacity.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;The solution involves categorizing strings into different types. For instance, punctuation can be separated from words. Strings cannot be merged across different categories unless it&amp;rsquo;s a space, which improves compression efficiency.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;model&#34;&gt;Model&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A decoder-only transformer serves as the backbone.&lt;/li&gt;
+&lt;li&gt;Pre-norm residual blocks are employed.&lt;/li&gt;
+&lt;li&gt;The weights in the transformer block are initialized with 1/sqrt(N), where N is the number of layers.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;training-process-and-loss-function&#34;&gt;Training Process and Loss Function&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The learning rate is tuned using 5% of the WebText dataset.&lt;/li&gt;
+&lt;li&gt;Four models are trained with a geometrically increasing number of parameters.&lt;/li&gt;
+&lt;li&gt;Sequence length (seqlen) is set to 1024.&lt;/li&gt;
+&lt;li&gt;Batch size is set to 512.&lt;/li&gt;
+&lt;li&gt;Loss function: $L = \sum_{i=1}^n \frac{cross_entropy(p_i, x_i)}{seqlen}$
+&lt;ul&gt;
+&lt;li&gt;Here, p represents the probability of the predicted token, and x denotes the ground truth token.&lt;/li&gt;
+&lt;li&gt;Spanning from the first to the last token, the loss is computed as the average cross entropy between the predicted token and ground truth token.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;metrics-and-evaluation&#34;&gt;Metrics and Evaluation&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Perplexity (PPL): Lower values are better. PPL is calculated as $PPL = \exp(L)$&lt;/li&gt;
+&lt;li&gt;Bits per byte (BPB): This measures the model&amp;rsquo;s compression efficiency. Lower values are better. BPB is calculated as $BPB = \frac{L}{log(2)}$&lt;/li&gt;
+&lt;li&gt;Bits per character (BPC): Lower values are preferable.&lt;/li&gt;
+&lt;li&gt;Accuracy (ACC): Higher values are better. This metric is used for multiple-choice tasks.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;results-and-findings&#34;&gt;Results and Findings&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;The model can handle many tasks across different domains in a zero-shot manner, demonstrating considerable improvement on tasks with small datasets.&lt;/li&gt;
+&lt;li&gt;The model performs reliably on noisy data and out-of-distribution data.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;childrens-book-test&#34;&gt;Children’s Book Test&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;This dataset tests the model&amp;rsquo;s ability to discern the missing word with a context of 20 sentences provided for each question. The model should capture the language&amp;rsquo;s long-term dependencies.&lt;/li&gt;
+&lt;li&gt;Even the smallest model surpasses the state-of-the-art (SOTA).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;lambada&#34;&gt;LAMBADA&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The task involves predicting the last word of a sentence. For humans, approximately 50 words are typically needed to predict the last word.&lt;/li&gt;
+&lt;li&gt;The models outperform the SOTA in terms of perplexity (PPL).&lt;/li&gt;
+&lt;li&gt;For incorrect predictions, most predictions are valid continuations of the sentence but not valid final words. This suggests that the models are not specialized for this task and do not know they should predict the sentence&amp;rsquo;s last word.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;coqa&#34;&gt;CoQA&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;This task tests reading comprehension, and the model needs to understand the conversation history because it includes questions like &amp;ldquo;why&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;The model surpasses the SOTA without fine-tuning.&lt;/li&gt;
+&lt;li&gt;Problem and finding: The model often uses simple retrieval-based heuristics, such as directly copying a name from the context to answer a &amp;ldquo;who&amp;rdquo; question.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;summarization&#34;&gt;Summarization&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The prompt &amp;ldquo;TL;DR:&amp;rdquo; is used to induce summarization.&lt;/li&gt;
+&lt;li&gt;The performance falls short of classic neural baselines.&lt;/li&gt;
+&lt;li&gt;Problem and finding:
+&lt;ul&gt;
+&lt;li&gt;Capturing long-distance dependencies is challenging. The model tends to summarize only the most recent sentences.&lt;/li&gt;
+&lt;li&gt;It makes mistakes on details, such as how many cars were involved in a crash.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;translation&#34;&gt;Translation&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Although English predominates in the training corpus, the model shows limited ability to understand and translate French. The volume of French data is 500 times smaller than typical monolingual translation datasets.&lt;/li&gt;
+&lt;li&gt;The overall performance significantly trails behind SOTA.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;question-answering&#34;&gt;Question Answering&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Factoid questions were used to assess and quantify how much knowledge has been learned by the model.&lt;/li&gt;
+&lt;li&gt;Model size is crucial for performance.&lt;/li&gt;
+&lt;li&gt;Compared with an open domain question answering system that uses a retrieval-based method, the largest GPT2 performs significantly worse.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;inspiration-and-derivatives-from-this-paper&#34;&gt;Inspiration and Derivatives from This Paper&lt;/h1&gt;
+&lt;h2 id=&#34;distribution-of-language&#34;&gt;Distribution of Language&lt;/h2&gt;
+&lt;p&gt;An effective language model should be capable of learning the inherent rules of language, as these rules determine the distribution of language. By evaluating what factors influence language and whether these factors can be learned easily, we can identify the model&amp;rsquo;s weaknesses and areas for improvement.&lt;/p&gt;
+&lt;p&gt;Language, an outcome of thought, conceptualizes human senses and cognition, serving as a medium for communication and a vehicle for thought. It can also be viewed as an agent&amp;rsquo;s reaction to its environment, functioning as an explicit symbol for conveying messages or abstracting entities to facilitate logical reasoning. However, since language compresses information and cannot fully represent its referent, it cannot fully reflect the process of thought but rather serves as an output of this process.&lt;/p&gt;
+&lt;p&gt;From a text-generation perspective, each subsequent token is conditioned by preceding text. The relationship between the last token and preceding text can be syntactical or semantic. Among these, semantic relationships are the most crucial and challenging to learn. Semantics originate from the agent&amp;rsquo;s cognitive activity and are influenced by various factors that may be hard to infer from preceding text. By examining these factors and tracking their influence on cognition, we can identify which elements are difficult for models to predict, thereby pinpointing the model&amp;rsquo;s weaknesses and potential areas for enhancement.&lt;/p&gt;
+&lt;p&gt;Factors that are challenging to predict typically exhibit the following characteristics:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Strong associations with known conditions (preceding text), such that a high-probability answer can be inferred from previous context. For instance, common sense is easily predictable; if during text generation the given statement is &amp;ldquo;The sky is&amp;hellip;&amp;rdquo;, we can confidently predict &amp;ldquo;blue&amp;rdquo; as the next word. However, personal experiences are unpredictable; if given &amp;ldquo;When I was a child&amp;hellip;&amp;rdquo;, predicting the next word becomes challenging due to the unique nature of individual experiences.&lt;/li&gt;
+&lt;li&gt;For unknown factors not directly related to previous context but indirectly influencing future text through the state of the agent, predictability becomes challenging.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Factors that might influence current semantics include:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Preceding text: This factor is easy for a well-trained model to predict as the meaning can typically be inferred from the context.&lt;/li&gt;
+&lt;li&gt;Environment: This represents the agent&amp;rsquo;s physical and social surroundings, which might not be explicitly stated in the text.
+&lt;ul&gt;
+&lt;li&gt;Context: This can usually be inferred to a large degree from preceding text and can significantly influence subsequent text. However, it may not always be fully embodied in preceding text.&lt;/li&gt;
+&lt;li&gt;Agent&amp;rsquo;s environment: Very little about this can be inferred from preceding text. Although it might not directly impact preceding text, it indirectly influences future text by affecting the agent&amp;rsquo;s state.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Memory
+&lt;ul&gt;
+&lt;li&gt;Common knowledge and cultural background: These are easily predictable; given preceding context, we can confidently infer what common knowledge is used. This directly impacts future text in a similar manner as preceding context.&lt;/li&gt;
+&lt;li&gt;Personal experiences: These are hard to predict unless explicitly mentioned in preceding text. Like preceding context, personal experiences directly influence future text.&lt;/li&gt;
+&lt;li&gt;Domain knowledge: This is relatively easy to predict by determining a field or domain of knowledge through the context and preceding text. The challenge here lies in small-scale models that do not have enough capacity to accommodate this low-frequency knowledge.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Inner state refers to intermediate products of the cognitive process, rather than the preceding text itself. This does not aim to describe the entire cognitive process but rather views it as a black box, assuming intermediate outputs for better understanding of the model.
+&lt;ul&gt;
+&lt;li&gt;Perception and understanding of environment: These are hard to infer but more direct than environmental factors.&lt;/li&gt;
+&lt;li&gt;Thoughts and understanding of preceding text: These are relatively easier to infer since text is an output of thought. The only challenging part is predicting a complete thought or cognitive process; however, they significantly influence future text.&lt;/li&gt;
+&lt;li&gt;Motivation: This is relatively hard to predict. Although most people will have similar motivations under similar circumstances, the environment is unpredictable, making motivations equally hard to predict. Motivations indirectly influence future text by affecting thoughts and emotions.&lt;/li&gt;
+&lt;li&gt;Emotions: These are usually reflected in text and thus easier to infer; they directly influence future text quite significantly.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This analysis indicates that even though large language models display impressive language comprehension abilities, there are still factors difficult to infer from preceding text. By providing additional information, we could potentially enhance the model&amp;rsquo;s understanding of language, particularly the underlying generation process, thereby improving its overall performance.&lt;/p&gt;
+&lt;h2 id=&#34;why-does-this-training-procedure-work&#34;&gt;Why does this training procedure work?&lt;/h2&gt;
+&lt;p&gt;A key advantage of this method is that for each token, the input&amp;rsquo;s distribution is similar; this means that any substring within a piece of text, designated as $p(x_i, x_{&amp;lt;i})$, falls within the training distribution. Although training is conducted in parallel, attention masking ensures that the model only sees preceding tokens and not future ones, thereby aligning the distributions during the training and inference phases.&lt;/p&gt;
+&lt;p&gt;A sufficiently challenging objective is also crucial as it compels the model to learn the intrinsic rules influencing language distribution. If the training data covers a wide range, the model can&amp;rsquo;t merely overfit a subset of data through shortcuts; instead, it must predict all data by deciphering these inherent rules, thereby encompassing a vast body of knowledge. However, since the model can only indirectly learn about inner states, its understanding cannot fully represent cognitive states, resulting in limited logical and inferential capabilities. To render text more regular, the content should ideally encompass comprehensive information; for reference on this aspect, we can refer back to the analysis on language distribution. Despite its challenging nature, this objective is achievable by leveraging Transformers&amp;rsquo; capability to capture long-distance dependencies, allowing model convergence.&lt;/p&gt;
+&lt;h2 id=&#34;why-the-model-can-zero-shot-many-tasks&#34;&gt;Why the model can zero-shot many tasks?&lt;/h2&gt;
+&lt;p&gt;Zero-shot refers to a model’s ability to perform reasonably well on a task without having been specifically trained for it. The objective of this model is to predict subsequent content based on preceding text, thereby creating a unified prediction format. This format can effectively guide the model&amp;rsquo;s behavior through prompts, harmonizing the way context and tasks are conditioned. Given sufficient conditions, the model can understand the task at hand. The model&amp;rsquo;s ability to not only comprehend tasks but also accomplish them stems from its understanding of the underlying rules of language. Essentially, it learns these deeper determinants of language distribution from extensive corpora; viewed from this deeper level, downstream tasks do not exceed the scope of the training distribution.&lt;/p&gt;
+&lt;h2 id=&#34;why-has-this-level-of-intelligence-emerged-in-natural-language-modalities-while-video-based-auto-regressive-models-havent-reached-this-level-yet&#34;&gt;Why has this level of intelligence emerged in natural language modalities, while video-based auto-regressive models haven&amp;rsquo;t reached this level yet?&lt;/h2&gt;
+&lt;p&gt;Language is a product of the thought process, serving as a vehicle for thought and a means of expressing dense semantics. Therefore, it is closer to human-understood intelligence compared to imagery. For video-based auto-regressive models, learning the laws of the world from videos and gaining an understanding of these global change patterns through a similar self-supervised approach is a more challenging task. Language inherently sets a context; even scattered text on the internet can construct context to some extent, although video can also achieve this.&lt;/p&gt;
+&lt;p&gt;Finally, from a hardware resource perspective, language has high information density; a small amount of text can convey substantial information. In contrast, imagery requires numerous pixels to express comparable information, making the data throughput requirements for language lower than visual modalities.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>preliminary experiment for LLM distillation and pretraining</title>
         <link>https://example.org/project/dearth-tiny/</link>
         <pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate>
         <author>xfious@outlook.com (XFious)</author>
         <guid>https://example.org/project/dearth-tiny/</guid>
-        <description>&lt;img src="https://example.org/project/dearth-tiny/img.png" alt="Featured image of post preliminary experiment for distillation and pretraining" /&gt;&lt;h1 id=&#34;language-model-on-tinystories&#34;&gt;Language Model on TinyStories&lt;/h1&gt;
+        <description>&lt;img src="https://example.org/project/dearth-tiny/img.png" alt="Featured image of post preliminary experiment for LLM distillation and pretraining" /&gt;&lt;h1 id=&#34;language-model-on-tinystories&#34;&gt;Language Model on TinyStories&lt;/h1&gt;
 &lt;iframe src=&#34;https://xfious-dearth-tiny.hf.space&#34; style=&#34;width: calc(100%); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
 &lt;h1 id=&#34;about-this-project&#34;&gt;About this project&lt;/h1&gt;
 &lt;h2 id=&#34;what-is-this-project&#34;&gt;What is this project?&lt;/h2&gt;
@@ -121,7 +303,7 @@
 &lt;h2 id=&#34;what-is-the-future-work&#34;&gt;What is the future work?&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;PPO for alignment.&lt;/li&gt;
-&lt;li&gt;Memory-augmented model, adding memory to improve the effect of the model; the memory stored in the database can make the model more controllable and may reduce the illusion caused by the memory stored in the parameters.&lt;/li&gt;
+&lt;li&gt;Memory-augmented model, adding memory to improve the effect of the model; the memory stored in the database can make the model more controllable and may reduce the hallucination caused by the memory stored in the parameters.&lt;/li&gt;
 &lt;/ul&gt;
 </description>
         </item>

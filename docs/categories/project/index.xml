@@ -9,12 +9,12 @@
         <managingEditor>xfious@outlook.com (XFious)</managingEditor>
         <webMaster>xfious@outlook.com (XFious)</webMaster>
         <lastBuildDate>Mon, 13 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://example.org/categories/project/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>preliminary experiment for distillation and pretraining</title>
+        <title>preliminary experiment for LLM distillation and pretraining</title>
         <link>https://example.org/project/dearth-tiny/</link>
         <pubDate>Mon, 13 Nov 2023 00:00:00 +0000</pubDate>
         <author>xfious@outlook.com (XFious)</author>
         <guid>https://example.org/project/dearth-tiny/</guid>
-        <description>&lt;img src="https://example.org/project/dearth-tiny/img.png" alt="Featured image of post preliminary experiment for distillation and pretraining" /&gt;&lt;h1 id=&#34;language-model-on-tinystories&#34;&gt;Language Model on TinyStories&lt;/h1&gt;
+        <description>&lt;img src="https://example.org/project/dearth-tiny/img.png" alt="Featured image of post preliminary experiment for LLM distillation and pretraining" /&gt;&lt;h1 id=&#34;language-model-on-tinystories&#34;&gt;Language Model on TinyStories&lt;/h1&gt;
 &lt;iframe src=&#34;https://xfious-dearth-tiny.hf.space&#34; style=&#34;width: calc(100%); height: calc(100vh - 100px); margin: 0px&#34;&gt;&lt;/iframe&gt;
 &lt;h1 id=&#34;about-this-project&#34;&gt;About this project&lt;/h1&gt;
 &lt;h2 id=&#34;what-is-this-project&#34;&gt;What is this project?&lt;/h2&gt;
@@ -121,7 +121,7 @@
 &lt;h2 id=&#34;what-is-the-future-work&#34;&gt;What is the future work?&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;PPO for alignment.&lt;/li&gt;
-&lt;li&gt;Memory-augmented model, adding memory to improve the effect of the model; the memory stored in the database can make the model more controllable and may reduce the illusion caused by the memory stored in the parameters.&lt;/li&gt;
+&lt;li&gt;Memory-augmented model, adding memory to improve the effect of the model; the memory stored in the database can make the model more controllable and may reduce the hallucination caused by the memory stored in the parameters.&lt;/li&gt;
 &lt;/ul&gt;
 </description>
         </item>
