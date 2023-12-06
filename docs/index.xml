@@ -86,7 +86,7 @@
 &lt;li&gt;Four models are trained with a geometrically increasing number of parameters.&lt;/li&gt;
 &lt;li&gt;Sequence length (seqlen) is set to 1024.&lt;/li&gt;
 &lt;li&gt;Batch size is set to 512.&lt;/li&gt;
-&lt;li&gt;Loss function: $L = \sum_{i=1}^n \frac{cross_entropy(p_i, x_i)}{seqlen}$
+&lt;li&gt;Loss function: $L = \sum_{i=1}^n \frac{cross\underline{\hspace{0.5em}}entropy(p_i, x_i)}{seqlen}$
 &lt;ul&gt;
 &lt;li&gt;Here, p represents the probability of the predicted token, and x denotes the ground truth token.&lt;/li&gt;
 &lt;li&gt;Spanning from the first to the last token, the loss is computed as the average cross entropy between the predicted token and ground truth token.&lt;/li&gt;
@@ -845,10 +845,10 @@ Code for this project: &lt;a class=&#34;link&#34; href=&#34;https://github.com/X
         </item>
         <item>
         <title>ABOUT</title>
-        <link>https://example.org/page/search/</link>
+        <link>https://example.org/about/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
         <author>xfious@outlook.com (XFious)</author>
-        <guid>https://example.org/page/search/</guid>
+        <guid>https://example.org/about/</guid>
         <description>&lt;h1 id=&#34;xiaonan-fu&#34;&gt;Xiaonan Fu&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;Email: &lt;a class=&#34;link&#34; href=&#34;mailto:xfious@outlook.com&#34; &gt;xfious@outlook.com&lt;/a&gt;&lt;/li&gt;
@@ -864,7 +864,7 @@ Code for this project: &lt;a class=&#34;link&#34; href=&#34;https://github.com/X
 &lt;li&gt;C/C++, Java, Node.js, Rust&lt;/li&gt;
 &lt;li&gt;Android native app development&lt;/li&gt;
 &lt;li&gt;CUDA&lt;/li&gt;
-&lt;li&gt;Linux administration and maintenance + Docker&lt;/li&gt;
+&lt;li&gt;Linux system administration and maintenance + Docker&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h1 id=&#34;research-interest&#34;&gt;Research Interest&lt;/h1&gt;
 &lt;ul&gt;
@@ -881,6 +881,7 @@ Code for this project: &lt;a class=&#34;link&#34; href=&#34;https://github.com/X
 &lt;/li&gt;
 &lt;li&gt;Meta-learning&lt;/li&gt;
 &lt;li&gt;Reinforcement Learning, GAN, and new learning methods (learning objective) derived from them.&lt;/li&gt;
+&lt;li&gt;Architecture-level software design and development&lt;/li&gt;
 &lt;/ul&gt;
 </description>
         </item>

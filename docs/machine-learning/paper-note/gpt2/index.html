@@ -160,7 +160,7 @@
         
         
         <li >
-            <a href='/page/search/' >
+            <a href='/about/' >
                 
                 
                 
@@ -355,7 +355,7 @@
 <li>Four models are trained with a geometrically increasing number of parameters.</li>
 <li>Sequence length (seqlen) is set to 1024.</li>
 <li>Batch size is set to 512.</li>
-<li>Loss function: $L = \sum_{i=1}^n \frac{cross_entropy(p_i, x_i)}{seqlen}$
+<li>Loss function: $L = \sum_{i=1}^n \frac{cross\underline{\hspace{0.5em}}entropy(p_i, x_i)}{seqlen}$
 <ul>
 <li>Here, p represents the probability of the predicted token, and x denotes the ground truth token.</li>
 <li>Spanning from the first to the last token, the loss is computed as the average cross entropy between the predicted token and ground truth token.</li>
