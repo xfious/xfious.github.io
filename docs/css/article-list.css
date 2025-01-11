@@ -25,6 +25,7 @@
     margin-top: 20px;
     margin-bottom: 5px;
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     align-items: center;
 
@@ -47,7 +48,7 @@
 }
 .article-list {
     position: relative;
-    width: 55vw;
+    width: 75%;
     left: 0%;
     background-color: #1e1e1e;
     padding: 30px;
@@ -82,7 +83,7 @@
 .home-article-lists-area {
     position: relative;
     top: -30vh;
-    width: 100vw;
+    width: 100%;
     opacity: 0;
     transition: 
         opacity 0.3s ease-in-out;
