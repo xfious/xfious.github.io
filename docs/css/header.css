@@ -1,0 +1,35 @@
+.header-area {
+    height: 62px;
+    width: 100%;
+    position: fixed;
+    background-color: black;
+    z-index: 100;
+}
+
+.header-sitename {
+    position: absolute;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    height: 100%;
+    margin-left: 30px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.header-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 100%;
+}
+
+.header-cates {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    font-size: 15px;
+    height: 100%;
+    width: 100%;
+}

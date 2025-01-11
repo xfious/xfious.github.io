@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/development/" class="parent-entry">Development</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/development/linux/" class="parent-entry">linux</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">Migrate Ubuntu on Btrfs to a New Disk</div>
+    
+        <div class="markdown-body"><ul>
+<li>System: Kubuntu 22.04</li>
+<li>There are two partitions on the original disk, EFI and Ubuntu root partition</li>
+<li>The Ubuntu root partition is using Btrfs filesystem, with two subvolumes, <code>@</code> and <code>@home</code></li>
+</ul>
+<h1 id="create-partitions"><a class="markdownIt-Anchor" href="#create-partitions"></a> Create partitions</h1>
+<ul>
+<li>Using <code>sudo fdisk /dev/[disk]</code> to partition
+<ul>
+<li>For example, <code>sudo fdisk /dev/nvme1n1</code></li>
+</ul>
+</li>
+<li>Create GPT partition table</li>
+<li>Create EFI partition, then change the partition type using <code>t</code> to change the type to EFI</li>
+<li>Create Linux partition main partition</li>
+</ul>
+<h1 id="copy-efi-partition"><a class="markdownIt-Anchor" href="#copy-efi-partition"></a> Copy EFI partition</h1>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo dd if=/dev/nvme0n1p1 of=/dev/nvme1n1p1 status=progress</span><br></pre></td></tr></table></figure>
+<h1 id="copy-btrfs-partition"><a class="markdownIt-Anchor" href="#copy-btrfs-partition"></a> Copy Btrfs partition</h1>
+<ul>
+<li>Boot into a live USB Linux</li>
+<li>Assume the Btrfs partition is <code>/dev/nvme0n1p2</code> and the new disk is <code>/dev/nvme1n1p2</code></li>
+<li>Mount the old Btrfs partition</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount /dev/nvme0n1p2 /mnt</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Start copying the Btrfs partition</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">btrfs replace start /dev/nvme0n1p2 /dev/nvme1n1p2 /mnt</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Check the progress</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">btrfs replace status /mnt</span><br></pre></td></tr></table></figure>
+<ul>
+<li>This method should keep all the Btrfs subvolumes and UUIDs.</li>
+</ul>
+<h1 id="or-copy-linux-partition-using-dd"><a class="markdownIt-Anchor" href="#or-copy-linux-partition-using-dd"></a> Or Copy Linux partition using dd</h1>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo dd if=/dev/nvme0n1p2 of=/dev/nvme1n1p2 status=progress</span><br></pre></td></tr></table></figure>
+<ul>
+<li>This method will keep the original Btrfs partition’s UUID, so there is no need to modify the <code>/etc/fstab</code> file.</li>
+<li>The reason for using dd instead of rsync is that this way the Btrfs subvolume information is preserved.</li>
+<li>This step is recommended to be done using a live USB Linux.</li>
+</ul>
+<h1 id="other-operations"><a class="markdownIt-Anchor" href="#other-operations"></a> Other operations</h1>
+<p>Resize the btrfs partition to use the entire disk</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo btrfs filesystem resize max [mounting point]</span><br></pre></td></tr></table></figure>
+<p>Check if the partition has any issues</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo btrfs check /dev/nvme1n1p2</span><br></pre></td></tr></table></figure>
+<p>View UUID</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo blkid</span><br></pre></td></tr></table></figure>
+<h2 id="backup-important-files-to-another-disk"><a class="markdownIt-Anchor" href="#backup-important-files-to-another-disk"></a> Backup important files to another disk</h2>
+<ul>
+<li>Mount the disk to be migrated and another backup disk</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync -avx --info=progress2 --info=name0 --info=stats2 --info=flist0 /source_directory/ /destination_directory/</span><br></pre></td></tr></table></figure>
+<h2 id="another-method"><a class="markdownIt-Anchor" href="#another-method"></a> Another method</h2>
+<ul>
+<li>If the two disks have the same size, you can use <code>dd</code> to copy the entire disk</li>
+<li>For example <code>dd if=/dev/sda of=/dev/sdb bs=4096</code></li>
+</ul>
+<h3 id="reference"><a class="markdownIt-Anchor" href="#reference"></a> reference</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://iamcheyan.com/app/pelican/blog/btrfs-fen-qu-qian-yi-ji-lu.html">BTRFS 分区迁移记录</a></li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

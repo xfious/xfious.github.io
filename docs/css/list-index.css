@@ -1,0 +1,111 @@
+.list-tag-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #e7e9e9;
+}
+.list-tag-entry {
+    color: #e7e9e9;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px;
+}
+.list-tag-entry:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.list-tag-title {
+    font-size: 16px;
+    color: #9a9e9e;
+    margin-left: 0px;
+}
+.tensor-like-list-tag-entry {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 0px 0px;
+    margin-right: 5px;
+    position: relative;
+    top: 5px;
+}
+
+.list-entry-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+.list-entry {
+    display: flex;
+    align-items: center;
+}
+.list-entry-title {
+    font-size: 18px;
+    color: #9a9e9e;
+}
+.list-entry-title:hover {
+    color: #e7e9e9;
+    text-decoration: underline;
+}
+
+
+.tensor-like-list-entry {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-right: 8px;
+    position: relative;
+    top: 5px;
+}
+
+.left-panel {
+    position: fixed;
+    left: 8%;
+    top: 150px;
+    width: 25vw;
+    height: 70vh;
+    margin-top: 10vh;
+    margin-left: 2vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+.left-panel-block {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 90%;
+    margin-bottom: 50px;
+}
+.left-panel-title {
+    font-size: 24px;
+    font-weight: 500;
+    color: #e7e9e9;
+    width: 90%;
+    margin-bottom: 10px;
+}
+
+
+.parent-entries-area {
+    position: relative;
+    top: 0px;
+    left: 30%;
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    color: gray;
+    gap: 5px;
+    font-size: 18px;
+}
+
+.parent-entry:hover {
+    color: white;
+    text-decoration: underline;
+}

@@ -1,0 +1,122 @@
+.article-list-title {
+    font-size: 42px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.article-entry {
+    margin-bottom: 25px;
+    color: #e7e9e9;
+}
+
+.article-entry-title {
+    font-size: 32px;
+}
+.article-entry-content, .article-entry-description {
+    font-size: 20px;
+    color: #9e9d9d;
+    margin-top: 5px;
+    font-family: "system-ui", sans-serif; 
+    line-height: 1.5;
+}
+.article-entry-info {
+    font-size: 18px;
+    color: #e7e9e9;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+}
+.article-entry-info-item {
+    border-radius: 9999px;
+    padding: 5px 10px;
+}
+.article-entry-time {
+    background-color: rgb(61, 61, 61);
+}
+.article-entry-tag {
+    background-color: rgb(61, 61, 61);;
+}
+
+.article-entry-divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #2c2c2c;
+}
+.article-list {
+    position: relative;
+    width: 55vw;
+    left: 0%;
+    background-color: #1e1e1e;
+    padding: 30px;
+    border-radius: 20px;
+}
+.article-entry-detail {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+}
+.article-entry-detail-text {
+    flex: 1;
+}
+.article-entry-detail img {
+    width: 27%;
+    max-height: 200px;
+    max-width: 355px;
+    object-fit: cover;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+.article-entry-readmore {
+    color: rgb(86, 156, 214);
+    cursor: pointer;
+    text-decoration: underline;
+    margin-left: 10px;
+}
+
+
+.home-article-lists-area {
+    position: relative;
+    top: -30vh;
+    width: 100vw;
+    opacity: 0;
+    transition: 
+        opacity 0.3s ease-in-out;
+}
+
+.article-list-area {
+    width: 70%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 50px;
+    position: relative;
+    left: 30%;
+}
+
+
+.article-list-index-area {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    gap: 5px;
+    flex-direction: column;
+    position: fixed;
+    top: 30vh;
+    right: 70vw;
+    margin-right: 80px;
+}
+.article-list-index {
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.2s;
+    color: gray;
+}
+.article-list-index-selected {
+    color: white;
+}
