@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] Emerging Properties in Self-Supervised Vision Transformers</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2104.14294">https://arxiv.org/abs/2104.14294</a></p>
+<div class="intended-highlight-area">
+<h1 id="tldr"><a class="markdownIt-Anchor" href="#tldr"></a> TL;DR</h1>
+<ul>
+<li>DINO introduces a self-supervised method that doesn’t require labels or negative samples.</li>
+<li>It uses a teacher network and a student network, updating the teacher network’s parameters through EMA.</li>
+<li>The teacher network sees a global view, while the student network only sees local views. The student should output features similar to the teacher.</li>
+<li>To prevent all images from having similar features, centering and sharpening techniques are used.</li>
+</ul>
+</div>
+<h1 id="introduction"><a class="markdownIt-Anchor" href="#introduction"></a> Introduction</h1>
+<p>ViT requires significant computational resources and data. What are its benefits?</p>
+<p><strong>Motivation</strong>: Self-supervised learning has been successful in NLP. Is ViT’s lack of a clear advantage due to its reliance on supervised learning?</p>
+<ul>
+<li>GPT has clearer supervision signals than image models, because it is trained to predict the next token.</li>
+<li>Image training often reduces the rich visual information contained in an image to a single concept selected from a predefined set of a few thousand categories of objects</li>
+</ul>
+<p><strong>Key Components</strong></p>
+<ul>
+<li>Momentum encoder: Provides more stable and gradual updates.</li>
+<li>Can be interpreted as a form of knowledge distillation without labels.</li>
+<li>Our method can work with only a centering and sharpening of the teacher output to avoid collapse.</li>
+</ul>
+<h1 id="related-work"><a class="markdownIt-Anchor" href="#related-work"></a> Related Work</h1>
+<p>Existing Self-Supervised Learning Methods for Images</p>
+<ul>
+<li><strong>Instance Discrimination</strong>: Treats each image as a separate class (instance) and generates positive sample pairs through data augmentation (e.g., cropping, rotation). Images in positive set should have similar representations.
+<ul>
+<li>A problem with this approach is that it does not scale well to large datasets because the number of categories grows linearly with the number of images.</li>
+<li>noise contrastive estimator</li>
+</ul>
+</li>
+<li>BYOL: Similar in concept of this paper.</li>
+</ul>
+<h1 id="approach"><a class="markdownIt-Anchor" href="#approach"></a> Approach</h1>
+<ul>
+<li>Two networks: a teacher and a student. They have the same architecture but different parameters.</li>
+<li>Given an input image x, both networks output probability distributions over K dimensions, normalized using softmax with temperature τ.</li>
+<li>We use cross-entropy loss to make the student output similar to the teacher output.</li>
+</ul>
+<img src="method.png" width="300px">
+<p><em>sg means stop-gradient. Only student needs gradient.</em></p>
+<br>
+<p><strong>Input Processing</strong></p>
+<ul>
+<li>Input x is processed into a global view and several cropped local views of the image.</li>
+<li>The global view has a resolution of 224x224, covering a large area of the original image.</li>
+<li>Local views have a resolution of 96x96, covering only a small area of the original image.</li>
+<li>All crops are passed through the student, while only the global view is passed through the teacher.</li>
+</ul>
+<p><strong>Updating the Teacher Network</strong></p>
+<ul>
+<li>Directly copying parameters from the student network in real-time does not lead to convergence.</li>
+<li>Freezing the teacher network for an epoch works well.</li>
+<li>We use an exponential moving average of the student network parameters: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mtext>teacher</mtext></msub><mo>←</mo><mi>λ</mi><msub><mi>θ</mi><mtext>teacher</mtext></msub><mo>+</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>λ</mi><mo stretchy="false">)</mo><msub><mi>θ</mi><mtext>student</mtext></msub></mrow><annotation encoding="application/x-tex">\theta_{\text{teacher}} \leftarrow \lambda \theta_{\text{teacher}} + (1-\lambda) \theta_{\text{student}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">teacher</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">←</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="mord mathnormal">λ</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">teacher</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">λ</span><span class="mclose">)</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">student</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi></mrow><annotation encoding="application/x-tex">\lambda</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">λ</span></span></span></span> follows a cosine schedule from 0.996 to 1 during training.</li>
+<li>The teacher model consistently provides more stable features.</li>
+</ul>
+<p><strong>Avoiding Collapse</strong></p>
+<ul>
+<li>Collapse means that the features of all samples become almost identical.</li>
+<li><strong>Centering</strong>: Subtracting an output mean from the teacher output. The mean is updated using EMA.
+<ul>
+<li>EMA: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>=</mo><mi>λ</mi><mi>a</mi><mo>+</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>λ</mi><mo stretchy="false">)</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">a = \lambda a + (1-\lambda) b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathnormal">λ</span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">λ</span><span class="mclose">)</span><span class="mord mathnormal">b</span></span></span></span></li>
+</ul>
+</li>
+<li><strong>Sharpening</strong>: Using a lower temperature to make certain dimensions more prominent after softmax.</li>
+<li>Centering encourages a uniform distribution, while sharpening makes the output more discriminative. They balance each other out.</li>
+</ul>
+<h1 id="ablation-study"><a class="markdownIt-Anchor" href="#ablation-study"></a> Ablation Study</h1>
+<ul>
+<li>EMA update for the teacher model is crucial.</li>
+<li>Cross-entropy loss performs better than MSE loss.</li>
+<li>Sinkhorn-Knopp improves results slightly.</li>
+<li>Multi-crop training is important.</li>
+<li>8x8 patch size is better than 16x16 for ViT.</li>
+<li>The teacher model consistently outperforms the student model in validation for every epoch.
+<ul>
+<li>This behavior has not been observed by other frameworks using momentum, nor when the teacher is built from the previous epoch of the student.</li>
+<li>We interpret the momentum teacher in DINO as a form of Polyak-Ruppert averaging.</li>
+<li>Polyak-Ruppert averaging aims to improve model performance and stability by averaging historical parameters.</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.09882">Multi-crop</a> can save computational resources and improve performance.</li>
+</ul>
+<h1 id="related-work-2"><a class="markdownIt-Anchor" href="#related-work-2"></a> Related Work</h1>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.01978">Unsupervised feature learning via non-parametric instance discrimination.</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.07733">Bootstrap your own latent: A new approach to self-supervised learning.</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.09882">Unsupervised learning of visual features by contrasting cluster assignments</a></li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

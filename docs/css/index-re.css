@@ -76,11 +76,30 @@
     top: 51%;
     left: 101px;
     max-width: 75%;
+    max-height: 42%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.home-top-article-title-cur {
+    flex: 0 0 auto;
+    flex-shrink: 0;
+    text-overflow: ellipsis;
+}
+.home-top-article-desc-cur {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .home-top-article-tensor {
     position: absolute;
-    left: 30px;
+    left: 30.6px;
     top: calc(51% + 10px);
 
     display: grid;

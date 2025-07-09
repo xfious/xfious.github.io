@@ -93,7 +93,7 @@
     position: relative;
     top: 0px;
     left: 30%;
-    width: 70%;
+    width: calc(70% - 20px);
     display: flex;
     flex-direction: row;
     justify-content: flex-start;

@@ -15,7 +15,7 @@
 
 <script>
     var home_top_info = {};
-    var home_top_info_json = "{\"all\":[{\"title\":\"Migrate Ubuntu on Btrfs to a New Disk\",\"content\":\"System: Kubuntu 22.04 There are two partitions on the original disk, EFI and Ubuntu root partition The Ubuntu root partition is using Btrfs filesystem, with two subvolumes, @ and @home    Using sudo fdisk /dev/[disk] to partition  For example, sudo fdisk /dev/nvme1n1   Create GPT partition table Cre...\",\"url\":\"/development/linux/migrate-btrfs-disk/\"},{\"title\":\"[Paper Note] Language Models are Unsupervised Multitask Learners\",\"description\":\"A general purpose training procedure that can be applied to a variety of NLP tasks in a zero-shot manner.\",\"content\":\"This paper presents a general purpose training procedure that can be applied to a variety of NLP tasks, using task instructions and task input as conditioning factors. A model trained with a massive, diverse, and unsupervised dataset can handle many tasks in a zero-shot manner and typically outperfo...\",\"url\":\"/machine-learning/paper-note/gpt2/\"},{\"title\":\"preliminary experiment for LLM distillation and pretraining\",\"description\":\"This experiment is to verify the effectiveness of the various methods from papers.\",\"content\":\"This is a preliminary experiment for pretraining language model, and using distillation to accelerate training and improve performance. The experiment is to verify the effectiveness of the following method:  DeepNet (https://arxiv.org/pdf/2203.00555.pdf) Distillation framework, and corresponding los...\",\"url\":\"/project/dearth-tiny/\"},{\"title\":\"Are Small Language Models Low-rank?\",\"description\":\"Explore causal LM training and increase hidden dimension with low-rank matrices.\",\"content\":\"Over-parameterized language models are low rank intrinsically. In this project, I trained 2 causal language models with 28M parameters each, such that one is the baseline and another uses low-rank weights but has higher hidden dimensions, and compare their training speed and accuracy. Although they ...\",\"url\":\"/project/low-rank-lm/\"},{\"title\":\"Revealing Category Preferences of ResNet Layers: Visualization Based on Web\",\"description\":\"Using web-based technology, this project visualizes the internal activation pattern of ResNet18 on the CIFAR10 dataset.\",\"content\":\"Using web-based technology, this project visualizes the internal activation pattern of ResNet18 on the CIFAR10 dataset. The visualization tries to show whether those kernels in convolutional layers tend to specialize to a certain class, and from a higher level, whether exists an internal activation ...\",\"url\":\"/project/resnet18-vis/\"}],\"project\":[{\"title\":\"preliminary experiment for LLM distillation and pretraining\",\"description\":\"This experiment is to verify the effectiveness of the various methods from papers.\",\"content\":\"This is a preliminary experiment for pretraining language model, and using distillation to accelerate training and improve performance. The experiment is to verify the effectiveness of the following method:  DeepNet (https://arxiv.org/pdf/2203.00555.pdf) Distillation framework, and corresponding los...\",\"url\":\"/project/dearth-tiny/\"},{\"title\":\"Are Small Language Models Low-rank?\",\"description\":\"Explore causal LM training and increase hidden dimension with low-rank matrices.\",\"content\":\"Over-parameterized language models are low rank intrinsically. In this project, I trained 2 causal language models with 28M parameters each, such that one is the baseline and another uses low-rank weights but has higher hidden dimensions, and compare their training speed and accuracy. Although they ...\",\"url\":\"/project/low-rank-lm/\"},{\"title\":\"Revealing Category Preferences of ResNet Layers: Visualization Based on Web\",\"description\":\"Using web-based technology, this project visualizes the internal activation pattern of ResNet18 on the CIFAR10 dataset.\",\"content\":\"Using web-based technology, this project visualizes the internal activation pattern of ResNet18 on the CIFAR10 dataset. The visualization tries to show whether those kernels in convolutional layers tend to specialize to a certain class, and from a higher level, whether exists an internal activation ...\",\"url\":\"/project/resnet18-vis/\"},{\"title\":\"An Evaluation of Four P300 ERP Classifiers' Generalization Performance in the Oddball Paradigm\",\"description\":\"P300 ERP is evoked when a person perceives a target stimuli, and it associates with the decision-making process that something important had occurred.\",\"content\":\"For classifying P300 event-related potential, usually need prior knowledge about the EEG signal during the target and non-target stimuli. However, different classifiers need different amounts of data to achieve a usable classification ability. In this final project, I explored 4 different classifier...\",\"url\":\"/project/eeg-classify/\"},{\"title\":\"Use Verlet Integration to Simulate Gravity\",\"description\":\"Finite Difference, Verlet Integration, and its Application\",\"content\":\"Online-demo: https://xiaonanfu-ucsd.github.io/verlet-gravity/      Differential equations are an important tool for classical mechanics, such as analyzing force and movement. In the simulation of the physical phenomenon of real-world objects, numerical differentiation is usually good enough to revea...\",\"url\":\"/project/verlet-gravity/\"}],\"machine-learning\":[{\"title\":\"[Paper Note] Language Models are Unsupervised Multitask Learners\",\"description\":\"A general purpose training procedure that can be applied to a variety of NLP tasks in a zero-shot manner.\",\"content\":\"This paper presents a general purpose training procedure that can be applied to a variety of NLP tasks, using task instructions and task input as conditioning factors. A model trained with a massive, diverse, and unsupervised dataset can handle many tasks in a zero-shot manner and typically outperfo...\",\"url\":\"/machine-learning/paper-note/gpt2/\"}],\"about\":[{\"title\":\"ABOUT ME\",\"content\":\"Email: xfious@outlook.com Github: xfious Github: xiaonanfu-ucsd    Web development and electron-based desktop development; Javascript/Typescript + HTML + CSS, MySQL Python + Pytorch + pybind11 C/C++, Java, Node.js Android native app development CUDA Linux system administration and maintenance + Dock...\",\"url\":\"/about/\"}]}";
+    var home_top_info_json = "{\"all\":[{\"title\":\"[Paper Note] SVDQuant: Absorbing Outliers by Low-Rank Components for 4-Bit Diffusion Models\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2411.05007 https://github.com/mit-han-lab/nunchaku -xc-start   a quantization method where both weights and activations are quantized to 4-bit. Activation outliers are first processed using a smoothing method. However, this leads to more pronounced weight outliers. SVD is then ...\",\"url\":\"/machine-learning/paper-note/250518-svd-quant-2025/\"},{\"title\":\"[Paper Note] The Super Weight in Large Language Models\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2411.07191  Outliers with large magnitudes in LLMs significantly impact model performance. A single parameter can cause a boost in perplexity. The most important outliers are less than 0.01% of the total parameters. These super weights can be identified with just one forward pa...\",\"url\":\"/machine-learning/paper-note/250516-super-weight-2024/\"},{\"title\":\"[Paper Note] Titans: Learning to Memorize at Test Time\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2501.00663 Attention mechanisms and recurrent models each have their strengths and weaknesses:  Attention can attend to the entire context window, but it comes with a high computational cost. Recurrent models compress the state into a fixed size, but they struggle to model depe...\",\"url\":\"/machine-learning/paper-note/250510-titans-2024/\"},{\"title\":\"[Paper Note] Conditional Variational Autoencoder with Adversarial Learning for End-to-End Text-to-Speech\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2106.06103 -xc-start   Two encoders are used: one to generate a latent variable  from the original speech spectrogram, and another to generate  from the text. These  variables should be as similar as possible. To address the problem of variable  length between text and speech, ...\",\"url\":\"/machine-learning/paper-note/250325-vits-2021/\"},{\"title\":\"[Paper Note] Emerging Properties in Self-Supervised Vision Transformers\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2104.14294 -xc-start   DINO introduces a self-supervised method that doesn’t require labels or negative samples. It uses a teacher network and a student network, updating the teacher network’s parameters through EMA. The teacher network sees a global view, while the student net...\",\"url\":\"/machine-learning/paper-note/250314-dino-2021/\"}],\"project\":[{\"title\":\"preliminary experiment for LLM distillation and pretraining\",\"description\":\"This experiment is to verify the effectiveness of the various methods from papers.\",\"content\":\"This is a preliminary experiment for pretraining language model, and using distillation to accelerate training and improve performance. The experiment is to verify the effectiveness of the following method:  DeepNet (https://arxiv.org/pdf/2203.00555.pdf) Distillation framework, and corresponding los...\",\"url\":\"/project/dearth-tiny/\"},{\"title\":\"Are Small Language Models Low-rank?\",\"description\":\"Explore causal LM training and increase hidden dimension with low-rank matrices.\",\"content\":\"Over-parameterized language models are low rank intrinsically. In this project, I trained 2 causal language models with 28M parameters each, such that one is the baseline and another uses low-rank weights but has higher hidden dimensions, and compare their training speed and accuracy. Although they ...\",\"url\":\"/project/low-rank-lm/\"},{\"title\":\"Revealing Category Preferences of ResNet Layers: Visualization Based on Web\",\"description\":\"Using web-based technology, this project visualizes the internal activation pattern of ResNet18 on the CIFAR10 dataset.\",\"content\":\"Using web-based technology, this project visualizes the internal activation pattern of ResNet18 on the CIFAR10 dataset. The visualization tries to show whether those kernels in convolutional layers tend to specialize to a certain class, and from a higher level, whether exists an internal activation ...\",\"url\":\"/project/resnet18-vis/\"},{\"title\":\"An Evaluation of Four P300 ERP Classifiers' Generalization Performance in the Oddball Paradigm\",\"description\":\"P300 ERP is evoked when a person perceives a target stimuli, and it associates with the decision-making process that something important had occurred.\",\"content\":\"For classifying P300 event-related potential, usually need prior knowledge about the EEG signal during the target and non-target stimuli. However, different classifiers need different amounts of data to achieve a usable classification ability. In this final project, I explored 4 different classifier...\",\"url\":\"/project/eeg-classify/\"},{\"title\":\"Use Verlet Integration to Simulate Gravity\",\"description\":\"Finite Difference, Verlet Integration, and its Application\",\"content\":\"Online-demo: https://xiaonanfu-ucsd.github.io/verlet-gravity/      Differential equations are an important tool for classical mechanics, such as analyzing force and movement. In the simulation of the physical phenomenon of real-world objects, numerical differentiation is usually good enough to revea...\",\"url\":\"/project/verlet-gravity/\"}],\"machine-learning\":[{\"title\":\"[Paper Note] SVDQuant: Absorbing Outliers by Low-Rank Components for 4-Bit Diffusion Models\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2411.05007 https://github.com/mit-han-lab/nunchaku -xc-start   a quantization method where both weights and activations are quantized to 4-bit. Activation outliers are first processed using a smoothing method. However, this leads to more pronounced weight outliers. SVD is then ...\",\"url\":\"/machine-learning/paper-note/250518-svd-quant-2025/\"},{\"title\":\"[Paper Note] The Super Weight in Large Language Models\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2411.07191  Outliers with large magnitudes in LLMs significantly impact model performance. A single parameter can cause a boost in perplexity. The most important outliers are less than 0.01% of the total parameters. These super weights can be identified with just one forward pa...\",\"url\":\"/machine-learning/paper-note/250516-super-weight-2024/\"},{\"title\":\"[Paper Note] Titans: Learning to Memorize at Test Time\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2501.00663 Attention mechanisms and recurrent models each have their strengths and weaknesses:  Attention can attend to the entire context window, but it comes with a high computational cost. Recurrent models compress the state into a fixed size, but they struggle to model depe...\",\"url\":\"/machine-learning/paper-note/250510-titans-2024/\"},{\"title\":\"[Paper Note] Conditional Variational Autoencoder with Adversarial Learning for End-to-End Text-to-Speech\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2106.06103 -xc-start   Two encoders are used: one to generate a latent variable  from the original speech spectrogram, and another to generate  from the text. These  variables should be as similar as possible. To address the problem of variable  length between text and speech, ...\",\"url\":\"/machine-learning/paper-note/250325-vits-2021/\"},{\"title\":\"[Paper Note] Emerging Properties in Self-Supervised Vision Transformers\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2104.14294 -xc-start   DINO introduces a self-supervised method that doesn’t require labels or negative samples. It uses a teacher network and a student network, updating the teacher network’s parameters through EMA. The teacher network sees a global view, while the student net...\",\"url\":\"/machine-learning/paper-note/250314-dino-2021/\"},{\"title\":\"[Paper Note] Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2006.16236   Aiming to address the quadratic complexity issue in Transformers.   Self-attention can be expressed as a linear dot-product of kernel feature maps, achieving O(N) complexity.   When applying a kernel with positive similarity scores on the queries and keys, linear a...\",\"url\":\"/machine-learning/paper-note/250218-linear-attn-2020/\"},{\"title\":\"[Paper Note] Meissonic: Revitalizing Masked Generative Transformers for Efficient High-Resolution Text-to-Image Synthesis\",\"description\":\"\",\"content\":\"Existing Problem While MaskGIT-like methods offer fast inference, their overall performance isn’t great. Innovation  Our method uses a combination of multi-modal and single-modal transformer layers.  Language and vision representations are inherently different. We use cross-modal transformers to und...\",\"url\":\"/machine-learning/paper-note/250206-meissonic-2024/\"},{\"title\":\"[Paper Note] MaskGIT: Masked Generative Image Transformer\",\"description\":\"\",\"content\":\"https://arxiv.org/abs/2202.04200   Unlike text, images are not sequential. This makes auto-regressive models unsuitable for image generation tasks.   During training, MaskGIT is trained on a masked prediction task, similar to what is used in BERT.   Inference: At each iteration, the model predicts a...\",\"url\":\"/machine-learning/paper-note/250130-maskgit-2022/\"},{\"title\":\"[Paper Note] Learning Transferable Visual Models From Natural Language Supervision\",\"description\":\"\",\"content\":\"-xc-start   CLIP maps images and text into the same embedding space. It is trained using contrastive learning. Within each batch, the similarity between correct image and text feature pairs is maximized, while the similarity between incorrect pairs is minimized. Both the image and text encoders are ...\",\"url\":\"/machine-learning/paper-note/250122-clip-2021/\"},{\"title\":\"[Paper Note] Language Models are Unsupervised Multitask Learners\",\"description\":\"A general purpose training procedure that can be applied to a variety of NLP tasks in a zero-shot manner.\",\"content\":\"This paper presents a general purpose training procedure that can be applied to a variety of NLP tasks, using task instructions and task input as conditioning factors. A model trained with a massive, diverse, and unsupervised dataset can handle many tasks in a zero-shot manner and typically outperfo...\",\"url\":\"/machine-learning/paper-note/gpt2/\"}],\"about\":[{\"title\":\"ABOUT ME\",\"content\":\"Email: xfious@outlook.com Github: xfious Github: xiaonanfu-ucsd    Web development and electron-based desktop development; Javascript/Typescript + HTML + CSS; Golang Python + Pytorch + pybind11 C/C++, Java, Node.js Android native app development CUDA Linux system administration and maintenance + Doc...\",\"url\":\"/about/\"}]}";
     home_top_info = JSON.parse(home_top_info_json);
 
     window.addEventListener("load", function () {
@@ -65,8 +65,8 @@
 
         <div class="home-top-right-area">
             <div class="home-top-article-container">
-                <div class="home-top-article-title home-top-article-title-cur">Migrate Ubuntu on Btrfs to a New Disk</div>
-                <div class="home-top-article-desc home-top-article-desc-cur">System: Kubuntu 22.04 There are two partitions on the original disk, EFI and Ubuntu root partition The Ubuntu root partition is using Btrfs filesystem, with two subvolumes, @ and @home    Using sudo fdisk /dev/[disk] to partition  For example, sudo fdisk /dev/nvme1n1   Create GPT partition table Cre...</div>
+                <div class="home-top-article-title home-top-article-title-cur">[Paper Note] SVDQuant: Absorbing Outliers by Low-Rank Components for 4-Bit Diffusion Models</div>
+                <div class="home-top-article-desc home-top-article-desc-cur">https://arxiv.org/abs/2411.05007 https://github.com/mit-han-lab/nunchaku -xc-start   a quantization method where both weights and activations are quantized to 4-bit. Activation outliers are first processed using a smoothing method. However, this leads to more pronounced weight outliers. SVD is then ...</div>
             </div>
             <div class="home-top-article-tensor"></div>
             <button type="button" class="home-top-article-prev-button home-top-article-button">
@@ -108,19 +108,50 @@
 
             
             <div class="article-entry">
-                <div class="article-entry-title"><a href="/development/linux/migrate-btrfs-disk/">Migrate Ubuntu on Btrfs to a New Disk</a></div>
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250518-svd-quant-2025/">[Paper Note] SVDQuant: Absorbing Outliers by Low-Rank Components for 4-Bit Diffusion Models</a></div>
                 <div class="article-entry-detail">
                     <div class="article-entry-detail-text">
-                                                
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
                         <div class="article-entry-content">
-                            System: Kubuntu 22.04 There are two partitions on the original disk, EFI and Ubuntu root partition The Ubuntu root partition is using Btrfs filesystem, with two subvolumes, @ and @home    Using sudo fdisk /dev/[disk] to partition  For example, sudo fdisk /dev/nvme1n1   Create GPT partition table Cre...
-                            <span class="article-entry-readmore"><a href="/development/linux/migrate-btrfs-disk/">Read more</a></span>
+                            https://arxiv.org/abs/2411.05007 https://github.com/mit-han-lab/nunchaku    a quantization method where both weights and activations are quantized to 4-bit. Activation outliers are first processed using a smoothing method. However, this leads to more pronounced weight outliers. SVD is then used to d...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250518-svd-quant-2025/">Read more</a></span>
                         </div>
 
                         <div class="article-entry-info">
-                            <span class="article-entry-info-item article-entry-time">04-18-2024</span>
-<span class="article-entry-info-item article-entry-tag">Linux</span>
-<span class="article-entry-info-item article-entry-tag">Btrfs</span>
+                            <span class="article-entry-info-item article-entry-time">05-18-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">quantization</span>
+
+                        </div>
+                    </div>
+                    <img src="/machine-learning/paper-note/250518-svd-quant-2025/svdquant.jpeg">
+                </div>
+            </div>
+<div class="article-entry-divider"></div>
+
+
+            <div class="article-entry">
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250516-super-weight-2024/">[Paper Note] The Super Weight in Large Language Models</a></div>
+                <div class="article-entry-detail">
+                    <div class="article-entry-detail-text">
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
+                        <div class="article-entry-content">
+                            https://arxiv.org/abs/2411.07191  Outliers with large magnitudes in LLMs significantly impact model performance. A single parameter can cause a boost in perplexity. The most important outliers are less than 0.01% of the total parameters. These super weights can be identified with just one forward pa...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250516-super-weight-2024/">Read more</a></span>
+                        </div>
+
+                        <div class="article-entry-info">
+                            <span class="article-entry-info-item article-entry-time">05-16-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">quantization</span>
 
                         </div>
                     </div>
@@ -131,114 +162,81 @@
 
 
             <div class="article-entry">
-                <div class="article-entry-title"><a href="/machine-learning/paper-note/gpt2/">[Paper Note] Language Models are Unsupervised Multitask Learners</a></div>
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250510-titans-2024/">[Paper Note] Titans: Learning to Memorize at Test Time</a></div>
                 <div class="article-entry-detail">
                     <div class="article-entry-detail-text">
                         
                         <div class="article-entry-description">
-                            A general purpose training procedure that can be applied to a variety of NLP tasks in a zero-shot manner.
+                            
                         </div>
                         
                         <div class="article-entry-content">
-                            This paper presents a general purpose training procedure that can be applied to a variety of NLP tasks, using task instructions and task input as conditioning factors. A model trained with a massive, diverse, and unsupervised dataset can handle many tasks in a zero-shot manner and typically outperfo...
-                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/gpt2/">Read more</a></span>
+                            https://arxiv.org/abs/2501.00663 Attention mechanisms and recurrent models each have their strengths and weaknesses:  Attention can attend to the entire context window, but it comes with a high computational cost. Recurrent models compress the state into a fixed size, but they struggle to model depe...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250510-titans-2024/">Read more</a></span>
                         </div>
 
                         <div class="article-entry-info">
-                            <span class="article-entry-info-item article-entry-time">11-23-2023</span>
-<span class="article-entry-info-item article-entry-tag">Transformer</span>
-<span class="article-entry-info-item article-entry-tag">Language Model</span>
-<span class="article-entry-info-item article-entry-tag">GPT</span>
+                            <span class="article-entry-info-item article-entry-time">05-10-2025</span>
 <span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">memory</span>
 
                         </div>
                     </div>
-                    <img src="/machine-learning/paper-note/gpt2/gpt2-size.png">
+                    <img src="/machine-learning/paper-note/250510-titans-2024/loop-arch.png">
                 </div>
             </div>
 <div class="article-entry-divider"></div>
 
 
             <div class="article-entry">
-                <div class="article-entry-title"><a href="/project/dearth-tiny/">preliminary experiment for LLM distillation and pretraining</a></div>
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250325-vits-2021/">[Paper Note] Conditional Variational Autoencoder with Adversarial Learning for End-to-End Text-to-Speech</a></div>
                 <div class="article-entry-detail">
                     <div class="article-entry-detail-text">
                         
                         <div class="article-entry-description">
-                            This experiment is to verify the effectiveness of the various methods from papers.
+                            
                         </div>
                         
                         <div class="article-entry-content">
-                            This is a preliminary experiment for pretraining language model, and using distillation to accelerate training and improve performance. The experiment is to verify the effectiveness of the following method:  DeepNet (https://arxiv.org/pdf/2203.00555.pdf) Distillation framework, and corresponding los...
-                            <span class="article-entry-readmore"><a href="/project/dearth-tiny/">Read more</a></span>
+                            https://arxiv.org/abs/2106.06103    Two encoders are used: one to generate a latent variable  from the original speech spectrogram, and another to generate  from the text. These  variables should be as similar as possible. To address the problem of variable  length between text and speech, an unsupe...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250325-vits-2021/">Read more</a></span>
                         </div>
 
                         <div class="article-entry-info">
-                            <span class="article-entry-info-item article-entry-time">11-12-2023</span>
-<span class="article-entry-info-item article-entry-tag">Transformer</span>
-<span class="article-entry-info-item article-entry-tag">Language Model</span>
-<span class="article-entry-info-item article-entry-tag">GPT</span>
-<span class="article-entry-info-item article-entry-tag">TinyStories</span>
+                            <span class="article-entry-info-item article-entry-time">03-25-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">VITS</span>
 
                         </div>
                     </div>
-                    <img src="/project/dearth-tiny/img.png">
+                    <img src="/machine-learning/paper-note/250325-vits-2021/method.png">
                 </div>
             </div>
 <div class="article-entry-divider"></div>
 
 
             <div class="article-entry">
-                <div class="article-entry-title"><a href="/project/low-rank-lm/">Are Small Language Models Low-rank?</a></div>
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250314-dino-2021/">[Paper Note] Emerging Properties in Self-Supervised Vision Transformers</a></div>
                 <div class="article-entry-detail">
                     <div class="article-entry-detail-text">
                         
                         <div class="article-entry-description">
-                            Explore causal LM training and increase hidden dimension with low-rank matrices.
+                            
                         </div>
                         
                         <div class="article-entry-content">
-                            Over-parameterized language models are low rank intrinsically. In this project, I trained 2 causal language models with 28M parameters each, such that one is the baseline and another uses low-rank weights but has higher hidden dimensions, and compare their training speed and accuracy. Although they ...
-                            <span class="article-entry-readmore"><a href="/project/low-rank-lm/">Read more</a></span>
+                            https://arxiv.org/abs/2104.14294    DINO introduces a self-supervised method that doesn’t require labels or negative samples. It uses a teacher network and a student network, updating the teacher network’s parameters through EMA. The teacher network sees a global view, while the student network only...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250314-dino-2021/">Read more</a></span>
                         </div>
 
                         <div class="article-entry-info">
-                            <span class="article-entry-info-item article-entry-time">06-14-2023</span>
-<span class="article-entry-info-item article-entry-tag">Transformer</span>
-<span class="article-entry-info-item article-entry-tag">Language Model</span>
-<span class="article-entry-info-item article-entry-tag">GPT</span>
+                            <span class="article-entry-info-item article-entry-time">03-14-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">dino</span>
 
                         </div>
                     </div>
-                    <img src="/project/low-rank-lm/head.png">
-                </div>
-            </div>
-<div class="article-entry-divider"></div>
-
-
-            <div class="article-entry">
-                <div class="article-entry-title"><a href="/project/resnet18-vis/">Revealing Category Preferences of ResNet Layers: Visualization Based on Web</a></div>
-                <div class="article-entry-detail">
-                    <div class="article-entry-detail-text">
-                        
-                        <div class="article-entry-description">
-                            Using web-based technology, this project visualizes the internal activation pattern of ResNet18 on the CIFAR10 dataset.
-                        </div>
-                        
-                        <div class="article-entry-content">
-                            Using web-based technology, this project visualizes the internal activation pattern of ResNet18 on the CIFAR10 dataset. The visualization tries to show whether those kernels in convolutional layers tend to specialize to a certain class, and from a higher level, whether exists an internal activation ...
-                            <span class="article-entry-readmore"><a href="/project/resnet18-vis/">Read more</a></span>
-                        </div>
-
-                        <div class="article-entry-info">
-                            <span class="article-entry-info-item article-entry-time">03-25-2023</span>
-<span class="article-entry-info-item article-entry-tag">CNN</span>
-<span class="article-entry-info-item article-entry-tag">ResNet</span>
-<span class="article-entry-info-item article-entry-tag">Visualization</span>
-
-                        </div>
-                    </div>
-                    <img src="/project/resnet18-vis/activation.png">
+                    
                 </div>
             </div>
 
@@ -402,6 +400,252 @@
             <div class="article-entry-divider"></div>
 
             
+            <div class="article-entry">
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250518-svd-quant-2025/">[Paper Note] SVDQuant: Absorbing Outliers by Low-Rank Components for 4-Bit Diffusion Models</a></div>
+                <div class="article-entry-detail">
+                    <div class="article-entry-detail-text">
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
+                        <div class="article-entry-content">
+                            https://arxiv.org/abs/2411.05007 https://github.com/mit-han-lab/nunchaku    a quantization method where both weights and activations are quantized to 4-bit. Activation outliers are first processed using a smoothing method. However, this leads to more pronounced weight outliers. SVD is then used to d...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250518-svd-quant-2025/">Read more</a></span>
+                        </div>
+
+                        <div class="article-entry-info">
+                            <span class="article-entry-info-item article-entry-time">05-18-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">quantization</span>
+
+                        </div>
+                    </div>
+                    <img src="/machine-learning/paper-note/250518-svd-quant-2025/svdquant.jpeg">
+                </div>
+            </div>
+<div class="article-entry-divider"></div>
+
+
+            <div class="article-entry">
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250516-super-weight-2024/">[Paper Note] The Super Weight in Large Language Models</a></div>
+                <div class="article-entry-detail">
+                    <div class="article-entry-detail-text">
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
+                        <div class="article-entry-content">
+                            https://arxiv.org/abs/2411.07191  Outliers with large magnitudes in LLMs significantly impact model performance. A single parameter can cause a boost in perplexity. The most important outliers are less than 0.01% of the total parameters. These super weights can be identified with just one forward pa...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250516-super-weight-2024/">Read more</a></span>
+                        </div>
+
+                        <div class="article-entry-info">
+                            <span class="article-entry-info-item article-entry-time">05-16-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">quantization</span>
+
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+<div class="article-entry-divider"></div>
+
+
+            <div class="article-entry">
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250510-titans-2024/">[Paper Note] Titans: Learning to Memorize at Test Time</a></div>
+                <div class="article-entry-detail">
+                    <div class="article-entry-detail-text">
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
+                        <div class="article-entry-content">
+                            https://arxiv.org/abs/2501.00663 Attention mechanisms and recurrent models each have their strengths and weaknesses:  Attention can attend to the entire context window, but it comes with a high computational cost. Recurrent models compress the state into a fixed size, but they struggle to model depe...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250510-titans-2024/">Read more</a></span>
+                        </div>
+
+                        <div class="article-entry-info">
+                            <span class="article-entry-info-item article-entry-time">05-10-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">memory</span>
+
+                        </div>
+                    </div>
+                    <img src="/machine-learning/paper-note/250510-titans-2024/loop-arch.png">
+                </div>
+            </div>
+<div class="article-entry-divider"></div>
+
+
+            <div class="article-entry">
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250325-vits-2021/">[Paper Note] Conditional Variational Autoencoder with Adversarial Learning for End-to-End Text-to-Speech</a></div>
+                <div class="article-entry-detail">
+                    <div class="article-entry-detail-text">
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
+                        <div class="article-entry-content">
+                            https://arxiv.org/abs/2106.06103    Two encoders are used: one to generate a latent variable  from the original speech spectrogram, and another to generate  from the text. These  variables should be as similar as possible. To address the problem of variable  length between text and speech, an unsupe...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250325-vits-2021/">Read more</a></span>
+                        </div>
+
+                        <div class="article-entry-info">
+                            <span class="article-entry-info-item article-entry-time">03-25-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">VITS</span>
+
+                        </div>
+                    </div>
+                    <img src="/machine-learning/paper-note/250325-vits-2021/method.png">
+                </div>
+            </div>
+<div class="article-entry-divider"></div>
+
+
+            <div class="article-entry">
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250314-dino-2021/">[Paper Note] Emerging Properties in Self-Supervised Vision Transformers</a></div>
+                <div class="article-entry-detail">
+                    <div class="article-entry-detail-text">
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
+                        <div class="article-entry-content">
+                            https://arxiv.org/abs/2104.14294    DINO introduces a self-supervised method that doesn’t require labels or negative samples. It uses a teacher network and a student network, updating the teacher network’s parameters through EMA. The teacher network sees a global view, while the student network only...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250314-dino-2021/">Read more</a></span>
+                        </div>
+
+                        <div class="article-entry-info">
+                            <span class="article-entry-info-item article-entry-time">03-14-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">dino</span>
+
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+<div class="article-entry-divider"></div>
+
+
+            <div class="article-entry">
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250218-linear-attn-2020/">[Paper Note] Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention</a></div>
+                <div class="article-entry-detail">
+                    <div class="article-entry-detail-text">
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
+                        <div class="article-entry-content">
+                            https://arxiv.org/abs/2006.16236   Aiming to address the quadratic complexity issue in Transformers.   Self-attention can be expressed as a linear dot-product of kernel feature maps, achieving O(N) complexity.   When applying a kernel with positive similarity scores on the queries and keys, linear a...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250218-linear-attn-2020/">Read more</a></span>
+                        </div>
+
+                        <div class="article-entry-info">
+                            <span class="article-entry-info-item article-entry-time">02-18-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">transformer</span>
+<span class="article-entry-info-item article-entry-tag">linear-transformer</span>
+
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+<div class="article-entry-divider"></div>
+
+
+            <div class="article-entry">
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250206-meissonic-2024/">[Paper Note] Meissonic: Revitalizing Masked Generative Transformers for Efficient High-Resolution Text-to-Image Synthesis</a></div>
+                <div class="article-entry-detail">
+                    <div class="article-entry-detail-text">
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
+                        <div class="article-entry-content">
+                            Existing Problem While MaskGIT-like methods offer fast inference, their overall performance isn’t great. Innovation  Our method uses a combination of multi-modal and single-modal transformer layers.  Language and vision representations are inherently different. We use cross-modal transformers to und...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250206-meissonic-2024/">Read more</a></span>
+                        </div>
+
+                        <div class="article-entry-info">
+                            <span class="article-entry-info-item article-entry-time">02-06-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">maskgit</span>
+<span class="article-entry-info-item article-entry-tag">t2i</span>
+
+                        </div>
+                    </div>
+                    <img src="/machine-learning/paper-note/250206-meissonic-2024/example.png">
+                </div>
+            </div>
+<div class="article-entry-divider"></div>
+
+
+            <div class="article-entry">
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250130-maskgit-2022/">[Paper Note] MaskGIT: Masked Generative Image Transformer</a></div>
+                <div class="article-entry-detail">
+                    <div class="article-entry-detail-text">
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
+                        <div class="article-entry-content">
+                            https://arxiv.org/abs/2202.04200   Unlike text, images are not sequential. This makes auto-regressive models unsuitable for image generation tasks.   During training, MaskGIT is trained on a masked prediction task, similar to what is used in BERT.   Inference: At each iteration, the model predicts a...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250130-maskgit-2022/">Read more</a></span>
+                        </div>
+
+                        <div class="article-entry-info">
+                            <span class="article-entry-info-item article-entry-time">01-30-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">maskgit</span>
+<span class="article-entry-info-item article-entry-tag">t2i</span>
+
+                        </div>
+                    </div>
+                    <img src="/machine-learning/paper-note/250130-maskgit-2022/method.png">
+                </div>
+            </div>
+<div class="article-entry-divider"></div>
+
+
+            <div class="article-entry">
+                <div class="article-entry-title"><a href="/machine-learning/paper-note/250122-clip-2021/">[Paper Note] Learning Transferable Visual Models From Natural Language Supervision</a></div>
+                <div class="article-entry-detail">
+                    <div class="article-entry-detail-text">
+                        
+                        <div class="article-entry-description">
+                            
+                        </div>
+                        
+                        <div class="article-entry-content">
+                            CLIP maps images and text into the same embedding space. It is trained using contrastive learning. Within each batch, the similarity between correct image and text feature pairs is maximized, while the similarity between incorrect pairs is minimized. Both the image and text encoders are trained from...
+                            <span class="article-entry-readmore"><a href="/machine-learning/paper-note/250122-clip-2021/">Read more</a></span>
+                        </div>
+
+                        <div class="article-entry-info">
+                            <span class="article-entry-info-item article-entry-time">01-22-2025</span>
+<span class="article-entry-info-item article-entry-tag">paper-note</span>
+<span class="article-entry-info-item article-entry-tag">clip</span>
+
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+<div class="article-entry-divider"></div>
+
+
             <div class="article-entry">
                 <div class="article-entry-title"><a href="/machine-learning/paper-note/gpt2/">[Paper Note] Language Models are Unsupervised Multitask Learners</a></div>
                 <div class="article-entry-detail">

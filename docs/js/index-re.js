@@ -249,11 +249,15 @@ function create_home_top_area_observer() {
             if (entry.isIntersecting) {
                 article_list_area.style.opacity = 0;
                 home_top_area.style.opacity = 1;
+                // disable the article list area click event response
+                article_list_area.style.pointerEvents = "none";
             } else {
                 // article_list_area.style.opacity = Math.min(1, calc_percentage(entry.intersectionRatio, 0.8, 0.5));
                 // home_top_area.style.opacity = Math.max(0, calc_percentage(entry.intersectionRatio, 0.5, 0.8));
                 article_list_area.style.opacity = 1;
                 home_top_area.style.opacity = 0;
+                // enable the article list area click event response
+                article_list_area.style.pointerEvents = "auto";
             }
         }
     }, {

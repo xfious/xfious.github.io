@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        <img class="article-cover-img" src="method.png" alt="[Paper Note] MaskGIT: Masked Generative Image Transformer">
+        <div class="article-title">[Paper Note] MaskGIT: Masked Generative Image Transformer</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2202.04200">https://arxiv.org/abs/2202.04200</a></p>
+<ul>
+<li>
+<p>Unlike text, images are not sequential. This makes auto-regressive models unsuitable for image generation tasks.</p>
+</li>
+<li>
+<p>During training, MaskGIT is trained on a masked prediction task, similar to what is used in BERT.</p>
+</li>
+<li>
+<p>Inference: At each iteration, the model predicts all tokens simultaneously but only keeps the most confident ones. The remaining tokens are masked out and re-predicted in the next iteration.</p>
+</li>
+<li>
+<p>This approach is much faster than autoregressive models.</p>
+</li>
+<li>
+<p>Mask scheduling: cosine schedule.</p>
+</li>
+</ul>
+<h1 id="training"><a class="markdownIt-Anchor" href="#training"></a> Training</h1>
+<ul>
+<li>
+<p>After tokenization using a VQ-encoder, a mask is applied to the input tokens. If <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>m</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">m_i = 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>, the token is replaced with a special <code>[MASK]</code> token. Otherwise, the original token is kept.</p>
+</li>
+<li>
+<p>A value <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo stretchy="false">(</mo><mi>r</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\gamma(r)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mclose">)</span></span></span></span> between 0 and 1 (inclusive) is used to determine how many tokens to mask.</p>
+</li>
+<li>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo stretchy="false">(</mo><mi>r</mi><mo stretchy="false">)</mo><mo>∗</mo><mi>N</mi></mrow><annotation encoding="application/x-tex">\gamma(r) * N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> tokens are replaced with <code>[MASK]</code> tokens, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> is the total number of tokens in the input sequence.</p>
+</li>
+<li>
+<p>Mask scheduling is important for generation quality.</p>
+</li>
+<li>
+<p>Training objective: The model is trained to predict the original tokens using a negative log-likelihood loss, effectively treating it as a classification problem where the generated tokens should match the real tokens in a one-hot manner.</p>
+</li>
+</ul>
+<h1 id="decoding"><a class="markdownIt-Anchor" href="#decoding"></a> Decoding</h1>
+<ul>
+<li>
+<p>In theory, all tokens could be generated in one pass. However, this is inconsistent with the training task, so iterative decoding is used.</p>
+</li>
+<li>
+<p>In the first iteration, all tokens are masked out.</p>
+</li>
+<li>
+<p>The model predicts the probability of each token.</p>
+</li>
+<li>
+<p>At each masked location <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathnormal">i</span></span></span></span>, a token is randomly sampled from the predicted distribution using temperature annealing to encourage more diversity. This is similar to how language models decode by sampling a token from a probability distribution.</p>
+</li>
+<li>
+<p>A confidence score is assigned to each token. The confidence score is the probability of the predicted token. For unmasked positions, the confidence score is 1.</p>
+</li>
+<li>
+<p>A mask schedule determines how many tokens should be replaced after each iteration.</p>
+</li>
+<li>
+<p>Apply mask: The tokens are sorted based on their confidence scores, and the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">n</span></span></span></span> tokens with the lowest scores are masked for the next iteration.</p>
+</li>
+</ul>
+<h1 id="mask-design"><a class="markdownIt-Anchor" href="#mask-design"></a> Mask Design</h1>
+<ul>
+<li>
+<p>The mask design, which determines how many tokens to mask in each iteration, is important for generation quality.</p>
+</li>
+<li>
+<p>Requirements for <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo stretchy="false">(</mo><mi>r</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\gamma(r)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mclose">)</span></span></span></span>:</p>
+<ul>
+<li>It must be a continuous function between 0 and 1.</li>
+<li>It must be monotonically decreasing with respect to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span>.</li>
+</ul>
+</li>
+<li>
+<p>Types of mask schedules:</p>
+<ul>
+<li>Linear</li>
+<li>Concave: Masks out most tokens in the beginning (e.g., cosine, square, exponential).</li>
+<li>Convex: Finalizes a vast majority of tokens within the first couple of iterations.</li>
+</ul>
+</li>
+</ul>
+<h1 id="ablation-studies"><a class="markdownIt-Anchor" href="#ablation-studies"></a> Ablation Studies</h1>
+<ul>
+<li>
+<p>Concave &gt; Linear &gt; Convex</p>
+</li>
+<li>
+<p>Cosine &gt; Cubic &gt; Exponential</p>
+</li>
+<li>
+<p>There is a sweet spot for the number of iterations. We hypothesize that too many iterations may discourage the model from keeping less confident predictions, which worsens token diversity.</p>
+</li>
+</ul>
+<div class="intended-highlight-area">
+<h1 id="questions"><a class="markdownIt-Anchor" href="#questions"></a> Questions</h1>
+<ul>
+<li>Is it possible to replace the mask token with a random vector? Or at least use a form of vq token + epsilon?</li>
+<li>During training, the model depends on ground truth tokens, but during generation, it depends on its own generated tokens. How to bridge this gap?</li>
+<li>Can the loss function be changed to mean squared error (MSE)?</li>
+<li>Does this mean that some tokens will always be retained throughout the iterations? What if the initial choice for these tokens is bad?</li>
+</ul>
+</div>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

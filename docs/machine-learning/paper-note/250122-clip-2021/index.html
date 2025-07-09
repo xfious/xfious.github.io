@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] Learning Transferable Visual Models From Natural Language Supervision</div>
+    
+        <div class="markdown-body"><div class="intended-highlight-area">
+<h1 id="tldr"><a class="markdownIt-Anchor" href="#tldr"></a> TL;DR</h1>
+<ul>
+<li>CLIP maps images and text into the same embedding space.</li>
+<li>It is trained using contrastive learning. Within each batch, the similarity between correct image and text feature pairs is maximized, while the similarity between incorrect pairs is minimized.</li>
+<li>Both the image and text encoders are trained from scratch. The text encoder also has an autoregressive loss.</li>
+<li>The output of the EOS token in the text encoder is used as the feature of the text.</li>
+</ul>
+</div>
+<h1 id="previous-methods-vs-our-method"><a class="markdownIt-Anchor" href="#previous-methods-vs-our-method"></a> Previous Methods vs. Our Method</h1>
+<p>Previous methods rely on:</p>
+<ul>
+<li>Predicting a fixed set of predetermined object categories.</li>
+<li>Limited supervision, which restricts the model’s ability to generalize.</li>
+<li>Classification-based approaches, requiring new classifications to specify any other visual concept.</li>
+</ul>
+<p>Our method offers a different approach:</p>
+<ul>
+<li>Learning state-of-the-art image representations using only image captions.</li>
+<li>Training on a large dataset of 400M image-text pairs.</li>
+<li>Improved generalization to downstream tasks.</li>
+</ul>
+<p>The effectiveness of our method can be validated through various tasks, including:</p>
+<ul>
+<li>OCR</li>
+<li>Action recognition in videos</li>
+<li>Geo-localization</li>
+<li>Fine-grained object classification</li>
+</ul>
+<h1 id="background"><a class="markdownIt-Anchor" href="#background"></a> Background</h1>
+<ul>
+<li>
+<p>In NLP, models learn from raw text without being limited to specific tasks, using a general prediction method.</p>
+</li>
+<li>
+<p>Previous methods lacked sufficient scale.</p>
+</li>
+<li>
+<p>Linear-probe representation learning analysis involves training a linear classifier on top of the model and comparing the results to determine which model performs better.</p>
+</li>
+<li>
+<p>The main focus of this type of work is using language as a training signal.</p>
+</li>
+</ul>
+<h1 id="method"><a class="markdownIt-Anchor" href="#method"></a> Method</h1>
+<ul>
+<li>Existing ImageNet-based models require significant computational resources. Therefore, a fast encoder is needed.</li>
+</ul>
+<p>using contrastive learning</p>
+<ul>
+<li>Jointly training an image CNN and a text transformer from scratch to predict the caption of an image was unsuccessful.</li>
+<li>Problem: Attempting to predict the exact words of the text is difficult due to the wide variety of captions.</li>
+<li>Therefore, contrastive learning is used.</li>
+</ul>
+<p>Objective</p>
+<ul>
+<li>
+<p>Proxy task: Predicting which text as a whole is paired with which image.</p>
+</li>
+<li>
+<p>CLIP learns a multi-modal embedding space.</p>
+</li>
+<li>
+<p>It jointly trains an image encoder and a text encoder, maximizing the cosine similarity of real pairs and minimizing the similarity of incorrect pairs within a batch.</p>
+</li>
+<li>
+<p>We optimize a symmetric cross-entropy loss over these similarity scores.</p>
+</li>
+</ul>
+<img src="method.png" width="400px" style="margin-left: 40px">
+<br>
+<p>Training</p>
+<ul>
+<li>training from scratch, not using pretrained text model.</li>
+<li>Only a linear projection is used between the encoder space and the contrastive embedding space.</li>
+<li>Adding more layers to the projection does not change the performance. Non-linear projections are typically used in self-supervised learning that uses only images.</li>
+<li>A random square crop from resized images is the only data augmentation used during training.</li>
+<li>The CLIP model treats the temperature parameter τ in the softmax function as a learnable parameter and parameterizes it in logarithmic form (i.e., optimizes log(τ)), avoiding manual hyperparameter tuning.</li>
+</ul>
+<p>Text encoder</p>
+<ul>
+<li>For text embedding, the text sequence is bracketed with [SOS] and [EOS] tokens. The activations of the highest layer of the transformer at the [EOS] token are treated as the feature representation of the text, which is layer normalized and then linearly projected into the multi-modal embedding space.</li>
+<li>The text encoder also optimizes an autoregressive loss.</li>
+</ul>
+<p>hyperparameters</p>
+<ul>
+<li>Training parameters: 32 epochs, Adam optimizer, Cosine learning rate schedule.</li>
+<li>batch size = 32768</li>
+<li>336 pixel square images</li>
+</ul>
+<h1 id="experiments"><a class="markdownIt-Anchor" href="#experiments"></a> Experiments</h1>
+<ul>
+<li>ViT performs better than ResNet.</li>
+<li>can do zero-shot on unseen datasets.</li>
+<li>Adding more words to the prompt can increase classification accuracy. For example, “a photo of {label}, a type of pet”.</li>
+<li>Linear probe is used to evaluate the quality of the learned representations.</li>
+<li>Zero-shot CLIP is much more robust to distribution shift than standard ImageNet models.</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

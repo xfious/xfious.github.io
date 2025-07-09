@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        <img class="article-cover-img" src="example.png" alt="[Paper Note] Meissonic: Revitalizing Masked Generative Transformers for Efficient High-Resolution Text-to-Image Synthesis">
+        <div class="article-title">[Paper Note] Meissonic: Revitalizing Masked Generative Transformers for Efficient High-Resolution Text-to-Image Synthesis</div>
+    
+        <div class="markdown-body"><p><strong>Existing Problem</strong></p>
+<p>While MaskGIT-like methods offer fast inference, their overall performance isn’t great.</p>
+<p><strong>Innovation</strong></p>
+<ul>
+<li>Our method uses a combination of multi-modal and single-modal transformer layers.
+<ul>
+<li>Language and vision representations are inherently different. We use cross-modal transformers to understand both text and images. Then, we use single-modal transformers to refine the visual representation.</li>
+</ul>
+</li>
+<li>RoPE (Rotary Positional Embedding)</li>
+<li>We use masking rate conditioning to inform the model about the amount of valid information available. We also discretize this condition.</li>
+<li>We use micro-conditioning, incorporating original image resolution, crop coordinates, and human preference scores.</li>
+<li>Feature compression layers are used.</li>
+<li>Our 1B model achieves performance comparable to SDXL.</li>
+</ul>
+<h1 id="architecture"><a class="markdownIt-Anchor" href="#architecture"></a> Architecture</h1>
+<ul>
+<li>We use CLIP as the text encoder.</li>
+<li>VQ-VAE image encoder and decoder.</li>
+<li>Codebook size: 8192</li>
+<li>Multi-modal transformer backbone.</li>
+<li>We chose CLIP over T5 because it’s faster.</li>
+</ul>
+<p><strong>Feature Compression Layers</strong></p>
+<ul>
+<li>The goal of these layers is to reduce the number of tokens representing an image, reducing the image representation from 64x64 to 32x32 before processing it through the transformer.</li>
+<li>We use 2D convolution-based feature compression layers.</li>
+</ul>
+<p><strong>Micro-Conditioning Details</strong></p>
+<ul>
+<li>We use sinusoidal embeddings and concatenate these as additional channels to the final pooled hidden states of the text encoder.</li>
+</ul>
+<p><strong>Masking Strategy</strong></p>
+<ul>
+<li>During training, the masking rate is sampled from an arccos distribution.</li>
+</ul>
+<h1 id="training"><a class="markdownIt-Anchor" href="#training"></a> Training</h1>
+<ul>
+<li>Loss: Cross-entropy loss</li>
+<li>Batch size (bz) = 2048, 100k steps</li>
+<li>512 resolution, bz = 512, 100k steps</li>
+<li>1024 resolution, bz = 256, 42k steps</li>
+<li>Training is very fast compared to other models. 48 H100 GPU days</li>
+</ul>
+<p><strong>Four Training Stages</strong></p>
+<ul>
+<li><strong>Stage 1:</strong> Focus on broad coverage of concepts
+<ul>
+<li>Although LAION has quality issues, finely annotated datasets don’t comprehensively cover fundamental concepts, especially regarding human faces.</li>
+<li>We carefully curated the deduplicated LAION-2B dataset by filtering out images with aesthetic scores below 4.5, watermark probabilities exceeding 50%, and other criteria outlined in Kolors (2024).</li>
+<li>About 2M images, 256x256 resolution</li>
+</ul>
+</li>
+<li><strong>Stage 2:</strong> Aligning images with long prompts
+<ul>
+<li>Aesthetic score &gt; 8 from LAION</li>
+<li>1.2M synthetic image-text pairs with long captions.</li>
+<li>512x512 resolution</li>
+<li>We observed a significant boost in the model’s ability to capture abstract concepts and respond accurately to complex prompts, including diverse styles and fantasy characters.</li>
+</ul>
+</li>
+<li><strong>Stage 3:</strong> feature compression
+<ul>
+<li>1024 resolution</li>
+<li>By introducing feature compression layers, we achieve a seamless transition from 512x512 to 1024x1024 generation with minimal computational cost.</li>
+</ul>
+</li>
+<li><strong>Final Stage</strong>: human preference
+<ul>
+<li>We fine-tune the model using a small learning rate, without freezing the text encoder. We also incorporate human preference scores as a micro-condition.</li>
+</ul>
+</li>
+</ul>
+<h1 id="results"><a class="markdownIt-Anchor" href="#results"></a> Results</h1>
+<ul>
+<li>More focus on visual aesthetics</li>
+<li>Performance on the HPS v2 benchmark</li>
+<li>Multi-Dimensional Human Preference Score</li>
+</ul>
+<h1 id="related-works"><a class="markdownIt-Anchor" href="#related-works"></a> Related Works</h1>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2301.00704">MUSE</a></li>
+<li>Aesthetic scores</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>
