@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] PARC: Physics-based Augmentation with Reinforcement Learning for Character Controllers</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2505.04002">PARC: Physics-based Augmentation with Reinforcement Learning for Character Controllers</a></p>
+<p>The goal of this paper is to enable characters to walk flexibly on complex terrain while mitigating issues like incorrect contacts or discontinuities.</p>
+<p>Current methods usually rely heavily on motion capture data, which requires a large and diverse dataset to be effective. PARC addresses this by using a cyclic workflow:</p>
+<ul>
+<li>First, a motion generator synthesizes new terrain traversal motions.</li>
+<li>Next, a tracking controller (trained via Reinforcement Learning) refines these motions to ensure they are physically plausible in a simulator.</li>
+<li>Finally, the refined motions are added back to the dataset for the next round of motion generation training.</li>
+</ul>
+<img src="fig2.png" max-width="80%">
+<h1 id="motion-generator"><a class="markdownIt-Anchor" href="#motion-generator"></a> Motion Generator</h1>
+<p>The motion generator uses a diffusion model with a Transformer encoder architecture. It predicts a motion sequence <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>=</mo><mo stretchy="false">{</mo><msub><mi>x</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>x</mi><mn>2</mn></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>x</mi><mi>T</mi></msub><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">X = \{x_1, x_2, ..., x_T\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">}</span></span></span></span>, where each frame <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">x</span></span></span></span> includes:</p>
+<ul>
+<li>Root position and rotation</li>
+<li>Joint rotations and positions</li>
+<li>Contact labels <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mi>J</mi></msup></mrow><annotation encoding="application/x-tex">c \in \{0, 1\}^J</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">c</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.0913309999999998em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.09618em;">J</span></span></span></span></span></span></span></span></span></span></span></li>
+</ul>
+<p><strong>Conditions</strong><br />
+The model is conditioned on several inputs to guide generation:</p>
+<ul>
+<li>A height map of the surrounding terrain, encoded using a CNN.</li>
+<li>A horizontal target direction <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">d</span></span></span></span>.</li>
+<li>The previous 2 frames of motion (optional).</li>
+</ul>
+<p><strong>Training Data and Loss</strong></p>
+<ul>
+<li>The training uses 0.5-second motion clips (13 future frames and 2 past frames).</li>
+<li>A future frame is randomly selected to set the target direction.</li>
+<li>The terrain is represented by a 31x31 grid centered at the initial position.</li>
+</ul>
+<p>The loss function consists of:</p>
+<ul>
+<li>Reconstruction loss and velocity loss.</li>
+<li>Joint consistency loss: ensuring predicted joint positions match those calculated via forward kinematics from joint rotations.</li>
+<li>Terrain penetration loss: preventing joints from clipping through the ground.</li>
+</ul>
+<p>To prevent the model from overfitting to previous frames and ignoring the terrain, there is a 10% chance during training to use random terrain and disable the reconstruction loss.</p>
+<p>Additionally, inspired by classifier-free guidance, the model interpolates between predictions with and without previous frame conditions during inference. This balances motion continuity with terrain compliance.</p>
+<h1 id="tracking-controller"><a class="markdownIt-Anchor" href="#tracking-controller"></a> Tracking Controller</h1>
+<p>The tracking controller uses Reinforcement Learning (RL) to execute generated motions within a physics simulator, which naturally corrects the motion from a physical perspective.</p>
+<p><strong>Agent Configuration</strong></p>
+<ul>
+<li>Input: Proprioceptive state, local terrain observations, and future target frames from the reference motion.</li>
+<li>Output: Target joint positions for PD controllers, which are then converted into joint torques.</li>
+</ul>
+<p><strong>Reward Design</strong><br />
+The reward function encourages the agent to match the reference motion’s joint positions, velocities, poses, and root orientation.</p>
+<p>Specifically, the agent is rewarded for matching the contact labels of the reference motion. This prevents the agent from using incorrect body parts as support points. While there is no explicit reward for balance, forcing the agent to match the reference poses encourages it to find physically stable ways to achieve those poses, effectively performing a correction of the original generated motion.</p>
+<p>The policy is implemented as a 3-layer MLP and trained using Proximal Policy Optimization (PPO).</p>
+<h1 id="reference"><a class="markdownIt-Anchor" href="#reference"></a> reference</h1>
+<ul>
+<li>
+<p>Human dynamics from monocular video with dynamic camera movements</p>
+</li>
+<li>
+<p>Self-Correcting Self-Consuming Loops for Generative Model Training</p>
+</li>
+<li>
+<p>Human Motion Diffusion Model</p>
+</li>
+<li>
+<p>Deepmimic: Example-guided deep reinforcement learning of physics-based character skills</p>
+</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

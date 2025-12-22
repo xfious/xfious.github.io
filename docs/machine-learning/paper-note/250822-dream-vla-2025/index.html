@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] DreamVLA: A Vision-Language-Action Model Dreamed with Comprehensive World Knowledge</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2507.04447">DreamVLA: A Vision-Language-Action Model Dreamed with Comprehensive World Knowledge</a></p>
+<p>Standard VLA models typically map language and vision directly to robot actions.</p>
+<p>Predicting the future can be used as a reasoning process to improve VLA capabilities. Common methods include predicting future video frames or trajectories. However, these methods have several drawbacks:</p>
+<ul>
+<li>Redundant pixel information.</li>
+<li>A lack of spatial information.</li>
+<li>Missing high-level understanding of future states, such as semantic information.</li>
+</ul>
+<h1 id="method"><a class="markdownIt-Anchor" href="#method"></a> Method</h1>
+<img src="fig2.png" max-width="70%">
+<p><strong>Inputs</strong></p>
+<ul>
+<li>Text tokens from CLIP.</li>
+<li>Proprioceptive state.</li>
+<li>Image tokens from a ViT-B pretrained with MAE.</li>
+</ul>
+<p><strong>Queries</strong></p>
+<ul>
+<li>Dream Queries: A total of 64 queries used to generate a world embedding. This part predicts future information in the form of embeddings rather than raw images. It predicts the state at frame <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>+</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">t+n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69841em;vertical-align:-0.08333em;"></span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal">n</span></span></span></span> (a single future frame rather than a sequence).</li>
+<li>Action Queries: The output of these queries serves as the condition for the diffuser that generates the action sequence.</li>
+</ul>
+<p><strong>Model Architecture</strong></p>
+<ul>
+<li>The core model is based on GPT-2 Medium.</li>
+</ul>
+<p><strong>Loss Functions</strong></p>
+<ul>
+<li>The world embedding is fed into several decoders to predict dynamic regions of the future frame, depth images, and semantic features (using SAM and DINO-v2).</li>
+<li>For dynamic regions, the decoder generates the entire image, but the loss is only calculated for the parts that change.</li>
+<li>During inference, these decoders are not used. The model does not need to reconstruct actual images, which saves computational power.</li>
+<li>ELBO loss is used for dynamic regions to predict a mask of whether a pixel changes.</li>
+<li>L2 loss is used for depth prediction.</li>
+<li>Contrastive loss is used for semantic features.</li>
+</ul>
+<p><strong>Attention Mask</strong></p>
+<ul>
+<li>Dynamic, depth, and semantic embeddings cannot attend to each other.</li>
+<li>World embeddings cannot attend to action embeddings.</li>
+</ul>
+<p>The model uses an additional action diffusion model because action embeddings and world embeddings share the same latent space and similar statistics, making them difficult to distinguish using a simple MLP.</p>
+<h1 id="experiment"><a class="markdownIt-Anchor" href="#experiment"></a> Experiment</h1>
+<p>The model was tested on:</p>
+<ul>
+<li>The language-free split of the CALVIN and DROID datasets.</li>
+<li>Training lasted for 20 epochs.</li>
+</ul>
+<p><strong>Baselines</strong></p>
+<ul>
+<li>Diffusion Policy</li>
+<li>Octo-Base</li>
+<li>OpenVLA</li>
+</ul>
+<p>DreamVLA achieves the highest performance on ABC-D tasks. Real-world experiments for gripper grasping were also conducted on a Franka Panda robot arm.</p>
+<h1 id="ablation-study"><a class="markdownIt-Anchor" href="#ablation-study"></a> Ablation Study</h1>
+<p><strong>Which visual knowledge is most important?</strong></p>
+<ul>
+<li>Dynamic regions have the greatest impact on performance.</li>
+<li>Using only depth, SAM, or DINO leads to a performance drop. These signals may be too noisy or unstable, interfering with the learning process.</li>
+</ul>
+<p><strong>Other findings:</strong></p>
+<ul>
+<li>Predicting the future is more effective than reconstructing the current RGB, depth, or semantic data.</li>
+<li>Using shared dream queries for all modalities leads to interference; providing independent queries for each modality is better for performance.</li>
+<li>The number of dream queries matters. Too many or too few can degrade performance. Using 9 queries per modality is a balanced choice.</li>
+</ul>
+<h1 id="reference"><a class="markdownIt-Anchor" href="#reference"></a> reference</h1>
+<ul>
+<li>
+<p>Learning universal policies via text-guided video generation.</p>
+</li>
+<li>
+<p>Robotic control via embodied chain-of-thought reasoning.</p>
+</li>
+<li>
+<p>3d-vla: A 3d vision-language-action generative world model.</p>
+</li>
+<li>
+<p>Any-point trajectory modeling for policy learning</p>
+</li>
+<li>
+<p>Efficient robotic policy learning via latent space backward planning</p>
+</li>
+<li>
+<p>Pixel motion as universal representation for robot control</p>
+</li>
+<li>
+<p>Symbolically-guided visual plan inference from uncurated video data.</p>
+</li>
+<li>
+<p>Dreamgen: Unlocking generalization in robot learning through neural trajectories</p>
+</li>
+<li>
+<p>Predictive inverse dynamics models are scalable learners for robotic manipulation</p>
+</li>
+<li>
+<p>Cot-vla: Visual chain-of-thought reasoning for vision-language-action models</p>
+</li>
+<li>
+<p>Unified world models: Coupling video and action diffusion for pretraining on large robotic datasets</p>
+</li>
+<li>
+<p>Reinbot: Amplifying robot visual-language manipulation with reinforcement learning</p>
+</li>
+<li>
+<p>A generalist agent</p>
+</li>
+<li>
+<p>Navid: Video-based vlm plans the next step for vision-and-language navigation</p>
+</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>
