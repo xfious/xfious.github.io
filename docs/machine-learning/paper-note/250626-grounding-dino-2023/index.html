@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2303.05499">Grounding DINO: Marrying DINO with Grounded Pre-Training for Open-Set Object Detection</a></p>
+<p>Open-set object detection refers to the task of detecting objects of unknown categories, not just those from a predefined set. For example, it could involve identifying a lion’s ear. This field is advanced by introducing language to generalize to unseen objects.</p>
+<p>Most existing open-set detectors extend closed-set detectors to open-set scenarios by incorporating language information.</p>
+<ul>
+<li>Contrastive learning can be used to give each region in an image language-aware representations.</li>
+<li>We have identified three points where language-vision fusion can occur:</li>
+</ul>
+<p><img src="fig2.png" alt="fig2" /></p>
+<ul>
+<li><strong>Backbone</strong>: Used for feature extraction.</li>
+<li><strong>Neck</strong>: For feature enhancement, and also for multi-modal feature fusion.</li>
+<li><strong>Head</strong>: For prediction, such as bounding boxes.</li>
+</ul>
+<h1 id="previous-works"><a class="markdownIt-Anchor" href="#previous-works"></a> Previous Works</h1>
+<p>It was challenging for previous CNN-based methods to perform feature fusion across all three phases. In contrast, Transformer-based detectors can easily integrate multi-modal information.</p>
+<p>CLIP, for instance, does not perform well on region-text pair tasks.</p>
+<p>GLIP introduced a new approach by incorporating contrastive training between object regions and language phrases on large-scale data.</p>
+<p><strong>Limitations of GLIP:</strong></p>
+<ul>
+<li>GLIP directly concatenates categories into sentences without considering their order, which can lead to interference between unrelated categories.</li>
+</ul>
+<p><strong>Improvements made by Grounding DINO:</strong></p>
+<ul>
+<li>Grounding DINO treats phrases of different categories as separate sentences, extracting text features for each independently.</li>
+</ul>
+<p>This work also introduces Referring Expression Comprehension (REC), a scenario often overlooked by previous methods.</p>
+<ul>
+<li><strong>REC</strong>: Using natural language to point to a specific object, e.g., “the fruit to the right of the apple.”</li>
+</ul>
+<h1 id="method"><a class="markdownIt-Anchor" href="#method"></a> Method</h1>
+<p>The method takes an image-text pair as input. It can handle multiple pairs of object boxes and noun phrases. For Referring Expression Comprehension (REC), there is only one bounding box for each text input.</p>
+<ul>
+<li>The image is fed into a Swin Transformer to extract image features, while the text is processed by BERT to obtain text features.</li>
+<li>A feature enhancer module (Neck) is then used for cross-modality feature fusion.</li>
+<li><strong>Language-Guided Query Selection</strong>:
+<ul>
+<li>We start with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>I</mi></msub></mrow><annotation encoding="application/x-tex">N_I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">I</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> image tokens and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">N_T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> text tokens. Typically, there are over 10,000 image tokens and fewer than 256 text tokens.</li>
+<li>The dot product between each image token and each text token is computed, resulting in an <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>I</mi></msub><mo>×</mo><msub><mi>N</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">N_I \times N_T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07847em;">I</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> matrix of logits.</li>
+<li>We apply <code>max(dim=-1)</code> to get the maximum text token logit corresponding to each image token.</li>
+<li>Then, the top <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">N_q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> image tokens corresponding to these logits are selected, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>q</mi></msub></mrow><annotation encoding="application/x-tex">N_q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> is set to 900. Each token here acts as a query, which may or may not find a bounding box and its corresponding text feature. In essence, a query might produce a bounding box (x, y, w, h) and a text feature.</li>
+</ul>
+</li>
+<li><strong>Decoder</strong>: The DINO decoder is extended with a text cross-attention mechanism.</li>
+<li>For more details, especially on how positive and negative bounding boxes are used to train the model to understand that a query might not produce a valid bounding box, refer to the paper <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2203.03605">DINO</a>.</li>
+</ul>
+<h2 id="loss-function"><a class="markdownIt-Anchor" href="#loss-function"></a> Loss Function</h2>
+<ul>
+<li><strong>Bounding Box Regression</strong>: We use both L1 loss and GIOU loss.
+<ul>
+<li>GIOU loss assesses the overlap between two bounding boxes.</li>
+<li>L1 loss measures the difference between the predicted (x, y, w, h) and the ground truth (x, y, w, h).</li>
+</ul>
+</li>
+<li><strong>Contrastive Loss</strong>:
+<ul>
+<li>For the final output of each query, the similarity between its text feature and the feature of its corresponding bounding box is calculated. If a generated bounding box does not match any ground truth, then no text feature should be similar to its feature.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Bipartite Matching</strong>: How do we map the outputs of 900 queries to a small number of ground truth bounding boxes?</p>
+<ul>
+<li>Following the method in DINO, we first calculate a matching cost and then use the Hungarian algorithm to find the optimal bipartite matching.</li>
+<li>Matched pairs are considered positive samples, while unmatched pairs are negative samples. The training objective for negative samples is to minimize the similarity between their features and text features.</li>
+</ul>
+<h1 id="experiments"><a class="markdownIt-Anchor" href="#experiments"></a> Experiments</h1>
+<p>The model was evaluated across various tasks:</p>
+<ul>
+<li><strong>Closed-set object detection</strong>: Performance was assessed using the COCO detection benchmark.</li>
+<li><strong>Open-set object detection</strong>: This was evaluated on zero-shot COCO, LVIS, and ODinW datasets.</li>
+<li><strong>Referring setting</strong>: Performance for referring expression comprehension was tested using the RefCOCO dataset.</li>
+</ul>
+<p><strong>Model Details</strong></p>
+<ul>
+<li><strong>Backbone</strong>: Swin Transformer was used as the image backbone.</li>
+<li><strong>Text Encoder</strong>: BERT-base from Hugging Face was employed as the text encoder.</li>
+<li><strong>Computational Efficiency</strong>: To reduce computational load, deformable attention was utilized in the image cross-attention modules.</li>
+<li><strong>Pretraining Data</strong>: The model was pretrained on Objects365 and OpenImages datasets.</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

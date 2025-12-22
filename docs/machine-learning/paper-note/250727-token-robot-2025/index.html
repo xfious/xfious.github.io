@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] FAST: Efficient Action Tokenization for  Vision-Language-Action Models</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2501.09747">FAST: Efficient Action Tokenization for  Vision-Language-Action Models</a></p>
+<p>Naive tokenization strategies based on a per-dimension, per-timestep binning scheme face a significant issue: tokens are too strongly correlated. This makes the prediction task overly simple, often leaving models stuck in poor local optima.</p>
+<p>Our key insight is that robot action signals must be compressed before training to reduce correlation between consecutive tokens. While Byte Pair Encoding (BPE) can be used, handling continuous numbers effectively requires a specific approach: Discrete Cosine Transform (DCT) encoding.</p>
+<h1 id="previous-action-representations"><a class="markdownIt-Anchor" href="#previous-action-representations"></a> Previous Action Representations</h1>
+<p><strong>Semantic Representations</strong></p>
+<ul>
+<li>Language sub-tasks or keypoints.</li>
+<li>The main problem is the need for a manually designed mapping from semantics to specific execution commands.</li>
+</ul>
+<p><strong>Low-level Robot Control Commands</strong></p>
+<ul>
+<li>Using an external diffusion model to generate continuous action sequences.</li>
+<li>Per-dimension, per-timestep binning schemes.</li>
+<li>Vector-quantized action representations: These methods perform well at coarse, low-fidelity reconstruction tasks but fail on high-frequency tasks where fine-grained control is required.</li>
+</ul>
+<p>For smooth signals, a high sampling rate means changes between consecutive timesteps are minimal. This leads to a near-zero marginal information gain for each new token. Autoregressive models struggle to learn meaningful patterns because they can achieve low loss simply by copying the previous token, failing to learn complex behaviors.</p>
+<h1 id="frequency-space-action-sequence-tokenization-fast"><a class="markdownIt-Anchor" href="#frequency-space-action-sequence-tokenization-fast"></a> Frequency-space Action Sequence Tokenization (FAST)</h1>
+<p>FAST uses the Discrete Cosine Transform (DCT) to convert continuous action signals into a frequency-space representation.</p>
+<ul>
+<li><strong>Action Chunk</strong>: Continuous action signals are divided into time windows. Each window contains <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi></mrow><annotation encoding="application/x-tex">H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span> timesteps and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi></mrow><annotation encoding="application/x-tex">D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span></span> channels of action signals.</li>
+<li><strong>Time Length</strong>: Typically 1 second. The sampling rate is less critical because DCT naturally unifies the influence of frequency.</li>
+</ul>
+<p>DCT is similar to the Fourier Transform but uses only cosine waveforms. It transforms a continuous 1D signal into a vector of the same length, where each dimension represents a coefficient for a specific frequency. These basis frequencies are orthogonal. The resulting vector represents coefficients whose linear combination reconstructs the original signal.</p>
+<p><strong>Why use this transformation?</strong></p>
+<ul>
+<li>Low-frequency coefficients usually have larger magnitudes. After quantization, many high-frequency coefficients become zero, making them easy for BPE to encode into tokens.</li>
+<li>Unlike vector quantization, this is an analytical approach, making it simple and fast.</li>
+<li>It is compatible with different action control frequencies.</li>
+</ul>
+<p><strong>Multi-channel Handling</strong><br />
+In a time window, there are multiple channels (e.g., joint angles, velocities). Each channel undergoes DCT individually rather than using a 2D DCT, as correlation between different channels is relatively low.</p>
+<ul>
+<li>The input and output of the DCT are both <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>×</mo><mi>H</mi></mrow><annotation encoding="application/x-tex">D \times H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span> matrices.</li>
+</ul>
+<p><strong>Quantization</strong><br />
+After DCT, real numbers are quantized into integers:</p>
+<ul>
+<li>The process involves scaling and then rounding.</li>
+<li>The scaling coefficient is a hyperparameter that balances lossiness and the compression rate.</li>
+<li>In experiments, this hyperparameter had little impact and was set to 10.</li>
+</ul>
+<p><strong>Flattening</strong><br />
+The quantized matrix is flattened into a vector by columns (<strong>column-first flattening</strong>).</p>
+<ul>
+<li>This means the same frequency components from different channels are placed together.</li>
+<li>This proved more stable during training than row-first flattening (grouping all frequencies of a single dimension together).</li>
+</ul>
+<p>The vocabulary size is set to 1024, which also showed minimal impact as a hyperparameter.</p>
+<h1 id="experiments"><a class="markdownIt-Anchor" href="#experiments"></a> Experiments</h1>
+<p>The method was tested on two VLA backbones: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\pi_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> and OpenVLA. The evaluation covered dexterous tasks and generalization tasks, such as manipulating unseen objects in new environments.</p>
+<p><strong>Comparisons</strong></p>
+<ul>
+<li>FSQ: Finite Scalar Quantization, which involves compression but requires more complex learning.</li>
+<li>Naive tokenization: Standard binning based on different channels.</li>
+</ul>
+<p><strong>Key Findings</strong></p>
+<ul>
+<li>In high-frequency tasks, FAST shows a high compression rate, significantly reducing the number of tokens to be generated.</li>
+<li>FAST significantly outperforms FSQ and naive tokenization in complex and high-frequency tasks.</li>
+<li>On the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>π</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\pi_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> model, FAST was compared against a diffusion-based version.
+<ul>
+<li>In small datasets, both FAST and diffusion achieve similar performance.</li>
+<li>In large datasets, FAST converges several times faster, though diffusion is more time-efficient during inference.</li>
+</ul>
+</li>
+</ul>
+<h1 id="ablation-study"><a class="markdownIt-Anchor" href="#ablation-study"></a> Ablation Study</h1>
+<ul>
+<li>FAST performs well across different autoregressive VLA models, suggesting the approach is independent of the underlying VLA backbone.</li>
+<li>If BPE is removed, performance drops but remains better than naive tokenization.</li>
+<li>The DCT transform itself concentrates signal information into a few coefficients and turns many others to zero. This improves the learning signal and reduces redundancy.</li>
+<li>BPE prevents a large number of repeated zero tokens from diluting the model’s learning signal.</li>
+</ul>
+<h1 id="reference"><a class="markdownIt-Anchor" href="#reference"></a> reference</h1>
+<ul>
+<li>
+<p>Openvla: An open-source vision-language-action model</p>
+</li>
+<li>
+<p>pi 0: A vision-language-action flow model for general robot control</p>
+</li>
+<li>
+<p>Finite scalar quantization: Vqvae made simple</p>
+</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

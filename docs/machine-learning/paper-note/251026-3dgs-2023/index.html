@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] 3D Gaussian Splatting for Real-Time Radiance Field Rendering</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2308.04079">3D Gaussian Splatting for Real-Time Radiance Field Rendering</a></p>
+<p>3D Gaussian Splatting (3DGS) aims to solve the problem of expensive neural network training and inference in NeRF, enabling real-time rendering.</p>
+<p>It avoids the need for random sampling used in NeRF, significantly accelerating the rendering process.</p>
+<h1 id="related-work"><a class="markdownIt-Anchor" href="#related-work"></a> Related Work</h1>
+<p><strong>Existing NeRF Acceleration Methods</strong></p>
+<ul>
+<li>Using spatial structures to store neural features. This replaces the MLP in NeRF with voxel or point-based spatial models.</li>
+<li>Replacing positional encoding with hash tables.</li>
+<li>Using Spherical Harmonics (SH) to store directional color. This is simpler than using an MLP to represent view-dependent colors and can be stored directly in voxels or points.</li>
+<li>Shrinking or completely removing the MLP.</li>
+</ul>
+<p><strong>Point-based Methods and Radiance Fields</strong></p>
+<p>Point-based <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span></span>-blending and NeRF-style volumetric rendering use similar rendering techniques. However, NeRF is continuous and requires random sampling.</p>
+<ul>
+<li>Some methods use neural networks to represent point attributes.</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2004.07484">Pulsar: Efficient Sphere-Based Neural Rendering</a> uses sphere primitives to represent points. These spheres are isotropic (always circular). In contrast, 3D Gaussian Splatting (3DGS) uses anisotropic Gaussians, which can represent ellipsoids of any shape.</li>
+<li>Pulsar only backpropagates gradients for the top N splats, while 3DGS backpropagates through all splats.</li>
+<li>Pulsar ignores visibility order, whereas 3DGS performs alpha-blending based on visibility.</li>
+</ul>
+<h1 id="method"><a class="markdownIt-Anchor" href="#method"></a> Method</h1>
+<p><img src="fig2.png" alt="fig2" /></p>
+<p>The input consists of a set of images of a static scene, a point cloud produced by Structure-from-Motion (SfM), and the camera poses/intrinsics provided by SfM.</p>
+<p>Each 3D Gaussian is defined by:</p>
+<ul>
+<li>Position (mean)</li>
+<li>Covariance matrix</li>
+<li>Opacity <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span></span></li>
+<li>View-dependent color parameters (Spherical Harmonics)</li>
+</ul>
+<p>3D Gaussians act as primitives for differentiable volume rendering. They are unstructured and highly efficient for fast rendering.</p>
+<p><strong>Projecting the Covariance Matrix</strong></p>
+<p>To project the covariance matrix from world space to camera space:</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi mathvariant="normal">Σ</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo>=</mo><mi>J</mi><mi>W</mi><mi mathvariant="normal">Σ</mi><msup><mi>W</mi><mi>T</mi></msup><msup><mi>J</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\Sigma&#x27; = J W \Sigma W^T J^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.751892em;vertical-align:0em;"></span><span class="mord"><span class="mord">Σ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.751892em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.09618em;">J</span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mord">Σ</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.09618em;">J</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span> is the transformation matrix from world to camera coordinates.</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.09618em;">J</span></span></span></span> is the Jacobian matrix for perspective projection. Perspective distortion occurs because we are projecting a region rather than a single point.</li>
+</ul>
+<p>The covariance matrix must be positive semi-definite. To ensure this during gradient descent, it is decomposed into:</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Σ</mi><mo>=</mo><mi>R</mi><mi>S</mi><msup><mi>S</mi><mi>T</mi></msup><msup><mi>R</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\Sigma = R S S^T R^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord">Σ</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.8413309999999999em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span></li>
+<li>This is analogous to describing an ellipsoid by its axis lengths (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>) and its rotation (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>).</li>
+</ul>
+<p>To simplify backpropagation and improve numerical stability, gradients for all parameters are derived explicitly.</p>
+<h2 id="optimization"><a class="markdownIt-Anchor" href="#optimization"></a> Optimization</h2>
+<ul>
+<li>A sigmoid activation function maps opacity values to [0, 1].</li>
+<li>The initial covariance matrix is estimated as an isotropic Gaussian with axes equal to the mean distance to the three closest points.</li>
+<li>The loss function combines L1 loss and D-SSIM loss (which considers brightness, contrast, and pixel correlation).</li>
+</ul>
+<h2 id="adaptive-control-of-gaussians"><a class="markdownIt-Anchor" href="#adaptive-control-of-gaussians"></a> Adaptive Control of Gaussians</h2>
+<p><img src="fig4.png" alt="fig4" /></p>
+<p>The optimization process adds or deletes 3D Gaussians periodically:</p>
+<ul>
+<li>Under-reconstruction: Regions lacking enough Gaussians.</li>
+<li>Over-reconstruction: Regions where a single Gaussian covers too large an area.</li>
+<li>Both cases are identified by large view-space positional gradients.</li>
+</ul>
+<p><strong>Handling Under-reconstruction</strong></p>
+<ul>
+<li>Duplicate the Gaussian in that region and move the new one in the direction of the positional gradient.</li>
+</ul>
+<p><strong>Handling Over-reconstruction</strong></p>
+<ul>
+<li>These Gaussians have large variance. They are split into two smaller Gaussians. The variance is reduced by a factor of 1.6 (determined experimentally), and the new positions are sampled from the original Gaussian’s PDF.</li>
+</ul>
+<p><strong>Pruning</strong></p>
+<ul>
+<li>Periodically reset all Gaussian opacities to a very low value. Optimization will naturally increase the opacity of important ones.</li>
+<li>Gaussians with very low opacity are deleted.</li>
+<li>Gaussians that occupy too much space in image space or world space are deleted.</li>
+</ul>
+<h2 id="efficient-rendering"><a class="markdownIt-Anchor" href="#efficient-rendering"></a> Efficient Rendering</h2>
+<ul>
+<li>Only Gaussian splats that intersect the view frustum (within a 99% Confidence Interval) are kept.</li>
+<li>Splats are sorted by depth in camera space once per image. Sorting per pixel is unnecessary because splats are small enough that their center point depth is a sufficient approximation.</li>
+</ul>
+<p><strong>Hardware Optimizations</strong></p>
+<ul>
+<li>Images are divided into 16x16 tiles, each processed by a GPU thread block.</li>
+<li>Sorting keys use the tile ID in high bits and depth in low bits. This ensures splats covering the same tile are stored contiguously in memory.</li>
+<li>If a splat covers multiple tiles, it is instantiated multiple times.</li>
+<li>Each tile only needs a start and end pointer to its relevant splats for efficient rendering.</li>
+</ul>
+<h2 id="training-details"><a class="markdownIt-Anchor" href="#training-details"></a> Training Details</h2>
+<ul>
+<li>Training begins at 1/4 resolution for 250 iterations before gradually scaling up to full resolution.</li>
+<li>For SH coefficients, initial training only optimizes the zero-order component (view-independent color). This stabilizes training, as view-dependent data might be missing for certain points (e.g., in corners).</li>
+<li>Convergence usually takes 30k iterations (approx. 40 minutes).</li>
+<li>Model size is typically several hundred MBs.</li>
+</ul>
+<h1 id="ablation-study"><a class="markdownIt-Anchor" href="#ablation-study"></a> Ablation Study</h1>
+<ul>
+<li>Restricting backpropagation to only the first 10 points significantly degrades performance.</li>
+<li>Using random points instead of SfM initialization drops performance, especially in backgrounds or areas with few viewpoints.</li>
+<li>Failing to split large Gaussians (over-reconstruction) leads to a significant drop in PSNR.</li>
+<li>Handling under-reconstruction shows less dramatic impact but is still beneficial.</li>
+<li>Removing SH coefficients or using Isotropic Gaussians (diagonal covariance) slightly decreases performance.</li>
+</ul>
+<h1 id="limitations"><a class="markdownIt-Anchor" href="#limitations"></a> Limitations</h1>
+<ul>
+<li>Streak-like artifacts can appear in regions with few constraints.</li>
+<li>“Popping” artifacts may occur because the renderer clips Gaussian splats, creating hard thresholds.</li>
+<li>Visibility ordering is an approximation because Gaussians have spatial extent; this can lead to slight rendering inaccuracies, which might be solved by anti-aliasing.</li>
+</ul>
+<h1 id="reference"><a class="markdownIt-Anchor" href="#reference"></a> reference</h1>
+<ul>
+<li>
+<p>Deep blending for free-viewpoint image-based rendering.</p>
+</li>
+<li>
+<p>Free view synthesis.</p>
+</li>
+<li>
+<p>Soft 3D reconstruction for view synthesis.</p>
+</li>
+<li>
+<p>Deepvoxels: Learning persistent 3d feature embeddings.</p>
+</li>
+<li>
+<p>Instant Neural Graphics Primitives with a Multiresolution Hash Encoding.</p>
+</li>
+<li>
+<p>Plenoxels: Radiance Fields without Neural Networks.</p>
+</li>
+<li>
+<p>Neural Point-Based Graphics</p>
+</li>
+<li>
+<p>Pulsar: Efficient Sphere-Based Neural Rendering.</p>
+</li>
+<li>
+<p>Point-nerf: Point-based neural radiance fields</p>
+</li>
+<li>
+<p>VoGE: A Differentiable Volume Renderer using Gaussian Ellipsoids for Analysis-by-Synthesis.</p>
+</li>
+<li>
+<p>Mixture of volumetric primitives for efficient neural rendering.</p>
+</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

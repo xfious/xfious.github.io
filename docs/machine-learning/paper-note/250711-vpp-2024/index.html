@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] Video Prediction Policy: A Generalist Robot Policy with Predictive Visual Representations</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2412.14803">Video Prediction Policy: A Generalist Robot Policy with Predictive Visual Representations</a></p>
+<p>We hypothesize that video diffusion models can capture dynamic information and better predict the future physical world. This capability could provide valuable guidance for robot action learning.</p>
+<h1 id="video-prediction-policy"><a class="markdownIt-Anchor" href="#video-prediction-policy"></a> Video Prediction Policy</h1>
+<p>For generalist policies, the visual module is crucial.</p>
+<p>Our approach is divided into two steps:</p>
+<ul>
+<li><strong>Step 1: Fine-tune a general-purpose video diffusion model.</strong> This model is fine-tuned using internet human and robot manipulation data. The primary goal here is to enhance manipulation skills.</li>
+<li><strong>Step 2: Learn an inverse dynamics model.</strong> This model is conditioned on the predictive representations from the previous step. This means we only use the internal states of the first model, not its direct output, thus avoiding the need for multi-step diffusion.</li>
+</ul>
+<h1 id="related-work"><a class="markdownIt-Anchor" href="#related-work"></a> Related Work</h1>
+<ul>
+<li>Ego4d: Around the world in 3,000 hours of egocentric video</li>
+<li>Spatialvlm: Endowing vision-language models with spatial reasoning capabilities</li>
+<li>Learning universal policies via text-guided video generation</li>
+<li>Unleashing large-scale video generative pre-training for visual robot manipulation</li>
+</ul>
+<p><strong>Limitations of Existing Approaches:</strong></p>
+<ul>
+<li>Some methods that utilize future information rely solely on a single future prediction step to determine actions. This approach may not accurately capture the complexities of physical dynamics.</li>
+<li>Denoising the final future image can be time-consuming and lead to a low control frequency, which is undesirable for real-time robotic control.</li>
+<li>The prediction quality of auto-regressive models often lags behind that of diffusion-based methods.</li>
+</ul>
+<p><strong>Insights from Diffusion Models:</strong></p>
+<ul>
+<li><strong>Image Diffusion Models for Visual Representations:</strong> Recent work indicates that image diffusion models can learn meaningful visual representations.
+<ul>
+<li><em>Denoising diffusion autoencoders are unified self-supervised learners.</em></li>
+</ul>
+</li>
+<li><strong>Diffusion Models for Semantic Segmentation:</strong> Diffusion models have also been shown to be effective for semantic segmentation tasks.
+<ul>
+<li><em>Diffusion hyperfeatures: Searching through time and space for semantic correspondence.</em></li>
+</ul>
+</li>
+</ul>
+<h1 id="text-guided-video-prediction-model-for-robot-manipulation"><a class="markdownIt-Anchor" href="#text-guided-video-prediction-model-for-robot-manipulation"></a> Text-guided Video Prediction Model for Robot Manipulation</h1>
+<p>While video generation models are trained on large-scale datasets, they are not fully controllable and often fail to produce optimal results in specialized domains like robot manipulation.</p>
+<p>Our base model is <strong>Stable Video Diffusion (SVD)</strong>.</p>
+<ul>
+<li>The original SVD model is only conditioned on initial-frame images.</li>
+<li>We augment this model to incorporate CLIP language embeddings using cross-attention layers, allowing for text-guided control.</li>
+<li>The output video resolution is 16 frames of 256x256 pixels.</li>
+</ul>
+<h1 id="action-learning-conditioned-on-predictive-visual-representation"><a class="markdownIt-Anchor" href="#action-learning-conditioned-on-predictive-visual-representation"></a> Action Learning Conditioned on Predictive Visual Representation</h1>
+<p><img src="./fig2.png" alt="fig2" /></p>
+<p>Our key insight is that even the first forward step of the diffusion process, while not producing a clear video, still provides a rough trajectory of future states and valuable guidance for action learning.</p>
+<p>We found that the up-sampling layers in U-Net diffusion models yield more effective representations.</p>
+<p>We concatenate the feature maps from these later layers after interpolating them to the same width and height.</p>
+<p>To further extract information, we use a Transformer (specifically, a “Video Former”) to generate T x L tokens. This Transformer is conditioned on the concatenated feature maps. These feature maps can originate from multiple camera views, but they are treated as distinct inputs rather than being merged into a single feature map.</p>
+<p>Finally, this information, along with the CLIP embeddings from natural language descriptions, conditions our diffusion policy model.</p>
+<h1 id="experiments"><a class="markdownIt-Anchor" href="#experiments"></a> Experiments</h1>
+<p>We evaluated our approach using two standard benchmarks:</p>
+<ul>
+<li><strong>CALVIN benchmark:</strong> This benchmark assesses the instruction-following capabilities of robotic policies in long-horizon manipulation tasks. We used the ABC-&gt;D setting, meaning the agent is trained in environments A, B, and C, and then evaluated in the unseen environment D.</li>
+<li><strong>MetaWorld Benchmark</strong></li>
+</ul>
+<p>We adopted the dataset sampling strategy from Octo, an open-source generalist robot policy, given the varying scales and quality of the datasets used in this work.</p>
+<p><strong>Computational cost:</strong></p>
+<ul>
+<li>Fine-tuning the video model required 2-3 days on eight NVIDIA A100 GPUs.</li>
+<li>The second stage, training a generalist policy with the CALVIN or MetaWorld dataset, took approximately 6-12 hours on four NVIDIA A100 GPUs.</li>
+</ul>
+<p>Since we use the video diffusion model solely as an encoder, we can achieve a control frequency of 7-10 Hz on an RTX 4090.</p>
+<h1 id="ablation-study"><a class="markdownIt-Anchor" href="#ablation-study"></a> Ablation Study</h1>
+<p>We conducted several ablation studies to understand the contribution of different components:</p>
+<ul>
+<li>
+<p><strong>Comparison with VAE as Encoder:</strong></p>
+<ul>
+<li>VAEs are primarily trained for reconstruction.</li>
+<li>Using a video generation model as an encoder significantly outperforms a VAE.</li>
+</ul>
+</li>
+<li>
+<p><strong>Importance of Internet Data and Pre-trained Models:</strong></p>
+</li>
+<li>
+<p>Both internet manipulation data and pre-trained video diffusion models are crucial for achieving good performance.</p>
+</li>
+<li>
+<p><strong>Impact of Video Former:</strong></p>
+<ul>
+<li>The Video Former significantly reduces latency and improves overall performance.</li>
+</ul>
+</li>
+<li>
+<p><strong>Feature Map Aggregation:</strong></p>
+<ul>
+<li>Using only the final layer’s feature map resulted in poorer performance.</li>
+<li>The image from the final layer often contains many irrelevant details that are not beneficial for the task.</li>
+<li>In contrast, we adopted a feature aggregation mechanism to leverage multiple layers of features within the up-sampling layers, which proved more effective.</li>
+</ul>
+</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

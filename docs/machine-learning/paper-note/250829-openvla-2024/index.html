@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] OpenVLA: An Open-Source Vision-Language-Action Model</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2406.09246">OpenVLA: An Open-Source Vision-Language-Action Model</a></p>
+<p>This paper shows a new paradigm for robot control: leveraging Vision-Language Models (VLMs) pre-trained on extensive robot data. The goal is to fine-tune these pre-trained VLMs, rather than training new behaviors from scratch. This approach is called Vision-Language-Action (VLA) model.</p>
+<ul>
+<li>Current VLAs has not released open weights.</li>
+<li>Previous work has not adequately explored efficient fine-tuning methods. This work utilizes LoRA and quantization for efficient fine-tuning.</li>
+</ul>
+<p>Traditional methods typically output language and vision embeddings and then train an action model from scratch. In contrast, this paper’s method directly fine-tunes the VLM to generate actions, which is named VLA.</p>
+<p><strong>Benefits of VLA</strong></p>
+<ul>
+<li>Visual and textual data are aligned on an internet scale.</li>
+<li>It uses a generic architecture, allowing for the reuse of VLM training infrastructure.</li>
+<li>It can directly leverage advancements in VLMs.</li>
+</ul>
+<p>However, existing methods are either closed-source, making fine-tuning impossible, or are trained and tested only in specific scenarios.</p>
+<h1 id="method"><a class="markdownIt-Anchor" href="#method"></a> Method</h1>
+<p><strong>Tokenization</strong></p>
+<ul>
+<li>Values in each channel are discretized into 256 bins.</li>
+<li>The range between the 1st and 99th percentile is evenly divided. This is done to ignore outlier actions, which would otherwise lead to a significant loss of precision.</li>
+<li>The least used tokens in the original vocabulary, specifically the last 256 tokens, are replaced.</li>
+</ul>
+<p><strong>OpenX Dataset</strong></p>
+<ul>
+<li>This dataset comprises 70 individual robot datasets, totaling 2 million trajectories.</li>
+</ul>
+<p><strong>Data Processing</strong></p>
+<ul>
+<li>To improve consistency between the input and output spaces, the data must include at least one third-person camera and use single-arm end-effector control.</li>
+<li>It’s crucial to balance different robot types, tasks, and scenarios. This work uses Octo’s data mixture weights, which reduce the weight of less diverse datasets and increase the weight of datasets with greater task and scene diversity.</li>
+<li>DROID, a large dataset released after Octo, was initially given only a 10% weight during training. However, due to consistently low accuracy on DROID, it was removed during the later stages of training.</li>
+</ul>
+<p>Before the final experiments, small-scale training was conducted on the BridgeData V2 dataset.</p>
+<p>Prismatic-7B, which uses SigLIP and DinoV2 as visual encoders, exhibits better spatial reasoning capabilities compared to other VLMs.</p>
+<p>The input consists of a single image.</p>
+<p>There was no performance difference observed between 224 and 384 resolutions, but the lower resolution significantly reduced training time.</p>
+<p>While frozen vision encoders often perform better in VLM training, fine-tuning the vision encoder during VLA training is crucial in the VLA setting. We hypothesize that the pre-trained vision backbone may not capture sufficient fine-grained spatial details about important parts of the scene to enable precise robotic control.</p>
+<p>The training involved 27 epochs, consuming 21,500 A100-hours, with a batch size of 2048.</p>
+<h1 id="experiment"><a class="markdownIt-Anchor" href="#experiment"></a> Experiment</h1>
+<h2 id="zero-shot-evaluation"><a class="markdownIt-Anchor" href="#zero-shot-evaluation"></a> Zero-Shot Evaluation</h2>
+<p><strong>Robot Platforms</strong></p>
+<ul>
+<li>WidowX robot</li>
+<li>Mobile manipulation robot from the RT-1 and RT-2 evaluations</li>
+</ul>
+<p><strong>Baselines</strong></p>
+<ul>
+<li>RT-1-X (35M parameters)</li>
+<li>Octo (93M parameters)</li>
+<li>RT-2-X (55B parameters)</li>
+</ul>
+<p><img src="fig3.png" alt="fig3" /></p>
+<p><strong>Conclusions</strong></p>
+<ul>
+<li>Our model (OpenVLA) performs better than RT-2-X, despite using only 7B parameters.</li>
+<li>RT-1-X and Octo performed poorly on test tasks, especially when distractors were present. They often failed to manipulate the correct objects and sometimes caused the robot to wave its arms aimlessly. This indicates a lack of generalization ability in models without internet pre-training.</li>
+<li>RT-2-X’s advantage: It showed better performance in semantic generalization tasks. This is likely due to its use of larger-scale internet pre-training data and joint fine-tuning on both robot action data and internet pre-training data, which better preserves pre-trained knowledge.</li>
+</ul>
+<h2 id="fine-tuning-evaluation"><a class="markdownIt-Anchor" href="#fine-tuning-evaluation"></a> Fine-Tuning Evaluation</h2>
+<p>For fine-tuning tests, we used the Franka Emika Panda 7-DoF robot.</p>
+<p><strong>Baselines</strong></p>
+<ul>
+<li>Diffusion policy</li>
+<li>Octo</li>
+<li>OpenVLA (trained only on the testing tasks)</li>
+</ul>
+<p>results</p>
+<ul>
+<li>Diffusion policy performs well in narrow, single-instruction tasks.</li>
+<li>Octo and OpenVLA perform better in diverse fine-tuning tasks involving multiple objects in the scene and requiring language conditioning.</li>
+<li>OpenVLA (scratch) showed lower performance, demonstrating that large-scale robot pre-training (OpenX) is crucial for the effectiveness of the OpenVLA model.</li>
+<li>For narrow but highly dexterous tasks, Diffusion Policy still shows smoother and more precise trajectories.</li>
+</ul>
+<h2 id="lora-and-quantization"><a class="markdownIt-Anchor" href="#lora-and-quantization"></a> LoRA and Quantization</h2>
+<p>We first compared the performance of fine-tuning different modules:</p>
+<ul>
+<li>Full fine-tuning (FT) performed the best.</li>
+<li>LoRA’s performance was close to full FT, and the number of ranks did not significantly affect it.</li>
+<li>Fine-tuning only the head and last layer yielded the worst results.</li>
+<li>Fine-tuning the backbone (excluding the vision encoder) also showed suboptimal performance.</li>
+<li>Sandwich fine-tuning, which unfreezes the vision encoder, token embedding matrix, and last layer, achieved performance close to LoRA.</li>
+</ul>
+<p><strong>Model Precision</strong></p>
+<ul>
+<li>Int4 and BF16 showed comparable performance, but Int8 performed very poorly.</li>
+<li>This is because Int8 inference speed was too slow, causing the control frequency to be much lower than the frequency in training.</li>
+</ul>
+<h1 id="reference"><a class="markdownIt-Anchor" href="#reference"></a> reference</h1>
+<ul>
+<li>
+<p>Pali: A jointly-scaled multilingual language-image model</p>
+</li>
+<li>
+<p>Octo: An open-source generalist robot policy</p>
+</li>
+<li>
+<p>QT-Opt: Scalable deep reinforcement learning for vision-based robotic manipulation</p>
+</li>
+<li>
+<p>Mt-opt: Continuous multi-task robotic reinforcement learning at scale</p>
+</li>
+<li>
+<p>Imitating shortest paths in simulation enables effective navigation and manipulation in the real world</p>
+</li>
+<li>
+<p>Droid: A large-scale in-the-wild robot manipulation dataset.</p>
+</li>
+<li>
+<p>Open X-Embodiment: Robotic learning datasets and RT-X models</p>
+</li>
+<li>
+<p>An embodied generalist agent in 3d world.</p>
+</li>
+<li>
+<p>Vision-language foundation models as effective robot imitators.</p>
+</li>
+<li>
+<p>3d-vla: 3d vision-language-action generative world model.</p>
+</li>
+<li>
+<p>What matters in employing vision language models for tokenizing actions in robot control?</p>
+</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

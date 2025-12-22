@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] 3D-VLA: A 3D Vision-Language-Action Generative World Model</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2403.09631">3D-VLA: A 3D Vision-Language-Action Generative World Model</a></p>
+<h1 id="how-to-integrate-3d-perception-and-enable-robots-to-understand-3d-scenes"><a class="markdownIt-Anchor" href="#how-to-integrate-3d-perception-and-enable-robots-to-understand-3d-scenes"></a> How to Integrate 3D Perception and Enable Robots to Understand 3D Scenes</h1>
+<p>This work focuses on integrating 3D perception into robotic systems to enhance their understanding of 3D environments.</p>
+<p><strong>Main Contributions</strong></p>
+<ul>
+<li>Previous Vision-Language-Action (VLA) models primarily relied on 2D image input and performed inference in 2D space. This work introduces 3D information.</li>
+<li>Prior VLA models typically mapped directly from visual states to actions. This work introduces target-based 3D scene prediction, effectively acting as a world model.</li>
+<li>A series of special interaction and action tokens are introduced into the Large Language Model (LLM) framework.</li>
+<li>3D datasets are constructed from existing datasets using depth estimation.</li>
+</ul>
+<h1 id="dataset"><a class="markdownIt-Anchor" href="#dataset"></a> Dataset</h1>
+<p>The research utilizes a variety of datasets:</p>
+<ul>
+<li>12 datasets from the Open-X Embodiment Dataset.</li>
+<li>Dobb-E, which includes depth information.</li>
+<li>RH20T, which also includes depth information.</li>
+<li>Datasets from two simulator environments: RLBench (James et al., 2020) and CALVIN (Mees et al., 2022).</li>
+<li>Epic-Kitchens.</li>
+<li>HOI4D.</li>
+</ul>
+<p><strong>Generating Depth Information</strong></p>
+<ul>
+<li>ZoeDepth is used for depth estimation.</li>
+<li>For video segments where the camera pose remains constant, optical flow is used to estimate unmoving background pixels. These background depth maps are then aligned to ensure depth consistency.</li>
+</ul>
+<p>Based on the depth information, point clouds and 3D bounding boxes for objects are generated.</p>
+<p>ChatGPT is used to diversify the instructions.</p>
+<h1 id="method"><a class="markdownIt-Anchor" href="#method"></a> Method</h1>
+<p>Since 3D datasets are much less abundant than 2D datasets, the system uses a Blip2 model as its backbone. It generates 3D features from images taken from different viewpoints, rather than directly processing point clouds.</p>
+<ul>
+<li><code>&lt;loc0-255&gt;</code> tokens are used to represent locations in 3D space. There are 256 such tokens, each representing a discrete position. Six of these tokens are needed to represent a 3D bounding box.</li>
+<li><code>&lt;scene&gt;&lt;/scene&gt;</code> tags enclose the embeddings of a static scene.</li>
+<li>The robot’s actions, with 7 degrees of freedom, are represented by discrete tokens such as <code>&lt;aloc0-255&gt;</code>, <code>&lt;arot0-255&gt;</code>, and <code>&lt;gripper0/1&gt;</code> to denote the arm’s intended absolute location, rotation, and gripper openness. These actions are separated by the <code>&lt;ACT SEP&gt;</code> token.</li>
+</ul>
+<p>An additional diffusion model is used to generate goal state 3D information:</p>
+<ul>
+<li>SD 1.4 is used for RGBD to RGBD prediction. This means the input is an initial frame and depth map, and the output is the goal state’s RGBD.</li>
+<li>Point-E is used for point cloud to point cloud prediction.</li>
+<li>The VLA backbone outputs <code>&lt;image&gt;description&lt;/image&gt;</code> tokens, and the description within these tags serves as the condition for the diffusion model. To align the VLA’s internal state and the diffusion models, a Transformer-based projector maps the VLA output embeddings to the diffusion model’s conditioning space.</li>
+<li>A similar method is used when generating point clouds, where the description is placed within <code>&lt;pcd&gt;description&lt;/pcd&gt;</code> tags.</li>
+</ul>
+<p><img src="fig2.png" alt="fig2" /></p>
+<p><strong>Finetuning and Alignment of Diffusion Models</strong></p>
+<ul>
+<li>First, each diffusion model is finetuned independently. Given an initial state and task description, the diffusion model predicts the goal state.</li>
+<li>Then, LoRA is used to finetune the diffusion models, and a Transformer-based projector is trained to align the VLA output with the diffusion model’s condition.</li>
+</ul>
+<h1 id="experiments"><a class="markdownIt-Anchor" href="#experiments"></a> Experiments</h1>
+<p>The system’s spatial reasoning performance is compared against other VLM or 3D LLM models.</p>
+<ul>
+<li>For example, it is tested by asking what would happen if certain specified actions were performed.</li>
+<li>The results show significantly better performance than other baselines, such as Blip2 and 3D-LLM.</li>
+</ul>
+<p>The ability of the 3D-VLA to generate RGB target images and point cloud targets is evaluated.</p>
+<ul>
+<li>Baselines include:
+<ul>
+<li>Instruct-P2P, an image editing model.</li>
+<li>SuSIE, a method for robots that generates subgoal images.</li>
+<li>NeXT-GPT, an LLM with image generation capabilities.</li>
+</ul>
+</li>
+<li>The 3D-VLA even outperforms Instruct-P2P, highlighting the benefits of finetuning for robotic tasks.</li>
+<li>The 3D-VLA can generate RGB-D target images that are highly consistent with real targets in terms of visual appearance and semantic content. It demonstrates robustness in unseen environments and daily life, maintaining the background while accurately modifying the state of the target object.</li>
+</ul>
+<p>The system demonstrates generalization capabilities on two benchmarks: RLBench and CALVIN.</p>
+<h1 id="reference"><a class="markdownIt-Anchor" href="#reference"></a> reference</h1>
+<ul>
+<li>
+<p>3d-llm: Injecting the 3d world into large language models</p>
+</li>
+<li>
+<p>Ll3da: Visual interactive instruction tuning for omni-3d understanding, reasoning, and planning</p>
+</li>
+<li>
+<p>Uni3d: Exploring unified 3d representation at scale</p>
+</li>
+<li>
+<p>Gpt4point: A unified framework for point-language understanding and generation</p>
+</li>
+<li>
+<p>Zero-shot robotic manipulation with pretrained image-editing diffusion models</p>
+</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

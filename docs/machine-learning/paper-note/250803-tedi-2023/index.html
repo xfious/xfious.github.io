@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] TEDi: Temporally-Entangled Diffusion for Long-Term Motion Synthesis</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2307.15042">TEDi: Temporally-Entangled Diffusion for Long-Term Motion Synthesis</a></p>
+<p>The goal of TEDi is to address the challenges of long-term motion generation. Traditional methods often suffer from inconsistencies when stitching diffusion-generated clips together, or they face significant latency issues.</p>
+<p>TEDi introduces a <strong>motion buffer</strong> concept: a denoised motion sequence where the frames at the beginning are closest to reality (clean), while the frames at the end are closer to pure noise.</p>
+<h1 id="motion-representation"><a class="markdownIt-Anchor" href="#motion-representation"></a> Motion Representation</h1>
+<p>The model represents motion using the following components for each frame:</p>
+<ul>
+<li><strong>Root joint displacements</strong>: Movement in the xz-plane.</li>
+<li><strong>Root joint height</strong>: Movement along the y-axis.</li>
+<li><strong>Joint rotations</strong>: Represented using a 6D notation for <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.09618em;">J</span></span></span></span> joints.</li>
+<li><strong>Foot contact labels</strong>: A binary vector <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">}</mo><mrow><mi>K</mi><mo>×</mo><mi>C</mi></mrow></msup></mrow><annotation encoding="application/x-tex">L \in \{0, 1\}^{K \times C}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72243em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">L</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.0913309999999998em;vertical-align:-0.25em;"></span><span class="mopen">{</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">}</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">K</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span></span></span></span></span></span></span></span></span> marking whether heels or toes are in contact with the ground.</li>
+</ul>
+<h1 id="method"><a class="markdownIt-Anchor" href="#method"></a> Method</h1>
+<p>During training, TEDi adds temporally varied noise to clean motion sequences. Each frame is assigned a different noise level.</p>
+<ul>
+<li><strong>Denoising Timestep Strategy</strong>: Since DDPM uses timesteps to determine noise levels, TEDi assigns different timesteps to different frames within a sequence.</li>
+<li><strong>Mixed Strategy</strong>: Training uses a mix of two strategies (2/3 probability for random allocation).
+<ul>
+<li><strong>Random allocation</strong>: Every frame in a sequence gets a random noise level. This forces the model to learn denoising from individual frames, treating a 500-frame sequence like a batch of 500 independent poses.</li>
+<li><strong>Monotonically increasing</strong>: Noise levels increase gradually over time.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Direct Motion Prediction</strong></p>
+<p>Unlike standard diffusion models that predict noise, TEDi predicts the motion itself. This allows the use of regularization and physical losses directly in the motion space.</p>
+<p><strong>Loss Functions</strong></p>
+<ul>
+<li><strong>Loss of Position (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>p</mi><mi>o</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">L_{pos}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">s</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span>)</strong>: While motion is represented by rotations, small errors in root rotations can cause massive non-linear displacements in end effectors (like feet). TEDi uses Forward Kinematics (FK)—a differentiable function—to calculate 3D coordinates and minimize position errors directly. This helps enforce physical constraints like “feet should not pass through the floor.”</li>
+<li><strong>Loss of Contact</strong>: Ensures that when foot contact labels are active, the velocity of the foot joints is near zero to prevent sliding.</li>
+<li><strong>Loss of Rotation</strong>: A standard L2 loss between predicted and ground-truth rotation angles.</li>
+</ul>
+<p><strong>Inference Process</strong></p>
+<p>At the start of inference, the motion buffer is initialized with a sequence where noise variance increases over time.</p>
+<h3 id="key-capabilities"><a class="markdownIt-Anchor" href="#key-capabilities"></a> Key Capabilities</h3>
+<p><strong>Controllable Synthesis</strong></p>
+<ul>
+<li><strong>Future-Guided Motion</strong>: Users can specify future actions to influence the current motion. By replacing future frames with “noisy target actions,” the model adjusts the preceding frames to lead into that target. To ensure smoothness, frames very close to being “finished” (within 5 steps) are not forced to the target.</li>
+<li><strong>Trajectory Control</strong>: The character’s path can be controlled by replacing the root joint displacements and height with a predefined trajectory.</li>
+</ul>
+<p>TEDi supports various motion tasks, including:</p>
+<ul>
+<li>Motion retargeting and style transfer.</li>
+<li>Key-frame based generation and interactive generation.</li>
+<li>Music-driven synthesis and animation layering.</li>
+</ul>
+<h1 id="results-and-comparisons"><a class="markdownIt-Anchor" href="#results-and-comparisons"></a> Results and Comparisons</h1>
+<p>The model is trained for 500k iterations on sequences of 500 frames at 30 fps. It excels at generating very long sequences compared to existing baselines:</p>
+<ul>
+<li><strong>vs. ACRNN</strong>: While ACRNN can generate long sequences, it often suffers from “foot sliding” or floating artifacts and tends to collapse quickly after initialization.</li>
+<li><strong>vs. Motion Diffusion Model (MDM)</strong>: MDM does not natively support long sequences. When using “outpainting” techniques to extend motion, MDM produces significant stitching artifacts at the boundaries.</li>
+</ul>
+<h1 id="reference"><a class="markdownIt-Anchor" href="#reference"></a> reference</h1>
+<ul>
+<li>
+<p>Phase-functioned neural networks for character control.</p>
+</li>
+<li>
+<p>Human motion diffusion model</p>
+</li>
+<li>
+<p>AutoConditioned Recurrent Networks for Extended Complex Human Motion Synthesis</p>
+</li>
+<li>
+<p>Character controllers using motion VAEs</p>
+</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] Genie: Generative Interactive Environments</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2402.15391">Genie: Generative Interactive Environments</a></p>
+<p>Genie introduces a novel approach for creating Generative Interactive Environments, specifically targeting platformer games. This system is unsupervised and can generate action-controllable virtual worlds described through text, synthetic images, or even sketches, without requiring ground-truth actions.</p>
+<p>The system leverages publicly available Internet gaming videos. It incorporates a video tokenizer and extracts latent actions via a causal action model. Furthermore, a separate model trained on robotic datasets demonstrates the applicability of this method to generalist agents.</p>
+<h1 id="method"><a class="markdownIt-Anchor" href="#method"></a> Method</h1>
+<p><strong>Spatial-Temporal Transformer</strong></p>
+<ul>
+<li>To address the quadratic memory issues often encountered in transformer architectures, Genie employs a specialized Spatial-Temporal Transformer.</li>
+<li>In the spatial attention layer, it only considers tokens within the same time step.</li>
+<li>In the temporal attention layer, it focuses solely on all tokens belonging to the same patch across all time steps.</li>
+<li>spatial attn -&gt; temporal attn -&gt; FFN</li>
+</ul>
+<p><strong>Latent Action Model</strong></p>
+<ul>
+<li>LAM infers the latent action between each pair of frames.</li>
+<li>Crucially, this inference operates on pixels rather than tokens, which means the LAM decoder output in pixel space, not tokens.</li>
+</ul>
+<p><img src="./fig5.png" alt="fig5" /></p>
+<p><strong>Video Tokenizer</strong></p>
+<ul>
+<li>The video tokenizer converts raw video frames into discrete tokens, denoted as <code>z</code>.</li>
+<li>Unlike previous works that might only encode spatial information for a single frame, this tokenizer encodes both spatial and temporal information simultaneously.</li>
+</ul>
+<p><strong>Dynamics Model</strong></p>
+<ul>
+<li>Given the latent action and frame tokens, the dynamics model is responsible for predicting the next frame.</li>
+</ul>
+<p><img src="./fig7.png" alt="fig7" /></p>
+<p><strong>Training Process</strong></p>
+<p><strong>Stage 1: Video Tokenizer Training</strong></p>
+<ul>
+<li>The video tokenizer is trained independently in the first stage.</li>
+</ul>
+<p><strong>Stage 2: Co-training the Latent Action Model and Dynamics Model</strong></p>
+<ul>
+<li>The input for LAM consists of frames <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mrow><mn>1</mn><mo>:</mo><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">x_{1:t+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>.</li>
+<li>The encoder of the LAM outputs a series of continuous latent actions <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mrow><mn>1</mn><mo>:</mo><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">a_{1:t}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>.</li>
+<li>The decoder of the LAM then predicts the next frame <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mrow><mn>2</mn><mo>:</mo><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">x_{2:t+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>, given the previous frames <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mrow><mn>1</mn><mo>:</mo><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">x_{1:t}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> and the inferred latent actions <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mrow><mn>1</mn><mo>:</mo><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">a_{1:t}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>.</li>
+<li>The LAM decoder is different from Dynamics model. Its input and output are in pixel space, but Dynamics model are using tokens from the video tokenizer.</li>
+<li>LAM decoder is only used to provide training signal.</li>
+<li>The size of the codebook used in LAM is 8, reflecting the typically small range of human inputs.</li>
+</ul>
+<p>Latent Action Model</p>
+<ul>
+<li>All frames within the LAM operate in pixel space.</li>
+<li>The LAM’s encoder extracts a sequence of latent actions from a series of preceding frames.</li>
+<li>Its decoder takes previous frames and these latent actions as input to predict the subsequent frame.</li>
+<li>Since the decoder already has access to the previous frames (which contain visual information), the latent actions don’t need to capture visual details. Instead, they are designed to focus purely on action-related information.</li>
+<li>The loss for this part is a reconstruction loss, comparing the predicted frame with the actual next frame. It does not receive any loss signals from the dynamics model.</li>
+<li>During inference, only the codebook from the LAM is utilized; other parts are not needed.</li>
+</ul>
+<p>Dynamics Model</p>
+<ul>
+<li>The dynamics model predicts the next frame using a method similar to MaskGIT.</li>
+<li>The model’s input are video tokens <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mrow><mn>1</mn><mo>:</mo><mi>T</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">z_{1:T-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328331em;"><span style="top:-2.5500000000000003em;margin-left:-0.04398em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>, and action token <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mrow><mn>1</mn><mo>:</mo><mi>T</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">a_{1:T-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328331em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>, and its task is to predict <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mrow><mn>2</mn><mo>:</mo><mi>T</mi></mrow></msub></mrow><annotation encoding="application/x-tex">z_{2:T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.04398em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>.</li>
+<li>For training, similar to MaskGIT’s approach of predicting masked tokens, each frame’s corresponding tokens within <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mrow><mn>2</mn><mo>:</mo><mi>T</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">z_{2:T-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328331em;"><span style="top:-2.5500000000000003em;margin-left:-0.04398em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span> can be masked with a certain probability. It’s important to note that a single frame, like an image, consists of multiple tokens, so only a subset of these tokens belonging to that frame will be masked.</li>
+<li>While the common practice is to concatenate video tokens and latent actions, Genie uses element-wise addition for combining video tokens and latent action tokens.</li>
+<li>The gradient will not propagate through action tokens.</li>
+</ul>
+<p>If there is no user input, the latent action is set to 0.</p>
+<h1 id="experiments"><a class="markdownIt-Anchor" href="#experiments"></a> Experiments</h1>
+<p>The Genie model was trained on 2D platformer games. The training data consisted of 16-second video clips sampled at 10 frames per second, totaling 30,000 hours of video content. The videos were processed at a resolution of 160x90 pixels.</p>
+<ul>
+<li><strong>Evaluating Generated Video Quality</strong>: The quality of the generated videos was assessed using the Frechet Video Distance (FVD).</li>
+<li><strong>Testing Controllability</strong>: To evaluate the model’s controllability, the Peak Signal-to-Noise Ratio (PSNR) was used to measure the similarity between generated videos and ground-truth videos. This involved two scenarios:
+<ul>
+<li>One video was generated using the ground-truth action sequence.</li>
+<li>Another video was generated using a random action sequence.</li>
+<li>Theoretically, if the model is controllable, the video generated with the ground-truth action sequence should be more similar to the actual ground-truth video.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Video Tokenizer</strong>:</p>
+<ul>
+<li>200 million parameters.</li>
+<li>Patch size of 4.</li>
+<li>Codebook embedding size of 32.</li>
+<li>Vocabulary size of 1024.</li>
+</ul>
+<p><strong>Latent Action Model</strong>:</p>
+<ul>
+<li>300 million parameters.</li>
+<li>Patch size of 16.</li>
+<li>Embedding size of 32.</li>
+<li>Vocabulary size of 8.</li>
+</ul>
+<p>A sequence length of 16 frames was used for training all components.</p>
+<p>batch size = 448 is better than 128 and 256, which means more data is better with same number of updates.</p>
+<p>During inference, 25 MaskGIT steps were performed for the sampling of each frame, using random sampling with a temperature of 2.</p>
+<p>The model demonstrated an understanding of 3D concepts and simulated parallax, where closer objects appear to move more significantly.</p>
+<h1 id="ablation-study"><a class="markdownIt-Anchor" href="#ablation-study"></a> Ablation Study</h1>
+<p>whether LAM should learn actions directly from raw pixel images or from video tokens.</p>
+<ul>
+<li>Learning actions directly from raw pixel images yielded superior results.</li>
+<li>This approach allowed latent actions to control video generation more effectively, leading to a better PSNR.</li>
+<li>On more complex robotics datasets, learning from pixels also produced better visual quality, as indicated by a better FVD.</li>
+</ul>
+<p>We compared different architectures for the video tokenizer: spatial-only ViT, C-ViVit, and ST-ViViT.</p>
+<ul>
+<li>The Spatial-Temporal ViViT (ST-ViViT) architecture performed better in terms of both FVD and PSNR.</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>

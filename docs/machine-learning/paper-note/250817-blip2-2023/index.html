@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/machine-learning/" class="parent-entry">MACHINE LEARNING</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+        <a href="/machine-learning/paper-note/" class="parent-entry">PAPER NOTE</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        
+        <div class="article-title">[Paper Note] BLIP-2: Bootstrapping Language-Image Pre-training  with Frozen Image Encoders and Large Language Models</div>
+    
+        <div class="markdown-body"><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2301.12597">BLIP-2: Bootstrapping Language-Image Pre-training  with Frozen Image Encoders and Large Language Models</a></p>
+<h1 id="vision-language-pre-training"><a class="markdownIt-Anchor" href="#vision-language-pre-training"></a> Vision-Language Pre-training</h1>
+<p>Given the existence of powerful language models (LLMs) and image encoders, a natural progression is to integrate them.</p>
+<p>To prevent catastrophic forgetting, LLMs are often frozen, which can make training difficult.</p>
+<ul>
+<li>Flamingo uses an image-to-text generation loss, which is often insufficient to bridge the modality gap effectively.</li>
+<li>To achieve effective vision-language alignment with frozen unimodal models, we propose a Querying Transformer (QFormer) pre-trained with a new two-stage pre-training strategy.</li>
+<li>This module is designed to select important information from images to feed into the LLM.</li>
+<li>The advantage is that it uses fewer trainable parameters, leading to greater efficiency.</li>
+</ul>
+<h1 id="method"><a class="markdownIt-Anchor" href="#method"></a> Method</h1>
+<p>The training is divided into two stages:</p>
+<ul>
+<li>Vision-language representation learning stage</li>
+<li>Vision-to-language generative learning stage</li>
+</ul>
+<p><img src="./fig2.png" alt="fig2" /></p>
+<p><strong>Q-Former Architecture</strong></p>
+<ul>
+<li>The model features two Transformer networks, each with N layers. One processes images, and the other processes text.</li>
+<li>The image model’s input consists of 32 embedding as query tokens. These queries extract information from image tokens via cross-attention, which is inserted every other layer.</li>
+<li>The image branch and text branch share the same self-attention layers. However, the text branch does not have cross-attention, and the feed-forward network (FFN) parameters differ between the two branches.</li>
+<li>The model parameters are initialized using <code>bert-base</code>.</li>
+</ul>
+<p>This bottleneck architecture, combined with our pre-training objectives, forces the queries to extract visual information most relevant to the text.</p>
+<p><strong>Three Training Objectives</strong></p>
+<p>The model is optimized simultaneously using three training objectives:</p>
+<ul>
+<li>
+<p><strong>Image-Text Contrastive Learning</strong>: Similar to CLIP, this objective maximizes the similarity of positive image-text pairs.</p>
+<ul>
+<li>The <code>[CLS]</code> token is selected as the text embedding.</li>
+<li>An image token with the highest similarity to the text embedding is chosen as the image embedding.</li>
+<li>During self-attention, the two modalities cannot attend to each other.</li>
+</ul>
+</li>
+<li>
+<p><strong>Image-grounded Text Generation</strong>: This involves the auto-regressive loss for the text branch.</p>
+<ul>
+<li>The <code>[CLS]</code> token is replaced with a new <code>[DEC]</code> token as the first text token to signal the decoding task.</li>
+<li>Query tokens are prevented from attending to text tokens.</li>
+</ul>
+</li>
+<li>
+<p><strong>Image-Text Matching</strong></p>
+<ul>
+<li>Each output query embedding is fed into a two-class linear classifier to obtain a logit. These logits are then averaged across all queries to produce the output matching score.</li>
+<li>It is a binary classification task where the model is asked to predict whether an image-text pair is matched or unmatched.</li>
+</ul>
+</li>
+</ul>
+<p>We remove the last layer of the Vision Transformer (ViT) and use the output features from the second-to-last layer, which leads to slightly better performance.</p>
+<h1 id="references"><a class="markdownIt-Anchor" href="#references"></a> references</h1>
+<ul>
+<li>
+<p>OFA: Unifying Architectures, Tasks, and Modalities Through a Simple Sequence-to-Sequence Learning Framework</p>
+</li>
+<li>
+<p>Flamingo: a Visual Language Model for Few-Shot Learning</p>
+</li>
+<li>
+<p>Align before fuse: Vision and language representation learning with momentum distillation.</p>
+</li>
+<li>
+<p>BLIP: bootstrapping language-image pre-training for unified visionlanguage understanding and generation.</p>
+</li>
+</ul>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>
