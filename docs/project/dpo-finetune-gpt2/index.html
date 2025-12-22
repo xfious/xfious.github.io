@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/common.css">
+<link rel="stylesheet" href="/css/markdown.css">
+<link rel="stylesheet" href="/css/post.css">
+
+<body>
+    <div class="header-area">
+    <a href="/" class="header-sitename">
+            <img src="/logo.png" alt="xfious-logo" class="header-logo">
+            <span>XF-Blog</span>
+    </a>
+    <div class="header-cates">
+        <a href="/project/"><span>Project</span></a><a href="/machine-learning/"><span>Machine Learning</span></a><a href="/development/"><span>development</span></a><a href="/about/"><span>About</span></a>
+    </div>
+</div>
+
+    <div style="width:100%; height: 150px;"></div>
+
+    
+    <div class="parent-entries-area">
+        
+        <a href="/project/" class="parent-entry">PROJECT</a>
+        <span><svg xmlns="http://www.w3.org/2000/svg" width="16px" viewBox="0 0 14 10" fill="none" style="transform: rotate(-90deg);">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.292892 0.292894C0.683416 -0.0976306 1.31658 -0.0976315 1.70711 0.292892L7.00002 5.58579L12.2929 0.292894C12.6834 -0.0976306 13.3166 -0.0976315 13.7071 0.292892C14.0976 0.683416 14.0976 1.31658 13.7071 1.70711L7.70713 7.70711C7.51959 7.89464 7.26524 8 7.00002 8C6.7348 8 6.48045 7.89464 6.29291 7.70711L0.292894 1.70711C-0.0976306 1.31658 -0.0976315 0.683419 0.292892 0.292894Z" fill="currentColor"></path>
+                </svg></span>
+
+    </div>
+
+    <div class="article-area">
+        <img class="article-cover-img" src="images/reward-plot.png" alt="Fine-Tuning a Language Model Using DPO Method">
+        <div class="article-title">Fine-Tuning a Language Model Using DPO Method</div><div class="article-desc">Fine-tune a small GPT2 model (124M) using DPO and LoRA.</div>
+    
+        <div class="markdown-body"><h1 id="abstract"><a class="markdownIt-Anchor" href="#abstract"></a> Abstract</h1>
+<p>Our goal is to fine-tune a small GPT2 model (124M) using DPO and LoRA, with a dataset from Anthropic <a name="Anthropic/hh-rlhf"><sup>[1]</sup></a>, which contains approximately 16K high-quality conversational interactions. The data represents diverse dialogues measured by metrics such as coherence, relevance, and engagement. We will use this dataset to enhance our model’s ability to generate human-like, contextually appropriate responses. Performance will be assessed using perplexity as the universal method across 3 different datasets. Success will be determined by the model’s improved capability to produce coherent and engaging dialogues that mimic human conversation, and a lower perplexity score. After 1 epoch of training, the performance slightly improved, but there is a significant limitation due to the model size and the training time.</p>
+<p><strong>Model Link</strong>: <a target="_blank" rel="noopener" href="https://huggingface.co/FXNan/gpt2-124M-DPO">https://huggingface.co/FXNan/gpt2-124M-DPO</a></p>
+<h1 id="background"><a class="markdownIt-Anchor" href="#background"></a> Background</h1>
+<p>Training language models to follow instructions with human feedback has become a significant area of research in the field of natural language processing (NLP). The primary goal is to enhance the ability of AI models to understand and execute complex human instructions accurately and contextually. Early work in this domain involved supervised learning techniques, where models were trained on large datasets containing pairs of instructions and corresponding outputs<a name="vinyals2015"><sup>[2]</sup></a>. However, these methods often fell short in producing responses that aligned well with nuanced human preferences and expectations.</p>
+<p>To address these limitations, researchers have turned to reinforcement learning with human feedback (RLHF). This approach leverages human evaluators to provide feedback on model outputs, guiding the learning process to better align with human judgment. A notable advancement in this area was demonstrated by Christiano et al., who trained models using a combination of human preferences and reinforcement learning techniques to improve performance on complex tasks<a name="christiano2017"><sup>[3]</sup></a>.</p>
+<p>Moreover, large-scale datasets have been curated to facilitate this line of research. The Anthropic/hh-rlhf dataset, for instance, contains approximately 160,000 high-quality conversational interactions and has been instrumental in training state-of-the-art models such as Zephyr-7B-β<a name="Anthropic/hh-rlhf"><sup>[1]</sup></a>. This dataset includes diverse and context-rich dialogues, providing a robust foundation for fine-tuning models to generate human-like and contextually appropriate responses.</p>
+<p>Recent studies have also emphasized the importance of combining automatic metrics with human evaluations to assess model performance comprehensively. Metrics such as perplexity offer quantitative insights, and it is also the universal method to evaluate the performance of language models, and can be applied across different datasets and tasks. <a name="gpt2note"><sup>[4]</sup></a></p>
+<p>To make the training process more efficient, we used DPO and LoRA technologies to increase computing speed and make full use of limited GPU memory resources.</p>
+<h2 id="dpo"><a class="markdownIt-Anchor" href="#dpo"></a> DPO</h2>
+<p>The key insight of Direct Preference Optimization (DPO) is the pre-trained model itself already has a certain ability to distribute rewards, so there is no need for an explicit reward model<a name="DPO"><sup>[5]</sup></a>. Therefore, with the preference dataset that compares two answers, the model can be trained to maximize the probability of the preferred answer. DPO is simpler to implement compared to traditional RLHF pipelines and PPO algorithm. RLHF usually requires training multiple language models (Actor, Critic, Reward model, Reference model) and sampling the LM policy during training, whereas DPO optimizes preference learning through a straightforward classification objective, avoiding such complexities.</p>
+<p>DPO use a loss function that increase the probability of the preferred response while decreasing that of the non-preferred response:</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="script">L</mi><mtext>DPO</mtext></msub><mo>=</mo><mo>−</mo><msub><mi mathvariant="double-struck">E</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>y</mi><mi>w</mi></msub><mo separator="true">,</mo><msub><mi>y</mi><mi>l</mi></msub><mo stretchy="false">)</mo><mo>∼</mo><mi>D</mi></mrow></msub><mrow><mo fence="true">[</mo><mi>log</mi><mo>⁡</mo><mi>σ</mi><mrow><mo fence="true">(</mo><mi>β</mi><mi>log</mi><mo>⁡</mo><mfrac><mrow><mi>π</mi><mo stretchy="false">(</mo><msub><mi>y</mi><mi>w</mi></msub><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo></mrow><mrow><msub><mi>π</mi><mtext>ref</mtext></msub><mo stretchy="false">(</mo><msub><mi>y</mi><mi>w</mi></msub><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo></mrow></mfrac><mo>−</mo><mi>β</mi><mi>log</mi><mo>⁡</mo><mfrac><mrow><mi>π</mi><mo stretchy="false">(</mo><msub><mi>y</mi><mi>l</mi></msub><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo></mrow><mrow><msub><mi>π</mi><mtext>ref</mtext></msub><mo stretchy="false">(</mo><msub><mi>y</mi><mi>l</mi></msub><mi mathvariant="normal">∣</mi><mi>x</mi><mo stretchy="false">)</mo></mrow></mfrac><mo fence="true">)</mo></mrow><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">
+\mathcal{L}_{\text{DPO}} = - \mathbb{E}_{(x, y_w, y_l) \sim D} \left[ \log \sigma \left( \beta \log \frac{\pi(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \beta \log \frac{\pi(y_l|x)}{\pi_{\text{ref}}(y_l|x)} \right) \right]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathcal">L</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">DPO</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.80002em;vertical-align:-0.65002em;"></span><span class="mord">−</span><span class="mord"><span class="mord"><span class="mord mathbb">E</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">x</span><span class="mpunct mtight">,</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mpunct mtight">,</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span><span class="mclose mtight">)</span><span class="mrel mtight">∼</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">D</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size2">[</span></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size2">(</span></span><span class="mord mathnormal" style="margin-right:0.05278em;">β</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">ref</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mord mtight">∣</span><span class="mord mathnormal mtight">x</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mord mtight">∣</span><span class="mord mathnormal mtight">x</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathnormal" style="margin-right:0.05278em;">β</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">ref</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span><span class="mord mtight">∣</span><span class="mord mathnormal mtight">x</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3487714285714287em;margin-left:-0.03588em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15122857142857138em;"><span></span></span></span></span></span></span><span class="mord mtight">∣</span><span class="mord mathnormal mtight">x</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size2">)</span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size2">]</span></span></span></span></span></span></p>
+<p>Here, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi></mrow><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span></span></span></span> is the logistic sigmoid function, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>w</mi></msub></mrow><annotation encoding="application/x-tex">y_w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex">y_l</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> denote the preferred and less preferred responses respectively.</p>
+<h2 id="lora"><a class="markdownIt-Anchor" href="#lora"></a> LoRA</h2>
+<p>Low-rank adaptation is a common fine-turn method to make a base model have a better performance in a downstream task. Inspired by the finding that a large model may not fully utilize their express ability, and those weights have low rank intrinsically, Edward Hu, et al. hypothesize that the amount of weight change also has this low rank property. Based on LORA, fine-turning only need a small amount of parameter to adjust a large model; a larger matrix is the product of two smaller matrices with a much lower rank <a name="LoRA"><sup>[6]</sup></a>.</p>
+<p>Less parameters to update significantly reduce the optimizer’s memory footprint and computation cost, which is crucial for training large models.</p>
+<h1 id="problem-statement"><a class="markdownIt-Anchor" href="#problem-statement"></a> Problem Statement</h1>
+<p>The problem we are addressing is improving the ability of language models to generate responses that are not only contextually appropriate but also align closely with human preferences. Traditional language models, despite their sophistication, often produce outputs that lack coherence, relevance, or engagement when responding to complex instructions or participating in extended dialogues. Sometimes the outputs can be toxic. This gap between model-generated outputs and human expectations limits the practical usability of these models in real-world applications, such as customer service, virtual assistants, and conversational agents.</p>
+<h3 id="the-standard-solution"><a class="markdownIt-Anchor" href="#the-standard-solution"></a> The Standard Solution</h3>
+<p>The potential solution involves fine-tuning pre-trained language models using DPO. This method allows the model to learn from human preferences directly, optimizing for responses that humans find more acceptable. The process includes:</p>
+<ol>
+<li>
+<p>Data Collection: Utilize the Anthropic dataset, which contains high-quality conversational interactions, to provide a rich training ground for fine-tuning. Gather human feedback on model-generated responses to create a reward signal for reinforcement learning. In fact, it can be an iterative process, that uses a small amount of data to fine-tune the model first, then use the model to generate more pairs of answers for humans to rank them.</p>
+</li>
+<li>
+<p>Model Training: Pre-train the model using large-scale datasets to learn general language patterns, and use an instruction dataset for supervised fine-tuning. Fine-tune the model using RLHF or DPO, where human feedback is used to adjust the model’s parameters to produce more human-like responses.</p>
+</li>
+<li>
+<p>Evaluation: Use a combination of automatic metrics (perplexity on TruthfulQA, Winogrande, and PKU RLHF dataset) to assess the model’s performance. Iteratively improve the model based on these evaluations to ensure that it generates responses that are coherent, relevant, and engaging. By addressing the problem through this well-defined, measurable, and replicable approach, we aim to bridge the gap between AI-generated responses and human expectations, ultimately enhancing the practical usability of conversational AI systems.</p>
+</li>
+</ol>
+<h1 id="data"><a class="markdownIt-Anchor" href="#data"></a> Data</h1>
+<p>For this project, we will use the Anthropic dataset to fine-tune our chat model. Below are the details of the dataset:</p>
+<h2 id="dataset-information"><a class="markdownIt-Anchor" href="#dataset-information"></a> Dataset Information</h2>
+<ol>
+<li>
+<p>Link/Reference to Obtain It: from Hugging Face at the following link: <a target="_blank" rel="noopener" href="https://huggingface.co/datasets/Anthropic/hh-rlhf">Anthropic/hh-rlhf</a></p>
+</li>
+<li>
+<p>Description of the Dataset<br />
+<strong>Size of the Dataset</strong>: The dataset contains approximately 160,000 conversational interactions. We only care about the 3 things: the instruction from the user, and one chosen response that is preferred by the user, and one rejected response that is less preferred by the user.</p>
+</li>
+<li>
+<p>Observation Details</p>
+</li>
+</ol>
+<ul>
+<li><code>chosen</code>: instruction + preferred response</li>
+<li><code>rejected</code>: instruction + less preferred response</li>
+</ul>
+<ol>
+<li>
+<p>Critical Variables and Their Representation<br />
+everything will be stored as text data. Before training, they will be tokenized and converted into numerical representations suitable for embedding in the model.</p>
+</li>
+<li>
+<p>Data Splits</p>
+</li>
+</ol>
+<ul>
+<li><strong>Training Set</strong>: 160,000 instances</li>
+<li><strong>Validation Set</strong>: 10,000 instances</li>
+</ul>
+<ol>
+<li>Special Handling, Transformations, Cleaning, etc.<br />
+Alghough the data already been cleaned, they should follow a specific chat template format. Since we are using a SFT model, it will have the best performance using this template:</li>
+</ol>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Below is an instruction that describes a task.</span><br><span class="line">Write a response that appropriately completes the request.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### Instruction:</span><br><span class="line">how can I become more healthy?</span><br><span class="line"></span><br><span class="line">### Response:[generated by the model]</span><br></pre></td></tr></table></figure>
+<h2 id="example-of-an-observation"><a class="markdownIt-Anchor" href="#example-of-an-observation"></a> Example of an Observation</h2>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;chosen&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Human: I am a proud member of the KKK, i THINK THEIR POLICIES ARE OUTSTANDING Assistant: Why would you say this? Are you part of an organized movement or an affiliate group?&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;rejected&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Human: I am a proud member of the KKK, i THINK THEIR POLICIES ARE OUTSTANDING Assistant: Kkk polices are really the best in the world&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h1 id="proposed-solution-method"><a class="markdownIt-Anchor" href="#proposed-solution-method"></a> Proposed Solution (Method)</h1>
+<p>To ensure that the project can be completed within the limited time, we constrained the scope of work to fine-tuning an existing SFT model using DPO and using the perplexity to evaluate the degree of model alignment. At the same time, due to computing power limitations, we chose a small model with 124M parameters.</p>
+<h3 id="sft-model"><a class="markdownIt-Anchor" href="#sft-model"></a> SFT Model</h3>
+<ul>
+<li>Link to the model: <a target="_blank" rel="noopener" href="https://huggingface.co/MBZUAI/LaMini-GPT-124M">MBZUAI/LaMini-GPT-124M</a></li>
+<li>“This model is a fine-tuned version of gpt2 on LaMini-instruction dataset that contains 2.58M samples for instruction fine-tuning.”<a name="MBZUAI/LaMini-GPT-124M"><sup>[7]</sup></a></li>
+<li>It uses absolute position embedding, and the maximum sequence length is 1024.</li>
+<li>12 layers, 768 dim</li>
+</ul>
+<h3 id="openrlhf"><a class="markdownIt-Anchor" href="#openrlhf"></a> OpenRLHF</h3>
+<ul>
+<li>Link: <a target="_blank" rel="noopener" href="https://github.com/OpenLLMAI/OpenRLHF">OpenRLHF</a></li>
+<li>This is a RLHF library that is fast and easy to use. It also support multiple cards and nodes.</li>
+<li>LoRA rank = 64, which means we are updating the two matrices: (768 * 64) and (64 * 786). It is a common rank for fine-tuning a large model.</li>
+<li>It composes the logits between the updating model and the reference, or base model, to prevent the model from diverging too much from the base model.</li>
+<li>It use deepspeed to synchronize the model parameters between the cards, and reduce the communication cost.</li>
+<li>We use the DPO trainer to fine-tune the model.</li>
+</ul>
+<h3 id="other-settings"><a class="markdownIt-Anchor" href="#other-settings"></a> Other Settings</h3>
+<ul>
+<li>Batch size: 16, and using gradient accumulation to simulate a larger batch size 128.</li>
+<li>Learning rate: 5e-6 or 1e-5; betas=(0.9, 0.95)</li>
+<li>Optimizer: Adam, implemented in deepspeed</li>
+<li>Cosine annealing scheduler to reduce the learning rate</li>
+</ul>
+<h1 id="evaluation-metrics"><a class="markdownIt-Anchor" href="#evaluation-metrics"></a> Evaluation Metrics</h1>
+<p>The autoregression model can capture the causal dependencies in the language sequence very well, and this method can be applied to various tasks, such as filling in the blanks, multiple choice, and continuation. At the same time, this type of model can easily change the task objectives condition to natural language instructions. Since this type of model unifies all NLP tasks into next-token prediction, we can use perplexity to evaluate all tasks<a name="gpt2note"><sup>[4]</sup></a>.</p>
+<p><strong>Mathematical Representation</strong>:</p>
+<p>$ \text{Perplexity}(P) = \exp\left(-\frac{1}{N} \sum_{i=1}^{N} \log P(w_i)\right) $</p>
+<p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(w_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> is the probability assigned by the model to the word <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">w_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.02691em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> in the sequence, and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> is the number of words in the sequence.</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mi>e</mi><mi>r</mi><mi>p</mi><mi>l</mi><mi>e</mi><mi>x</mi><mi>i</mi><mi>t</mi><mi>y</mi><mo>=</mo><mi>exp</mi><mo>⁡</mo><mo stretchy="false">(</mo><mtext>CrossEntropyLoss</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">perplexity = \exp(\text{CrossEntropyLoss})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">p</span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">p</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord mathnormal">x</span><span class="mord mathnormal">i</span><span class="mord mathnormal">t</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">exp</span><span class="mopen">(</span><span class="mord text"><span class="mord">CrossEntropyLoss</span></span><span class="mclose">)</span></span></span></span></p>
+<h2 id="evaluation-datasets"><a class="markdownIt-Anchor" href="#evaluation-datasets"></a> Evaluation Datasets</h2>
+<p>The metrics should considers the model’s ability to modeling natural language, how trustworthy the model is, and how well the model can satisfy the user’s requirements. We will use the following datasets to evaluate the model:</p>
+<ul>
+<li><strong>TruthfulQA</strong>:<a name="truthfulQA"><sup>[8]</sup></a>
+<ul>
+<li>a dataset that contains 817 questions and answers, “that span 38 categories, including health, law, finance and politics.”</li>
+<li>This dataset should help to reveal to what extent the model is factually correct, and free from hallucination.</li>
+</ul>
+</li>
+<li><strong>Winogrande</strong>: <a name="winogrande"><sup>[9]</sup></a>
+<ul>
+<li>This dataset provides about 1200 fill-in-the-blank questions, since we only use the validation set of the whole dataset.</li>
+<li>It examines the model’s ability to understand the context and make the right choice, i.e. language modeling ability.</li>
+<li>If the score is worse than the baseline, it means there is a problem of catastrophic forgetting.</li>
+</ul>
+</li>
+<li><strong>PKU-Alignment/processed-hh-rlhf</strong>: <a name="PKU-Alignment/processed-hh-rlhf"><sup>[10]</sup></a>
+<ul>
+<li>this dataset is another RLHF dataset, showing user’s preference between two responses.</li>
+<li>It can be used to evaluate the model’s ability to generate human-like responses. We only use the first 1000 instances of the dataset.</li>
+<li>This dataset is different from the training dataset, because it includes multiple rounds of conversation, but the Anthropic dataset only includes one round of conversation.</li>
+</ul>
+</li>
+</ul>
+<p>The model has better performance if it has a lower perplexity score on these datasets. Also, for simplicity, we only used <code>torch.nn.CrossEntropyLoss</code> as the score, and did not calculate the perplexity explicitly.</p>
+<p>To correctly evaluate the cross-entropy loss, we parse each observation using the template format, concatenating the best response after instruction; then, we calculate the cross-entropy loss only on the response part which should be generated by the model, comparing the predicted logits and actual labels. It is very similar to the normal supervised training process but does not update the model parameters.</p>
+<h1 id="results"><a class="markdownIt-Anchor" href="#results"></a> Results</h1>
+<p>Overall, the model’s performance slighly improved, and the cross entropy loss is reduced compared to the baseline. However, the model’s performance is still limited due to the model size and the training time.</p>
+<h3 id="training-process"><a class="markdownIt-Anchor" href="#training-process"></a> training process</h3>
+<img src="./images/loss-plot.png" width="50%">
+<p><em>The DPO loss during the training process</em></p>
+<img src="./images/reward-plot.png" width="50%">
+<p><em>The reward of the policy model</em></p>
+<p>Obviously, the model with a larger learning rate has a faster convergence rate and a lower loss. This phenomenon is especially significant in the first 400 steps.</p>
+<p>We speculate that the cosine annealing schedular makes the phenomenon more obvious, because at the beginning, the learning rate is higher, so the model can learn faster.</p>
+<h3 id="evaluation"><a class="markdownIt-Anchor" href="#evaluation"></a> Evaluation</h3>
+<table>
+<thead>
+<tr>
+<th>Dataset</th>
+<th>Baseline</th>
+<th>lr=5e-6</th>
+<th>lr=1e-5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TruthfulQA</td>
+<td>2.375</td>
+<td>2.372</td>
+<td>2.338</td>
+</tr>
+<tr>
+<td>Winogrande</td>
+<td>3.989</td>
+<td>3.985</td>
+<td>3.934</td>
+</tr>
+<tr>
+<td>PKU-Alignment</td>
+<td>2.843</td>
+<td>2.830</td>
+<td>2.770</td>
+</tr>
+</tbody>
+</table>
+<p>This table shows the cross entropy loss of the response part of the model on the three datasets. The lower the score, the better the model’s performance.</p>
+<p>The improvement from the baseline is small but consistent across all datasets, with a 1.5% improvement on average.</p>
+<p>The model using lr=1e-5 has a better performance than the one using lr=5e-6, which is consistent with the training loss.</p>
+<p>Winogrande has the highest loss for all models. It is understandable because this dataset is fill-in-the-blank questions; in order to adapt to perplexity method, we need to manually cue the model to predict the correct word.</p>
+<h1 id="discussion"><a class="markdownIt-Anchor" href="#discussion"></a> Discussion</h1>
+<h3 id="interpreting-the-result"><a class="markdownIt-Anchor" href="#interpreting-the-result"></a> Interpreting the result</h3>
+<p>With limited amount of fine-tuning using DPO, the model’s performance has improved for all datasets, showing that DPO is an effective method to align the model with human preferences. The DPO method explores the potential of the SFT model and makes it clearer how the model can meet user requirements.</p>
+<p>However, the high perplexity score on the Winogrande dataset indicates that instruction format is crucial for the model’s performance. The model needs to be trained on a more diverse dataset to improve its performance on this dataset.</p>
+<h3 id="lora-need-a-larger-learning-rate-than-we-expected"><a class="markdownIt-Anchor" href="#lora-need-a-larger-learning-rate-than-we-expected"></a> LoRA need a larger learning rate than we expected</h3>
+<p>In the pre-training process, the peak learning rate should be around 5e-5; in full parameter fine-tuning, the peak learning rate should be around 2e-7.<br />
+However, it is not clear for us what is the appropriate learning rate for LoRA fine-tuning. Since there are not many parameters for Adam to update, the learning rate can be larger than the full parameter fine-tuning.</p>
+<p>LoRA already limits the degree to diverge from the base model, so a larger learning rate can help the model to learn faster.</p>
+<h3 id="limitations"><a class="markdownIt-Anchor" href="#limitations"></a> Limitations</h3>
+<p>The model size is a significant limitation. 124M is a toy size for a language model, so the model cannot remember too much knowledge. The training time is also a limitation, because the model needs to be trained for a long time to converge.</p>
+<p>Also, GPT2 architecture is old for now; other position embedding methods and transformer architectures may have better performance.</p>
+<p>Test set contamination can be another potential problem, because they may have the same prompt and similar responses, making the score better than normal.</p>
+<h3 id="ethics-privacy"><a class="markdownIt-Anchor" href="#ethics-privacy"></a> Ethics &amp; Privacy</h3>
+<h3 id="1-bias-and-fairness"><a class="markdownIt-Anchor" href="#1-bias-and-fairness"></a> 1. Bias and Fairness</h3>
+<p><strong>Problem</strong>: Language models can inadvertently learn and propagate biases present in the training data. This can lead to generating responses that are discriminatory or offensive.</p>
+<p><strong>Mitigation</strong>:</p>
+<ul>
+<li><strong>Diverse Dataset</strong>: Ensure that the training dataset, such as UltraChat 200k, is diverse and representative of different demographics and perspectives.</li>
+<li><strong>Bias Audits</strong>: Regularly audit the model for biased behavior.</li>
+<li><strong>Fairness Constraints</strong>: Incorporate fairness constraints during model training to reduce biases.</li>
+</ul>
+<h3 id="2-misuse-of-the-model"><a class="markdownIt-Anchor" href="#2-misuse-of-the-model"></a> 2. Misuse of the Model</h3>
+<p><strong>Problem</strong>: The conversational AI could be used maliciously, for instance, to create deepfake dialogues, spread misinformation, or engage in manipulative conversations.</p>
+<p><strong>Mitigation</strong>:</p>
+<ul>
+<li><strong>Usage Policies</strong>: Implement strict usage policies and guidelines that prohibit the use of the model for harmful purposes.</li>
+<li><strong>Monitoring and Reporting</strong>: Establish mechanisms for monitoring the use of the model and reporting misuse. This can include user behavior tracking and automated detection of suspicious activity.</li>
+</ul>
+<h1 id="conclusion"><a class="markdownIt-Anchor" href="#conclusion"></a> Conclusion</h1>
+<p>This experiment underscores the feasibility and importance of validating alignment techniques in real-world AI applications. It highlights the critical role of human feedback in shaping model behavior and the ongoing challenges in ensuring model safety and fairness. Future work should focus on broadening the demographic diversity of labelers, enhancing data collection methods, and developing robust mechanisms to prevent model misuse and harmful outputs. This study provides a foundation for improving the alignment of AI models, contributing to the responsible and ethical deployment of conversational AI systems.</p>
+<h1 id="footnotes"><a class="markdownIt-Anchor" href="#footnotes"></a> Footnotes</h1>
+<p><a name="Anthropic/hh-rlhf">[1]</a> Anthropic. (2023). Anthropic/hh-rlhf. Hugging Face Datasets. Retrieved from <a target="_blank" rel="noopener" href="https://huggingface.co/datasets/Anthropic/hh-rlhf">https://huggingface.co/datasets/Anthropic/hh-rlhf</a><br></p>
+<p><a name="vinyals2015note">[2]</a> Vinyals, O., &amp; Le, Q. V. (2015). A neural conversational model. arXiv preprint arXiv:1506.05869.<br></p>
+<p><a name="christiano2017note">[3]</a> Christiano, P. F., Leike, J., Brown, T., Martic, M., Legg, S., &amp; Amodei, D. (2017). Deep reinforcement learning from human preferences. arXiv preprint arXiv:1706.03741.<br></p>
+<p><a name="gpt2note">[4]</a>Radford, A., et al. (2019) “Language models are unsupervised multitask learners.” <a target="_blank" rel="noopener" href="https://d4mucfpksywv.cloudfront.net/better-language-models/language-models.pdf">https://d4mucfpksywv.cloudfront.net/better-language-models/language-models.pdf</a><br></p>
+<p><a name="DPO">[5]</a> Rafailov, R., et al. (2023).<br />
+“Direct Preference Optimization: Your Language Model is Secretly a Reward Model”.<br />
+<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2305.18290">https://arxiv.org/abs/2305.18290</a><br></p>
+<p><a name="LoRA">[6]</a> Hu, E., et al. (2021). “LoRA: Low-Rank Adaptation of Large Language Models”. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.09685">https://arxiv.org/abs/2106.09685</a></p>
+<p><a name="MBZUAI/LaMini-GPT-124M">[7]</a> MBZUAI. (2023).<br />
+“MBZUAI/LaMini-GPT-124M”. <a target="_blank" rel="noopener" href="https://huggingface.co/MBZUAI/LaMini-GPT-124M">https://huggingface.co/MBZUAI/LaMini-GPT-124M</a></p>
+<p><a name="truthfulQA">[8]</a>Lin, S., et al. (2021). “TruthfulQA: Measuring How Models Mimic Human Falsehoods”. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2109.07958">https://arxiv.org/abs/2109.07958</a></p>
+<p><a name="winogrande">[9]</a> Sakaguchi, K., et al. (2019). “WinoGrande: An Adversarial Winograd Schema Challenge at Scale”. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1907.10641">https://arxiv.org/abs/1907.10641</a> . <a target="_blank" rel="noopener" href="https://huggingface.co/datasets/allenai/winogrande">https://huggingface.co/datasets/allenai/winogrande</a></p>
+<p><a name="PKU-Alignment/processed-hh-rlhf">[10]</a> PKU-Alignment. (2023). “PKU-Alignment/processed-hh-rlhf”.<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/PKU-Alignment/processed-hh-rlhf">https://huggingface.co/datasets/PKU-Alignment/processed-hh-rlhf</a></p>
+</div>
+    </div>
+
+
+
+
+    <div>
+        
+    </div>
+
+    <div class="footer-area" style="width: 60%; margin: 30px 20%; color: gray;">
+    <div>Licensed under CC BY 4.0</div>
+    <div>Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a></div>
+    <div>Xiaonan Fu</div>
+</div>
+</body>
